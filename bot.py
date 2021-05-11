@@ -29,9 +29,10 @@ else:
 
 # Strategies
 SIMPLE = True  # buys at % increase and sells if TP or SL is triggered
-ADJ_STOP_LOSS = False  # keeps upping the SL from the last price until it's met TODO: Implement
+TRAILING_STOP_LOSS = False  # keeps upping the SL from the last price until it's met TODO: Implement
 
 # PARAMS
+CUSTOM_LIST = False  # Use custom tickers.txt list for filtering pairs
 PAIR_WITH = 'USDT'
 QUANTITY = 15  # Value in PAIR_WITH
 FIATS = ['EURUSDT', 'GBPUSDT', 'JPYUSDT', 'USDUSDT', 'DOWN', 'UP']  # Pairs to exclude
@@ -55,6 +56,9 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
     with open(coins_bought_file_path) as file:
         coins_bought = json.load(file)
 
+# Load custom tickerlist from file tickers.txt into array tickers
+tickers = [line.strip() for line in open('tickers.txt')]
+
 
 def get_price():
     """Return the current price for all coins on binance"""
@@ -64,9 +68,15 @@ def get_price():
 
     for coin in prices:
 
-        # only Return coin(PAIR_WITH) pairs and exclude margin symbols like BTCDOWNUSDT
-        if PAIR_WITH in coin['symbol'] and all(item not in coin['symbol'] for item in FIATS):
-            initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+        # Only return USDT pairs and exclude margin symbols like BTCDOWNUSDT, filter by custom list if defined.
+
+        if CUSTOM_LIST:
+            if PAIR_WITH in coin['symbol'] and any(item in coin['symbol'] for item in tickers) and all(
+                    item not in coin['symbol'] for item in FIATS):
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+        else:  # only Return coin(PAIR_WITH) pairs and exclude margin symbols like BTCDOWNUSDT
+            if PAIR_WITH in coin['symbol'] and all(item not in coin['symbol'] for item in FIATS):
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
 
     return initial_price
 
@@ -88,7 +98,7 @@ def wait_for_price():
         # calculate the difference between the first and last price reads
         for coin in initial_price:
             threshold_check = (float(last_price[coin]['price']) - float(initial_price[coin]['price'])) / float(
-                last_price[coin]['price']) * 100
+                initial_price[coin]['price']) * 100
 
             # each coin with higher gains than our CHANGE_IN_PRICE is added to the volatile_coins dict
             if threshold_check > CHANGE_IN_PRICE:
