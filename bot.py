@@ -43,6 +43,7 @@ TAKE_PROFIT = 0.3  # At what percentage increase of buy value profits will be ta
 
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
+tickers = []  # ticker list for coin pairs
 
 # path to the saved coins_bought file
 coins_bought_file_path = 'coins_bought.json'
@@ -57,7 +58,8 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
         coins_bought = json.load(file)
 
 # Load custom tickerlist from file tickers.txt into array tickers
-tickers = [line.strip() for line in open('tickers.txt')]
+if CUSTOM_LIST:
+    tickers = [line.strip() for line in open('tickers.txt')]
 
 
 def get_price():
