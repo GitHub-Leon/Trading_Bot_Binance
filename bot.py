@@ -10,7 +10,6 @@ import os
 # loads environmental variables
 load_dotenv()
 
-
 TESTNET = False
 
 API_KEY_TESTNET = os.getenv('API_KEY_TESTNET')
@@ -29,9 +28,8 @@ else:
     client = Client(API_KEY_LIVE, API_SECRET_LIVE)
 
 # Strategies
-SIMPLE = True           # buys at % increase and sells if TP or SL is triggered
-ADJ_STOP_LOSS = False   # keeps upping the SL from the last price until it's met TODO: Implement
-
+SIMPLE = True  # buys at % increase and sells if TP or SL is triggered
+ADJ_STOP_LOSS = False  # keeps upping the SL from the last price until it's met TODO: Implement
 
 # PARAMS
 PAIR_WITH = 'USDT'
@@ -96,10 +94,6 @@ def wait_for_price():
             if threshold_check > CHANGE_IN_PRICE:
                 volatile_coins[coin] = threshold_check
                 volatile_coins[coin] = round(volatile_coins[coin], 3)
-
-                #print(
-                #    f'{coin} has gained {volatile_coins[coin]}% in the last {TIME_DIFFERENCE} minutes, calculating '
-                #    f'volume in {PAIR_WITH}')
 
         return volatile_coins, len(volatile_coins), last_price
 
@@ -210,7 +204,8 @@ def sell_coins():
                 decimals = len(str(coins_bought[coin]['volume']).split("."))
 
                 # color profit/loss output per trade
-                profit_loss = round((float(last_price[coin]['price']) / float(coins_bought[coin]['bought_at']) * 100 - 100.15), 2)
+                profit_loss = round(
+                    (float(last_price[coin]['price']) / float(coins_bought[coin]['bought_at']) * 100 - 100.15), 2)
                 if profit_loss > 0:
                     print("Sold for: " + '\033[92m' + str(profit_loss) + "%" + '\033[0m')
                 else:
