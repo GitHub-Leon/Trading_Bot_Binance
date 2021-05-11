@@ -1,19 +1,23 @@
 from binance.client import Client  # needed for the binance API and websockets
 from datetime import datetime, timedelta
 from itertools import count
+from dotenv import load_dotenv  # used to load environmental variables
 
 import time
 import json
 import os
 
+# loads environmental variables
+load_dotenv()
+
 
 TESTNET = False
 
-API_KEY_TESTNET = #
-API_SECRET_TESTNET = #
+API_KEY_TESTNET = os.getenv('API_KEY_TESTNET')
+API_SECRET_TESTNET = os.getenv('API_SECRET_TESTNET')
 
-API_KEY_LIVE = #
-API_SECRET_LIVE = #
+API_KEY_LIVE = os.getenv('API_KEY_LIVE')
+API_SECRET_LIVE = os.getenv('API_SECRET_LIVE')
 
 if TESTNET:
     client = Client(API_KEY_TESTNET, API_SECRET_TESTNET)
@@ -24,15 +28,19 @@ if TESTNET:
 else:
     client = Client(API_KEY_LIVE, API_SECRET_LIVE)
 
+# Strategies
+SIMPLE = True           # buys at % increase and sells if TP or SL is triggered
+ADJ_STOP_LOSS = False   # keeps upping the SL from the last price until it's met TODO: Implement
+
 
 # PARAMS
 PAIR_WITH = 'USDT'
 QUANTITY = 15  # Value in PAIR_WITH
 FIATS = ['EURUSDT', 'GBPUSDT', 'JPYUSDT', 'USDUSDT', 'DOWN', 'UP']  # Pairs to exclude
-TIME_DIFFERENCE = 1  # Difference in minutes before new calculation of current price
-CHANGE_IN_PRICE = 1.5  # Change in price to trigger buy order in %
-STOP_LOSS = 0.2  # Percentage loss for stop-loss trigger
-TAKE_PROFIT = 0.15  # At what percentage increase of buy value profits will be taken
+TIME_DIFFERENCE = 2  # Difference in minutes before new calculation of current price
+CHANGE_IN_PRICE = 2  # Change in price to trigger buy order in %
+STOP_LOSS = 1.5  # Percentage loss for stop-loss trigger
+TAKE_PROFIT = 0.3  # At what percentage increase of buy value profits will be taken
 
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
@@ -92,10 +100,6 @@ def wait_for_price():
                 #print(
                 #    f'{coin} has gained {volatile_coins[coin]}% in the last {TIME_DIFFERENCE} minutes, calculating '
                 #    f'volume in {PAIR_WITH}')
-
-        if len(volatile_coins) < 1:
-            #print(f'No coins moved more than {CHANGE_IN_PRICE}% in the last {TIME_DIFFERENCE} minute(s)')
-            pass
 
         return volatile_coins, len(volatile_coins), last_price
 
