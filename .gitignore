@@ -3,10 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
+# extensions
 *.so
 .env*
-*_coins_bought.json
+*.json
 .idea
 
 # Distribution / packaging
