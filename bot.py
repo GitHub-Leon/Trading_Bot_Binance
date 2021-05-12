@@ -41,6 +41,10 @@ CHANGE_IN_PRICE = 2  # Change in price to trigger buy order in %
 STOP_LOSS = 1.5  # Percentage loss for stop-loss trigger
 TAKE_PROFIT = 0.3  # At what percentage increase of buy value profits will be taken
 
+# Use log file for trades
+LOG_TRADES = True
+LOG_FILE = 'trades.txt'
+
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
 tickers = []  # ticker list for coin pairs
@@ -90,7 +94,7 @@ def wait_for_price():
     volatile_coins = {}
     initial_price = get_price()
 
-    while initial_price['BNBUSDT']['time'] > datetime.now() - timedelta(minutes=TIME_DIFFERENCE):
+    while initial_price['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(minutes=TIME_DIFFERENCE):
         # wait until the time passes
         time.sleep(60 * TIME_DIFFERENCE)
 
@@ -186,6 +190,11 @@ def buy():
                     orders[coin] = client.get_all_orders(symbol=coin, limit=1)
                     time.sleep(1)
 
+                else:
+                    # Log trade
+                    if LOG_TRADES:
+                        write_log(f"Buy : {volume[coin]} {coin} - {last_price[coin]['price']}")
+
     return orders, last_price, volume
 
 
@@ -199,6 +208,10 @@ def sell_coins():
         # define stop loss and take profit
         TP = float(coins_bought[coin]['bought_at']) + (float(coins_bought[coin]['bought_at']) * TAKE_PROFIT) / 100
         SL = float(coins_bought[coin]['bought_at']) - (float(coins_bought[coin]['bought_at']) * STOP_LOSS) / 100
+
+        LastPrice = float(last_price[coin]['price'])
+        BuyPrice = float(coins_bought[coin]['bought_at'])
+        PriceChange = float((LastPrice - BuyPrice) / BuyPrice * 100)
 
         # check that the price is above the take profit or below the stop loss
         if float(last_price[coin]['price']) > TP or float(last_price[coin]['price']) < SL:
@@ -240,8 +253,17 @@ def sell_coins():
             # run the else block if coin has been sold and create a dict for each coin sold
             else:
                 coins_sold[coin] = coins_bought[coin]
+                if LOG_TRADES:
+                    write_log(
+                        f"Sell: {coins_sold[coin]['volume']} {coin} - {BuyPrice} - {LastPrice} : {PriceChange:.2f}%")
 
     return coins_sold
+
+
+def write_log(log_line):
+    timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
+    with open(LOG_FILE, 'a+') as f:
+        f.write(timestamp + ' ' + log_line + '\n')
 
 
 def update_portfolio(orders, last_price, volume):
