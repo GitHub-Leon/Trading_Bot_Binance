@@ -2,6 +2,7 @@ from binance.client import Client  # needed for the binance API and websockets
 from datetime import datetime, timedelta
 from itertools import count
 from dotenv import load_dotenv  # used to load environmental variables
+from colorama import init
 
 import time
 import json
@@ -9,6 +10,8 @@ import os
 
 # loads environmental variables
 load_dotenv()
+
+init()  # coloring console output
 
 TESTNET = False
 
@@ -35,8 +38,10 @@ TRAILING_STOP_LOSS = False  # keeps upping the SL from the last price until it's
 CUSTOM_LIST = False  # Use custom tickers.txt list for filtering pairs
 PAIR_WITH = 'USDT'
 QUANTITY = 15  # Value in PAIR_WITH
+MAX_COINS = 10  # Max numbers of coins to hold
 FIATS = ['EURUSDT', 'GBPUSDT', 'JPYUSDT', 'USDUSDT', 'DOWN', 'UP']  # Pairs to exclude
 TIME_DIFFERENCE = 2  # Difference in minutes before new calculation of current price
+RECHECK_INTERVAL = 10  # Number of times to check for TP/SL during each TIME_DIFFERENCE (Minimum 1)
 CHANGE_IN_PRICE = 2  # Change in price to trigger buy order in %
 STOP_LOSS = 1.5  # Percentage loss for stop-loss trigger
 TAKE_PROFIT = 0.3  # At what percentage increase of buy value profits will be taken
@@ -44,6 +49,11 @@ TAKE_PROFIT = 0.3  # At what percentage increase of buy value profits will be ta
 # Use log file for trades
 LOG_TRADES = True
 LOG_FILE = 'trades.txt'
+
+# Debug for additional console output
+DEBUG = True
+
+# END OF CONFIG
 
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
@@ -61,6 +71,15 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
     with open(coins_bought_file_path) as file:
         coins_bought = json.load(file)
 
+
+# for colors in console output
+class txcolors:
+    BUY = '\033[92m'
+    WARNING = '\033[93m'
+    SELL = '\033[91m'
+    DEFAULT = '\033[39m'
+
+
 # Load custom tickerlist from file tickers.txt into array tickers
 if CUSTOM_LIST:
     tickers = [line.strip() for line in open('tickers.txt')]
@@ -77,7 +96,7 @@ def get_price():
         # Only return USDT pairs and exclude margin symbols like BTCDOWNUSDT, filter by custom list if defined.
 
         if CUSTOM_LIST:
-            if PAIR_WITH in coin['symbol'] and any(item in coin['symbol'] for item in tickers) and all(
+            if any(item + PAIR_WITH == coin['symbol'] for item in tickers) and all(
                     item not in coin['symbol'] for item in FIATS):
                 initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
         else:  # only Return coin(PAIR_WITH) pairs and exclude margin symbols like BTCDOWNUSDT
@@ -94,8 +113,14 @@ def wait_for_price():
     volatile_coins = {}
     initial_price = get_price()
 
-    while initial_price['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(minutes=TIME_DIFFERENCE):
-        # wait until the time passes
+    while initial_price['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(seconds=TIME_DIFFERENCE):
+        i = 0
+        while i < RECHECK_INTERVAL:
+            print(f'checking TP/SL...')
+            coins_sold = sell_coins()
+            remove_from_portfolio(coins_sold)
+            time.sleep((TIME_DIFFERENCE / RECHECK_INTERVAL))
+            i += 1
         time.sleep(60 * TIME_DIFFERENCE)
 
     else:
@@ -107,9 +132,11 @@ def wait_for_price():
                 initial_price[coin]['price']) * 100
 
             # each coin with higher gains than our CHANGE_IN_PRICE is added to the volatile_coins dict
+            # if less than MAX_COINS is not reached.
             if threshold_check > CHANGE_IN_PRICE:
-                volatile_coins[coin] = threshold_check
-                volatile_coins[coin] = round(volatile_coins[coin], 3)
+                if len(coins_bought) < MAX_COINS:
+                    volatile_coins[coin] = threshold_check
+                    volatile_coins[coin] = round(volatile_coins[coin], 3)
 
         return volatile_coins, len(volatile_coins), last_price
 
@@ -162,7 +189,7 @@ def buy():
 
         # only buy if the there are no active trades on the coin
         if coin not in coins_bought:
-            print(f"Buying {volume[coin]} {coin} at " + last_price[coin]['price'])
+            print(f"{txcolors.BUY}Preparing to buy {volume[coin]} {coin}{txcolors.DEFAULT}")
 
             if TESTNET:
                 # create test order before pushing an actual order
@@ -254,20 +281,17 @@ def sell_coins():
             else:
                 coins_sold[coin] = coins_bought[coin]
                 if LOG_TRADES:
+                    profit = (LastPrice - BuyPrice) * coins_sold[coin]['volume']
                     write_log(
-                        f"Sell: {coins_sold[coin]['volume']} {coin} - {BuyPrice} - {LastPrice} : {PriceChange:.2f}%")
+                        f"Sell: {coins_sold[coin]['volume']} {coin} - {BuyPrice} - {LastPrice} Profit: {profit:.2f} {PriceChange:.2f}%")
 
     return coins_sold
 
 
-def write_log(log_line):
-    timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
-    with open(LOG_FILE, 'a+') as f:
-        f.write(timestamp + ' ' + log_line + '\n')
-
-
 def update_portfolio(orders, last_price, volume):
     """add every coin bought to our portfolio for tracking/selling later"""
+
+    if DEBUG: print(orders)
 
     for coin in orders:
         coins_bought[coin] = {
@@ -294,17 +318,20 @@ def remove_from_portfolio(coins_sold):
         json.dump(coins_bought, file, indent=4)
 
 
+def write_log(log_line):
+    timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
+    with open(LOG_FILE, 'a+') as f:
+        f.write(timestamp + ' ' + log_line + '\n')
+
+
 if __name__ == '__main__':
     print('Press Ctrl-Q to stop the script')
 
     if not TESTNET:
         print(
-            'WARNING: You are using the Mainnet and live funds. As a safety measure, the script will start executing '
-            'in 30 seconds.')
+            'WARNING: You are using the Mainnet and live funds. Waiting 30 seconds as a security measure')
         time.sleep(30)
 
     for i in count():
         orders, last_price, volume = buy()
         update_portfolio(orders, last_price, volume)
-        coins_sold = sell_coins()
-        remove_from_portfolio(coins_sold)
