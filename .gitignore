@@ -6,8 +6,11 @@ __pycache__/
 # extensions
 *.so
 .env*
-*.json
-.idea
+/coins_bought.json
+/testnet_coins_bought.json
+/trades.txt
+/.idea/
+/creds.yml
 
 # Distribution / packaging
 .Python
