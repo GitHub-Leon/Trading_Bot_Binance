@@ -51,7 +51,7 @@ def sell_coins():
 
             # try to create a real order if the test orders did not raise an exception
             try:
-                sell_amount = coins_bought[coin]['volume']*99.25
+                sell_amount = coins_bought[coin]['volume']*99.25/100
                 decimals = len(str(coins_bought[coin]['volume']).split("."))
                 sell_amount = float('{:.{}f}'.format(sell_amount, decimals))
                 client.create_order(

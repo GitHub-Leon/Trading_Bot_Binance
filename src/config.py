@@ -18,7 +18,7 @@ creds_file = args.creds if args.creds else DEFAULT_CREDS_FILE
 parsed_config = parameters.load_config(config_file)
 parsed_creds = parameters.load_config(creds_file)
 
-DEBUG = True
+DEBUG = False
 
 # Load system vars
 TESTNET = parsed_config['script_options']['TESTNET']
@@ -61,7 +61,7 @@ if TESTNET:
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
 if CUSTOM_LIST:
-    tickers = [line.strip() for line in open('../tickers.txt')]
+    tickers = [line.strip() for line in open('tickers.txt')]
 else:
     tickers = None
 
