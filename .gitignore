@@ -5,7 +5,6 @@ __pycache__/
 
 # extensions
 *.so
-.env*
 /coins_bought.json
 /testnet_coins_bought.json
 /trades.txt
