@@ -19,7 +19,7 @@ def buy():
 
         # only buy if the there are no active trades on the coin
         if coin not in coins_bought:
-            print(f"{txcolors.BUY}Preparing to buy {volume[coin]} {coin}{txcolors.DEFAULT}")
+            print(f"{txcolors.DEFAULT}Preparing to buy {volume[coin]} {coin}{txcolors.DEFAULT}")
 
             if TESTNET:
                 # create test order before pushing an actual order
