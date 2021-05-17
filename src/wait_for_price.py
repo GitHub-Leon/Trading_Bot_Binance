@@ -48,7 +48,7 @@ def wait_for_price():
 
         # each coin with higher gains than our CHANGE_IN_PRICE is added to the volatile_coins dict if less than MAX_COINS is not reached.
         if threshold_check > CHANGE_IN_PRICE:
-            if len(coins_bought) < MAX_COINS:
+            if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
                 volatile_coins[coin] = threshold_check
                 volatile_coins[coin] = round(volatile_coins[coin], 3)
                 print(
