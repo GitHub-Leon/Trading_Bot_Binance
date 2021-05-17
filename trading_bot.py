@@ -1,6 +1,7 @@
 # The main modules that executes the script repeatedly
 
 # local dependencies
+from src.login import login
 from src.trade import buy
 from src.sell import sell_coins
 from src.update_portfolio import update_portfolio
@@ -16,4 +17,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if login():
+        main()
