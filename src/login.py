@@ -46,12 +46,45 @@ def generate_verification_code():  # generates random verification code
     return vcode.digits()
 
 
-def generate_verification_mail_text(auth):
-    return auth
+def generate_verification_mail_text(auth, firstname, lastname):
+    text = open("./src/helpers/mail_verification_plain.txt").read().split("##")
+    return text[0] + firstname + " " + lastname + text[1] + auth + text[2]
 
 
-def generate_verification_mail_html(auth):
-    return auth
+def generate_verification_mail_html(auth, firstname, lastname):
+    html = open("./src/helpers/mail_verification_html.html").read().split("##")
+    return html[0] + firstname + " " + lastname + html[1] + auth + html[2]
+
+
+def send_mail_verification(email, firstname, lastname):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Bot - Mail Verification"
+    message["From"] = SENDER_MAIL
+    message["To"] = email
+
+    # Create the plain-text and HTML version of your message
+    send_verification_code = generate_verification_code()
+    verification_text = generate_verification_mail_text(send_verification_code, firstname, lastname)
+    verification_html = generate_verification_mail_html(send_verification_code, firstname, lastname)
+
+    # Turn these into plain/html MIMEText objects
+    part1 = MIMEText(verification_text, "plain")
+    part2 = MIMEText(verification_html, "html")
+
+    # Add HTML/plain-text parts to MIMEMultipart message
+    # The email client will try to render the last part first
+    message.attach(part1)
+    message.attach(part2)
+
+    # Create secure connection with server and send email
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(SENDER_MAIL, SENDER_PW)
+        server.sendmail(
+            SENDER_MAIL, email, message.as_string()
+        )
+
+    return send_verification_code
 
 
 # Return True or False. True if LogIn was successful. False if LogIn failed.
@@ -94,33 +127,7 @@ def login():
             birthday = input("Please tell us your birthday! (DD/MM/YYYY) - ")
 
         # Sends auth. Mail
-        message = MIMEMultipart("alternative")
-        message["Subject"] = "Bot - Mail Verification"
-        message["From"] = SENDER_MAIL
-        message["To"] = email
-
-        # Create the plain-text and HTML version of your message
-        send_verification_code = generate_verification_code()
-        verification_text = generate_verification_mail_text(send_verification_code)
-        verification_html = generate_verification_mail_html(send_verification_code)
-
-        # Turn these into plain/html MIMEText objects
-        part1 = MIMEText(verification_text, "plain")
-        part2 = MIMEText(verification_html, "html")
-
-        # Add HTML/plain-text parts to MIMEMultipart message
-        # The email client will try to render the last part first
-        message.attach(part1)
-        message.attach(part2)
-
-        # Create secure connection with server and send email
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(SENDER_MAIL, SENDER_PW)
-            server.sendmail(
-                SENDER_MAIL, email, message.as_string()
-            )
-
+        send_verification_code = send_mail_verification(email, firstname, lastname)
         print("\nPlease check your mailbox and verify you account!")
 
         # Check if user auth. was a success
