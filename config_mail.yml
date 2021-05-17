@@ -1,0 +1,4 @@
+# These options say how the auth code sends
+auth-options:
+  SENDER_MAIL: "test.auth.reg@gmail.com"
+  SENDER_MAIL_PW: "Asdf1.asdf"
