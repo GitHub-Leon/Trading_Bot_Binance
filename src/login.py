@@ -30,19 +30,19 @@ SENDER_PW = parsed_config['auth-options']['SENDER_MAIL_PW']
 
 # functionalities
 
-def check_email(email):
+def check_email(email):  # verifies correct email regex
     return re.search(open("./src/helpers/email_regex.txt", "r").read(), email)
 
 
-def check_password(password):
+def check_password(password):  # verifies correct password regex
     return re.search(open("./src/helpers/password_regex.txt", "r").read(), password)
 
 
-def check_birthday(birthday):
+def check_birthday(birthday):  # verifies correct birthday regex
     return re.search(open("./src/helpers/birthday_regex.txt", "r").read(), birthday)
 
 
-def generate_verification_code():
+def generate_verification_code():  # generates random verification code
     return vcode.digits()
 
 
@@ -58,13 +58,12 @@ def generate_verification_mail_html(auth):
 def login():
     print(open("./src/helpers/welcome.txt", "r").read())
 
-    print("SignIn with your email and password.")
-    print("Password isn´t shown because of safety.\n")
+    print("SignIn with your email and password.\n"
+          "Password isn´t shown because of safety.\n")
 
     # ask about username and password and creates an account if the user doesn´t have one.
-
     if re.search("[y|Y]", input("Do you already have an account?(Y/N) - ")):
-        email = input("email: ")
+        email = input("Email: ")
         pw = getpass.getpass()
 
         if email == "admin" and pw == "admin":
@@ -76,19 +75,21 @@ def login():
         firstname = input("Tell us your first name! - ")
         lastname = input("Tell us your last name! - ")
 
-        email = input("email: ")
-        while not check_email(email):
+        # email input
+        email = input("Email: ")
+        while not check_email(email):  # verifies correct email regex
             print("Please enter a valid email address!")
             email = input("email: ")
 
+        # password input
         password = getpass.getpass()
-
-        while not check_password(password):
+        while not check_password(password):  # verifies correct password regex
             print("The Password must contain at least one letter, one digit and a minimum of eight characters ")
             password = getpass.getpass()
 
+        # birthday input
         birthday = input("Please tell us you birthday!(DD/MM/YYYY) - ")
-        while not check_birthday(birthday):
+        while not check_birthday(birthday):  # verifies correct birthday regex
             print("Please enter a valid birthday!")
             birthday = input("Please tell us your birthday! (DD/MM/YYYY) - ")
 

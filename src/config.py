@@ -80,6 +80,7 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
     with open(coins_bought_file_path) as file:
         coins_bought = json.load(file)
 
-if not TESTNET:
-    print('WARNING: You are using the Mainnet and live funds. Waiting 30 seconds as a security measure')
-    time.sleep(30)
+
+def bot_wait():
+    print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
+    time.sleep(10)

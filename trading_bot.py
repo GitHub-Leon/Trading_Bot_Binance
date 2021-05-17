@@ -6,9 +6,12 @@ from src.trade import buy
 from src.sell import sell_coins
 from src.update_portfolio import update_portfolio
 from src.remove_coins import remove_from_portfolio
+from src.config import bot_wait
 
 
 def main():
+    bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
+
     while True:
         orders, last_price, volume = buy()
         update_portfolio(orders, last_price, volume)
@@ -17,5 +20,5 @@ def main():
 
 
 if __name__ == '__main__':
-    if login():
+    if login():  # verifies correct login data before starting the bot
         main()
