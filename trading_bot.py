@@ -7,6 +7,7 @@ from src.sell import sell_coins
 from src.update_portfolio import update_portfolio
 from src.remove_coins import remove_from_portfolio
 from src.config import bot_wait
+from src.sell_all_coins import sell_all
 
 
 def main():
@@ -20,5 +21,8 @@ def main():
 
 
 if __name__ == '__main__':
-    if login():  # verifies correct login data before starting the bot
-        main()
+    try:
+        if login():  # verifies correct login data before starting the bot
+            main()
+    except KeyboardInterrupt:
+        sell_all()
