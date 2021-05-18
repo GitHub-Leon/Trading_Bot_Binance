@@ -26,7 +26,7 @@ LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
 LOG_FILE = parsed_config['script_options'].get('LOG_FILE')
 DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
 
-# Load trading vars
+# Load trading options
 PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
 QUANTITY = parsed_config['trading_options']['QUANTITY']
 CUSTOM_LIST = parsed_config['trading_options']['CUSTOM_LIST']
@@ -34,12 +34,18 @@ MAX_COINS = parsed_config['trading_options']['MAX_COINS']
 FIATS = parsed_config['trading_options']['FIATS']
 TIME_DIFFERENCE = parsed_config['trading_options']['TIME_DIFFERENCE']
 RECHECK_INTERVAL = parsed_config['trading_options']['RECHECK_INTERVAL']
+
+# Load strategy options
 CHANGE_IN_PRICE = parsed_config['strategy_options']['volatility']['CHANGE_IN_PRICE']
 STOP_LOSS = parsed_config['strategy_options']['volatility']['STOP_LOSS']
 TAKE_PROFIT = parsed_config['strategy_options']['volatility']['TAKE_PROFIT']
 USE_TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['USE_TRAILING_STOP_LOSS']
 TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['TRAILING_STOP_LOSS']
 TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILING_TAKE_PROFIT']
+RSI_TIME_INTERVAL = parsed_config['strategy_options']['stoch_rsi']['TIME_INTERVAL']
+RSI_PERIOD = parsed_config['strategy_options']['stoch_rsi']['PERIOD']
+USE_STOCH_RSI = parsed_config['strategy_options']['stoch_rsi']['USE_STOCH_RSI']
+
 
 if DEBUG_SETTING or args.debug:
     DEBUG = False

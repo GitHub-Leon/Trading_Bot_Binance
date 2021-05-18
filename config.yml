@@ -55,8 +55,16 @@ strategy_options:
 
     # when hit TAKE_PROFIT, move STOP_LOSS to TRAILING_STOP_LOSS percentage points below TAKE_PROFIT hence locking in profit
     # when hit TAKE_PROFIT, move TAKE_PROFIT up by TRAILING_TAKE_PROFIT percentage points
-    TRAILING_STOP_LOSS: 2
-    TRAILING_TAKE_PROFIT: 2
+    TRAILING_STOP_LOSS: 0.5
+    TRAILING_TAKE_PROFIT: 0.1
 
   stoch_rsi:
-    
+    # whether to use stoch_rsi or not; default is False
+    USE_STOCH_RSI: False
+
+    # time between candles
+    #1min; 3min; 5min; 15min; 30min; 1hour; 2hour; 4hour; 6hour; 8hour; 12hour; 1day; 3day; 1week; 1month
+    TIME_INTERVAL: 5min
+
+    # instances tracked back from current time
+    PERIOD: 14

@@ -1,8 +1,17 @@
 import numpy as np
 
+# local dependencies
+from src.config import client, RSI_TIME_INTERVAL, RSI_PERIOD
+from src.helpers.kline_factory import kline_factory_interval, kline_factory_timestamp
+
+interval = kline_factory_interval(RSI_TIME_INTERVAL)
+timestamp = kline_factory_timestamp(RSI_TIME_INTERVAL, RSI_PERIOD)
+
+series = client.get_historical_klines("NANOUSDT", interval, timestamp)
+
 
 # calculating RSI
-def rsi(series, period=14):
+def rsi(series, period):
     delta = series.diff().dropna()
     ups = delta * 0
     downs = ups.copy()
@@ -18,7 +27,7 @@ def rsi(series, period=14):
 
 
 # calculating Stoch RSI
-def stochrsi(series, period=14, smoothK=3, smoothD=3):
+def stochrsi(series, period, smoothK=3, smoothD=3):
     # Calculate RSI
     delta = series.diff().dropna()
     ups = delta * 0
@@ -43,7 +52,7 @@ def stochrsi(series, period=14, smoothK=3, smoothD=3):
 
 # calculating Stoch RSI
 #  -- Same as the above function but uses EMA, not SMA
-def stochrsi_ema(series, period=14, smoothK=3, smoothD=3):
+def stochrsi_ema(series, period, smoothK=3, smoothD=3):
     # Calculate RSI
     delta = series.diff().dropna()
     ups = delta * 0
