@@ -2,3 +2,5 @@
 auth-options:
   SENDER_MAIL: "test.auth.reg@gmail.com"
   SENDER_MAIL_PW: "Asdf1.asdf"
+  # Time until the auth. code isn´t valid anymore. Time in seconds.
+  CODE_EXPIRE_TIME: 60
