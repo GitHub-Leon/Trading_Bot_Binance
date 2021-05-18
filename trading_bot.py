@@ -1,11 +1,11 @@
 # The main modules that executes the script repeatedly
 
 # local dependencies
-from src.login import login
-from src.startup import startup
-from src.exit import before_exit
-from src.console_input import console_input
-from src.console_input import input_check
+from src.console.login import login
+from src.console.output.startup import startup
+from src.console.output.exit import before_exit
+from src.console.input.console_input import console_input
+from src.console.input.console_input import input_check
 from src.trade import buy
 from src.sell import sell_coins
 from src.update_portfolio import update_portfolio
