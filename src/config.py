@@ -10,13 +10,25 @@ from .helpers import handle_creds
 # Load arguments then parse settings
 args = parameters.parse_args()
 
+# Paths
+WELCOME_TEXT_FILE = 'src/console/output/welcome.txt'
+EMAIL_REGEX_FILE = './src/helpers/email_regex.txt'
+PASSWORD_REGEX_FILE = './src/helpers/password_regex.txt'
+BIRTHDAY_REGEX_FILE = './src/helpers/birthday_regex.txt'
+VERIFICATION_MAIL_PLAIN_TEXT_FILE = './src/helpers/mail_verification_plain.txt'
+VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
+
+# YML
 DEFAULT_CONFIG_FILE = 'config.yml'
 DEFAULT_CREDS_FILE = 'creds.yml'
+DEFAULT_CONFIG_AUTH_FILE = 'config_auth.yml'
 
 config_file = args.config if args.config else DEFAULT_CONFIG_FILE
 creds_file = args.creds if args.creds else DEFAULT_CREDS_FILE
+auth_file = args.config if args.config else DEFAULT_CONFIG_AUTH_FILE
 parsed_config = parameters.load_config(config_file)
 parsed_creds = parameters.load_config(creds_file)
+parsed_auth = parameters.load_config(auth_file)
 
 DEBUG = False
 
@@ -40,6 +52,12 @@ CUSTOM_LIST = parsed_config['trading_options']['CUSTOM_LIST']
 USE_TRAILING_STOP_LOSS = parsed_config['trading_options']['USE_TRAILING_STOP_LOSS']
 TRAILING_STOP_LOSS = parsed_config['trading_options']['TRAILING_STOP_LOSS']
 TRAILING_TAKE_PROFIT = parsed_config['trading_options']['TRAILING_TAKE_PROFIT']
+
+# Load auth vars
+SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
+SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
+CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
+
 
 if DEBUG_SETTING or args.debug:
     DEBUG = False

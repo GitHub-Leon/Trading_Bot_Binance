@@ -17,33 +17,19 @@ import vcode
 import datetime
 import time
 
-# async func
-import asyncio
-
-from .helpers import parameters
-
-# Load arguments then parse settings
-args = parameters.parse_args()
-
-DEFAULT_CONFIG_MAIL_FILE = 'config_mail.yml'
-
-config_file = args.config if args.config else DEFAULT_CONFIG_MAIL_FILE
-parsed_config = parameters.load_config(config_file)
-
-# Load vars
-SENDER_MAIL = parsed_config['auth-options']['SENDER_MAIL']
-SENDER_PW = parsed_config['auth-options']['SENDER_MAIL_PW']
-CODE_EXPIRE_DURATION = parsed_config['auth-options']['CODE_EXPIRE_TIME']
+# Local dependencies
+from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
+                       PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
 
 
 # functionalities
 
 def check_email(email):  # verifies correct email regex
-    return re.search(open("./src/helpers/email_regex.txt", "r").read(), email)
+    return re.search(open(EMAIL_REGEX_FILE, "r").read(), email)
 
 
 def check_password(password):  # verifies correct password regex
-    return re.search(open("./src/helpers/password_regex.txt", "r").read(), password)
+    return re.search(open(PASSWORD_REGEX_FILE, "r").read(), password)
 
 
 def check_birthday(birthday):  # verifies correct birthday regex
@@ -51,7 +37,7 @@ def check_birthday(birthday):  # verifies correct birthday regex
     birth_date = datetime.date(int(birthday_arr[2]), int(birthday_arr[1]), int(birthday_arr[0]))
     today = datetime.date.today()
     age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-    return re.search(open("./src/helpers/birthday_regex.txt", "r").read(), birthday) and age > 18
+    return re.search(open(BIRTHDAY_REGEX_FILE, "r").read(), birthday) and age > 18
 
 
 def generate_verification_code():  # generates random verification code
@@ -59,12 +45,12 @@ def generate_verification_code():  # generates random verification code
 
 
 def generate_verification_mail_text(auth, firstname, lastname):
-    text = open("./src/helpers/mail_verification_plain.txt").read().split("##")
+    text = open(VERIFICATION_MAIL_PLAIN_TEXT_FILE).read().split("##")
     return text[0] + firstname + " " + lastname + text[1] + auth + text[2]
 
 
 def generate_verification_mail_html(auth, firstname, lastname):
-    html = open("./src/helpers/mail_verification_html.html").read().split("##")
+    html = open(VERIFICATION_MAIL_HTML_FILE).read().split("##")
     return html[0] + firstname + " " + lastname + html[1] + auth + html[2]
 
 
@@ -102,7 +88,7 @@ def send_mail_verification(email, firstname, lastname):
 # Return True or False. True if LogIn was successful. False if LogIn failed.
 
 def login():
-    print(open("./src/helpers/welcome.txt", "r").read())
+    print(open(WELCOME_TEXT_FILE, "r").read())
 
     print("SignIn with your email and password.\n"
           "Password isn´t shown because of safety.\n")
