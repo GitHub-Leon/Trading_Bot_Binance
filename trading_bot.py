@@ -2,6 +2,10 @@
 
 # local dependencies
 from src.login import login
+from src.startup import startup
+from src.exit import before_exit
+from src.console_input import console_input
+from src.console_input import input_check
 from src.trade import buy
 from src.sell import sell_coins
 from src.update_portfolio import update_portfolio
@@ -21,8 +25,17 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        if login():  # verifies correct login data before starting the bot
-            main()
-    except KeyboardInterrupt:
-        sell_all()
+    if login():  # verifies correct login data before starting the bot
+        startup()  # before commands can be used
+        while True:
+            command = console_input()
+            if command == "start":
+                try:
+                    main()
+                except KeyboardInterrupt:
+                    sell_all()
+            elif command == "exit":
+                before_exit()
+                exit()
+            else:
+                input_check(command)
