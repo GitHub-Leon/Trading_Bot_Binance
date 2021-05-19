@@ -4,6 +4,10 @@ import getpass
 # regex
 import re
 
+# Database
+import mysql.connector
+from src.helpers.database_connection import connect_to_database
+
 # sending auth. mail
 import smtplib
 import ssl
@@ -19,13 +23,24 @@ import time
 
 # Local dependencies
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
-                       PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
+    PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
 
 
 # functionalities
 
 def check_email(email):  # verifies correct email regex
-    return re.search(open(EMAIL_REGEX_FILE, "r").read(), email)
+    regex_check = re.search(open(EMAIL_REGEX_FILE, "r").read(), email)
+
+    db = connect_to_database()
+    db_cursor = db.cursor()
+
+    query = "select Email from Users where Email like %s"
+    db_cursor.execute(query, (email,))
+    user_email = db_cursor.fetchone()
+
+    if user_email == None and regex_check:
+        return True
+    return False
 
 
 def check_password(password):  # verifies correct password regex
@@ -85,6 +100,21 @@ def send_mail_verification(email, firstname, lastname):
     return send_verification_code
 
 
+def check_login(email, user_given_pw):
+    db = connect_to_database()
+    db_cursor = db.cursor()
+
+    query = "select Password from Users where Email like %s"
+    db_cursor.execute(query, (email,))
+    user_pw = db_cursor.fetchone()
+
+    if user_pw[0] == user_given_pw:
+        return True
+    return False
+
+
+
+
 # Return True or False. True if LogIn was successful. False if LogIn failed.
 
 def login():
@@ -95,12 +125,17 @@ def login():
 
     # ask about username and password and creates an account if the user doesn´t have one.
     if re.search("[y|Y]", input("Do you already have an account?(Y/N) - ")):
-        email = input("Email: ")
-        pw = getpass.getpass()
+        while True:
+            email = input("Email: ")
+            pw = getpass.getpass()
 
-        if email == "admin" and pw == "admin":
-            print("Welcome admin!")
-            return True
+            if email == "admin" and pw == "admin":
+                print("Welcome admin!")
+                return True
+
+            if check_login(email, pw):
+                return True
+            print("Email or Password is incorrect!")
     else:
         # Create account
         print("Let´s create one!\n")
@@ -112,7 +147,7 @@ def login():
         email = input("Email: ")
         while not check_email(email):  # verifies correct email regex
             print("Please enter a valid email address!")
-            email = input("email: ")
+            email = input("Email: ")
 
         # password input
         password = getpass.getpass()
