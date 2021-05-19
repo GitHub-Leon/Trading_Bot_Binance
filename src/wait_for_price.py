@@ -15,7 +15,7 @@ def wait_for_price():
     """calls the initial price and ensures the correct amount of time has passed
     before reading the current price again"""
 
-    volatile_coins = {}
+    coins = {}
     initial_prices = get_price()
 
     while initial_prices['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(seconds=TIME_DIFFERENCE):
@@ -48,11 +48,11 @@ def wait_for_price():
 
         # each coin with higher gains than our CHANGE_IN_PRICE is added to the volatile_coins dict if less than MAX_COINS is not reached.
         if threshold_check > CHANGE_IN_PRICE:
-            if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
-                volatile_coins[coin] = threshold_check
-                volatile_coins[coin] = round(volatile_coins[coin], 3)
+            if len(coins_bought) + len(coins) < MAX_COINS or MAX_COINS == 0:
+                coins[coin] = threshold_check
+                coins[coin] = round(coins[coin], 3)
                 print(
-                    f'{coin} has gained {volatile_coins[coin]}% in the last {TIME_DIFFERENCE} seconds, calculating volume in {PAIR_WITH}')
+                    f'{coin} has gained {coins[coin]}% in the last {TIME_DIFFERENCE} seconds, calculating volume in {PAIR_WITH}')
 
             else:
                 print(
@@ -65,4 +65,4 @@ def wait_for_price():
     print(
         f'Max movement {float(info_change):.2f}% by {info_coin} from {float(info_start):.4f} to {float(info_stop):.4f}')
 
-    return volatile_coins, len(volatile_coins), last_prices
+    return coins, last_prices

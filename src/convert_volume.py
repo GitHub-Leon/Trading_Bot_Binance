@@ -5,15 +5,13 @@ from src.wait_for_price import wait_for_price
 from src.config import QUANTITY, client, DEBUG
 
 
-def convert_volume():
+def convert_volume(coins, last_price):
     """Converts the volume given in QUANTITY from coin (PAIR_WITH) to the each coin's volume"""
 
-    volatile_coins, number_of_coins, last_price = wait_for_price()
     lot_size = {}
     volume = {}
 
-    for coin in volatile_coins:
-
+    for coin in coins:
         # Find the correct step size for each coin
         try:
             info = client.get_symbol_info(coin)
@@ -22,7 +20,6 @@ def convert_volume():
 
             if lot_size[coin] < 0:
                 lot_size[coin] = 0
-
 
         except Exception as e:
             if DEBUG:

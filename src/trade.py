@@ -9,10 +9,9 @@ from src.config import coins_bought, LOG_TRADES, TESTNET, client
 from src.save_trade import write_log
 
 
-def buy():
+def buy(volume, last_price):
     """Place Buy market orders for each volatile coin found"""
 
-    volume, last_price = convert_volume()
     orders = {}
 
     for coin in volume:

@@ -13,7 +13,6 @@ def get_price():
     prices = client.get_all_tickers()
 
     for coin in prices:
-
         # Only return USDT pairs and exclude margin symbols like BTCDOWNUSDT, filter by custom list if defined.
         if CUSTOM_LIST:
             coin_is_in_ticker = any(item + PAIR_WITH in coin['symbol'] for item in tickers)
