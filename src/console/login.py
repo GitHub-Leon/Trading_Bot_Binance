@@ -31,14 +31,7 @@ from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEX
 def check_email(email):  # verifies correct email regex
     regex_check = re.search(open(EMAIL_REGEX_FILE, "r").read(), email)
 
-    db = connect_to_database()
-    db_cursor = db.cursor()
-
-    query = "select Email from Users where Email like %s"
-    db_cursor.execute(query, (email,))
-    user_email = db_cursor.fetchone()
-
-    if user_email == None and regex_check:
+    if user_exist(email) and regex_check:  # user not in database and email valid
         return True
     return False
 
@@ -113,6 +106,27 @@ def check_login(email, user_given_pw):
     return False
 
 
+def new_login(firstname, lastname, pw, email, birthday):
+    db = connect_to_database()
+    db_cursor = db.cursor()
+
+    query = "insert into Users values(null, %s, %s, %s, STR_TO_DATE(%s, '%d/%m/%Y'), %s, null, STR_TO_DATE(%s, '%Y-%m-%d'), %s, %s)"
+    db_cursor.execute(query, (firstname, lastname, email, birthday, pw, datetime.date.today(), 999, 999))  # 999 - free package and muster address
+    db.commit()
+    return True
+
+
+def user_exist(email):
+    db = connect_to_database()
+    db_cursor = db.cursor()
+
+    query = "select Email from Users where Email like %s"
+    db_cursor.execute(query, (email,))
+    user_email = db_cursor.fetchone()
+
+    if user_email != None:
+        return False
+    return True
 
 
 # Return True or False. True if LogIn was successful. False if LogIn failed.
@@ -185,6 +199,7 @@ def login():
                 if not re.search("[y|Y]", input("If you want you can request a new auth. code.(Y/N) - ")):
                     return False
 
+        new_login(firstname, lastname, password, email, birthday)
         print("Your registration is ready.\n"
               "If you need help please use the command 'help' or contact us!")
         return True

@@ -62,7 +62,7 @@ CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
 # Database connection
 DB_USERNAME = "bot"
 DB_PASSWORD = "asdfasdf"
-DB_NAME = "test"
+DB_NAME = "bot_2"
 
 
 if DEBUG_SETTING or args.debug:
