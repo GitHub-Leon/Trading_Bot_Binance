@@ -4,27 +4,28 @@ import time
 from datetime import datetime, timedelta
 
 # local dependencies
-from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS
+from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, USE_DEFAULT_STRATEGY, USE_TRAILING_STOP_LOSS, USE_STOCH_RSI
 from src.get_price import get_price
+from src.strategies.stoch_rsi import get_rsi_series, check_rsi_sell_signal
 from src.remove_coins import remove_from_portfolio
-from src.sell import sell_coins
+from src.sell import sell_coins_default, sell
 from src.colors import txcolors
 
 
-def wait_for_price():
+def wait_for_price_default(initial_prices):
     """calls the initial price and ensures the correct amount of time has passed
     before reading the current price again"""
 
     coins = {}
-    initial_prices = get_price()
 
     while initial_prices['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(seconds=TIME_DIFFERENCE):
         i = 0
-        while i < RECHECK_INTERVAL:
-            coins_sold = sell_coins()
-            remove_from_portfolio(coins_sold)
-            time.sleep((TIME_DIFFERENCE / RECHECK_INTERVAL))
-            i += 1
+        if USE_DEFAULT_STRATEGY or USE_TRAILING_STOP_LOSS:
+            while i < RECHECK_INTERVAL:
+                coins_sold = sell_coins_default()
+                remove_from_portfolio(coins_sold)
+                time.sleep((TIME_DIFFERENCE / RECHECK_INTERVAL))
+                i += 1
 
     else:
         last_prices = get_price()
@@ -64,5 +65,32 @@ def wait_for_price():
 
     print(
         f'Max movement {float(info_change):.2f}% by {info_coin} from {float(info_start):.4f} to {float(info_stop):.4f}')
+
+    return coins, last_prices
+
+
+def wait_for_price(initial_prices):
+
+    coins = {}
+
+    while initial_prices['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(seconds=TIME_DIFFERENCE):
+        i = 0
+        while i < RECHECK_INTERVAL:
+            coins_with_sell_signal = check_rsi_sell_signal()
+            coins_sold = sell(coins_with_sell_signal)
+            remove_from_portfolio(coins_sold)
+            time.sleep((TIME_DIFFERENCE / RECHECK_INTERVAL))
+            i += 1
+
+    else:
+        last_prices = get_price()
+        info_change = -100.00
+        info_coin = 'none'
+        info_start = 0.00
+        info_stop = 0.00
+
+    for coin in initial_prices:
+        last_price = float(last_prices[coin]['price'])
+        initial_price = float(initial_prices[coin]['price'])
 
     return coins, last_prices

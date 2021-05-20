@@ -1,13 +1,52 @@
 import numpy as np
 
 # local dependencies
-from src.config import client, RSI_TIME_INTERVAL, RSI_PERIOD
+from src.config import client, RSI_TIME_INTERVAL, RSI_PERIOD, RSI_SELL_TRIGGER, RSI_BUY_TRIGGER, coins_bought
 from src.helpers.kline_factory import kline_factory_interval, kline_factory_timestamp
+from datetime import datetime
 
-interval = kline_factory_interval(RSI_TIME_INTERVAL)
-timestamp = kline_factory_timestamp(RSI_TIME_INTERVAL, RSI_PERIOD)
 
-series = client.get_historical_klines("NANOUSDT", interval, timestamp)
+def get_rsi_series(coins):
+    interval = kline_factory_interval(RSI_TIME_INTERVAL)
+    timestamp = kline_factory_timestamp(RSI_TIME_INTERVAL, RSI_PERIOD)
+    rsi_coins = {}
+
+    for coin in coins:
+        series = client.get_historical_klines(coin['symbol'], interval, timestamp)
+
+        rsi_coins[coin['symbol']] = {
+            'price': coin['price'],
+            'time': datetime.now(),
+            'series': series
+        }
+
+    return rsi_coins
+
+
+def check_rsi_buy_signal(coins_rsi):
+    coins_with_buy_signal = {}
+
+    for coin in coins_rsi:
+        rsi_result = rsi(coin['symbol']['series'])
+
+        # Filters out coins who triggers the buy signal
+        if rsi_result > RSI_BUY_TRIGGER:
+            coins_with_buy_signal[coin['symbol']] = coin
+
+    return coins_with_buy_signal
+
+
+def check_rsi_sell_signal():
+    coins_with_sell_signal = {}
+
+    for coin in list(coins_bought):
+        rsi_result = rsi(coin['symbol']['series'])
+
+        # Filters out coins who triggers the sell signal from current coins
+        if rsi_result < RSI_SELL_TRIGGER:
+            coins_with_sell_signal[coin['symbol']] = coin
+
+    return coins_with_sell_signal
 
 
 # calculating RSI

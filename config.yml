@@ -40,6 +40,9 @@ trading_options:
 # Options that apply to specific strategies
 strategy_options:
   volatility:
+    # whether to use default settings or not; default is True
+    USE_DEFAULT_STRATEGY: True
+
     # the difference in % between the first and second checks for the price.
     CHANGE_IN_PRICE: 0.8
 
@@ -68,3 +71,9 @@ strategy_options:
 
     # instances tracked back from current time
     PERIOD: 14
+
+    # RSI value for coins to be bought (default: 80)
+    RSI_BUY_TRIGGER: 80
+
+    # RSI value for coins to be sold (default: 20)
+    RSI_SELL_TRIGGER: 20

@@ -37,6 +37,7 @@ RECHECK_INTERVAL = parsed_config['trading_options']['RECHECK_INTERVAL']
 
 # Load strategy options
 CHANGE_IN_PRICE = parsed_config['strategy_options']['volatility']['CHANGE_IN_PRICE']
+USE_DEFAULT_STRATEGY = parsed_config['strategy_options']['volatility']['USE_DEFAULT_STRATEGY']
 STOP_LOSS = parsed_config['strategy_options']['volatility']['STOP_LOSS']
 TAKE_PROFIT = parsed_config['strategy_options']['volatility']['TAKE_PROFIT']
 USE_TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['USE_TRAILING_STOP_LOSS']
@@ -45,6 +46,8 @@ TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILIN
 RSI_TIME_INTERVAL = parsed_config['strategy_options']['stoch_rsi']['TIME_INTERVAL']
 RSI_PERIOD = parsed_config['strategy_options']['stoch_rsi']['PERIOD']
 USE_STOCH_RSI = parsed_config['strategy_options']['stoch_rsi']['USE_STOCH_RSI']
+RSI_BUY_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_BUY_TRIGGER']
+RSI_SELL_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_SELL_TRIGGER']
 
 
 if DEBUG_SETTING or args.debug:
