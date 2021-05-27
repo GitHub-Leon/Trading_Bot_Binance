@@ -76,7 +76,7 @@ if DEBUG_SETTING or args.debug:
     DEBUG = False
 
 # Loads credentials
-access_key, secret_key = handle_creds.load_correct_creds(parsed_creds, False)
+access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
 
 if DEBUG:
     print(f'loaded config below\n{json.dumps(parsed_config, indent=4)}')
