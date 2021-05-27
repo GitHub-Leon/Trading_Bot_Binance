@@ -6,12 +6,12 @@ from src.console.output.startup import startup
 from src.console.output.exit import before_exit
 from src.console.input.console_input import console_input
 from src.console.input.console_input import input_check
-from src.trade import buy
-from src.sell import sell_coins
+from src.strategies.default.trade import buy
+from src.strategies.default.sell import sell_coins
 from src.update_portfolio import update_portfolio
 from src.remove_coins import remove_from_portfolio
 from src.config import bot_wait
-from src.sell_all_coins import sell_all
+from src.helpers.scripts.sell_all_coins import sell_all
 
 
 def main():

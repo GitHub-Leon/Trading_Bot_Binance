@@ -1,9 +1,9 @@
 from binance.helpers import round_step_size
 
 # local dependencies
-from src.colors import txcolors
+from src.classes.colors import txcolors
 from src.config import coins_bought, client, LOG_TRADES
-from src.get_price import get_price
+from src.strategies.default.get_price import get_price
 from src.save_trade import write_log
 from src.remove_coins import remove_from_portfolio
 

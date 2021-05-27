@@ -3,11 +3,12 @@
 from datetime import datetime
 
 # local dependencies
-from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers
+from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, historical_prices, hsp_head
 
 
-def get_price():
+def get_price(add_to_historical=True):
     """Return the current price for all coins on binance"""
+    global hsp_head, historical_prices
 
     initial_price = {}
     prices = client.get_all_tickers()
@@ -27,5 +28,13 @@ def get_price():
                 'price': coin['price'],
                 'time': datetime.now(),
             }
+
+    if add_to_historical:
+        hsp_head += 1
+
+        if hsp_head == RECHECK_INTERVAL:
+            hsp_head = 0
+
+        historical_prices[hsp_head] = initial_price
 
     return initial_price

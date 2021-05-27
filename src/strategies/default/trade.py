@@ -1,12 +1,13 @@
 # This module handles buys
 
 import time
-from src.colors import txcolors
+from datetime import datetime
 
 # import local modules
-from src.convert_volume import convert_volume
-from src.config import coins_bought, LOG_TRADES, TESTNET, client
+from src.strategies.default.convert_volume import convert_volume
+from src.config import coins_bought, LOG_TRADES, TEST_MODE, client
 from src.save_trade import write_log
+from src.classes.colors import txcolors
 
 
 def buy():
@@ -21,14 +22,19 @@ def buy():
         if coin not in coins_bought:
             print(f"{txcolors.DEFAULT}Preparing to buy {volume[coin]} {coin}{txcolors.DEFAULT}")
 
-            if TESTNET:
-                # create test order before pushing an actual order
-                client.create_test_order(
-                    symbol=coin,
-                    side='BUY',
-                    type='MARKET',
-                    quantity=volume[coin]
-                )
+            if TEST_MODE:
+                # only make an imaginary buy order
+                orders[coin] = [{
+                    'symbol': coin,
+                    'orderId': 0,
+                    'time': datetime.now().timestamp()
+                }]
+
+                # Log trade
+                if LOG_TRADES:
+                    write_log(f"Buy : {volume[coin]} {coin} - {last_price[coin]['price']}")
+
+                continue
 
             # try to create a real order if the test orders did not raise an exception
             try:
