@@ -1,8 +1,8 @@
 # This module converts the use-given volume from PAIR_WITH to the coin that gets bought
 
+from src.config import QUANTITY, client, DEBUG
 # local dependencies
 from src.strategies.default.wait_for_price import wait_for_price
-from src.config import QUANTITY, client, DEBUG
 
 
 def convert_volume():

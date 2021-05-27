@@ -1,17 +1,16 @@
-import os
 import json
+import os
 import time
 
 from binance.client import Client  # needed for the binance API and websockets
 
-from .helpers import parameters
 from .helpers import handle_creds
+from .helpers import parameters
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
 session_profit = 0
 bot_paused = False
-
 
 # Load arguments then parse settings
 args = parameters.parse_args()
@@ -72,7 +71,6 @@ RSI_SELL_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_SELL_TRIG
 SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
 SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
 CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
-
 
 if DEBUG_SETTING or args.debug:
     DEBUG = False

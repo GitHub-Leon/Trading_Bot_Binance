@@ -3,11 +3,11 @@
 import time
 from datetime import datetime
 
-# import local modules
-from src.strategies.default.convert_volume import convert_volume
+from src.classes.colors import txcolors
 from src.config import coins_bought, LOG_TRADES, TEST_MODE, client
 from src.save_trade import write_log
-from src.classes.colors import txcolors
+# import local modules
+from src.strategies.default.convert_volume import convert_volume
 
 
 def buy():

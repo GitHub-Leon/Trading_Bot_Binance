@@ -1,5 +1,5 @@
-from src.trading_options import trading_options
 from src.strategy_options import strategy_options
+from src.trading_options import trading_options
 
 
 def console_input():

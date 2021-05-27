@@ -1,10 +1,10 @@
 import json
 import os
-from datetime import datetime
 import sys
+from datetime import datetime
 
 # local dependencies
-from src.config import coins_bought, client, LOG_TRADES
+from src.config import client, LOG_TRADES
 from src.save_trade import write_log
 
 

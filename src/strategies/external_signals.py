@@ -2,8 +2,8 @@
 import glob
 import os
 
-from ..config import DEBUG
 from ..classes.colors import txcolors
+from ..config import DEBUG
 
 
 def external_signals():
