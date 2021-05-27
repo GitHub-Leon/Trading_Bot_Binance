@@ -9,8 +9,6 @@ from .helpers import parameters
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
-session_profit = 0
-bot_paused = False
 
 # Load arguments then parse settings
 args = parameters.parse_args()
@@ -35,7 +33,7 @@ parsed_config = parameters.load_config(config_file)
 parsed_creds = parameters.load_config(creds_file)
 parsed_auth = parameters.load_config(auth_file)
 
-DEBUG = True  # default False
+DEBUG = False  # default False
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
@@ -66,6 +64,7 @@ RSI_PERIOD = parsed_config['strategy_options']['stoch_rsi']['PERIOD']
 USE_STOCH_RSI = parsed_config['strategy_options']['stoch_rsi']['USE_STOCH_RSI']
 RSI_BUY_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_BUY_TRIGGER']
 RSI_SELL_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_SELL_TRIGGER']
+SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLING_MODULES']
 
 # Load auth vars
 SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
@@ -95,6 +94,9 @@ else:
 historical_prices = [None] * (TIME_DIFFERENCE * RECHECK_INTERVAL)
 hsp_head = -1
 
+session_profit = 0
+bot_paused = False
+
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
 
@@ -119,31 +121,3 @@ def bot_wait():
         print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)
 
-# signals = glob.glob("signals/*.exs")
-#     for filename in signals:
-#         for line in open(filename):
-#             try:
-#                 os.remove(filename)
-#             except:
-#                 if DEBUG: print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
-#
-#     if os.path.isfile("signals/paused.exc"):
-#         try:
-#             os.remove("signals/paused.exc")
-#         except:
-#             if DEBUG: print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
-#
-#     # load signalling modules
-#     try:
-#         if len(SIGNALLING_MODULES) > 0:
-#             for module in SIGNALLING_MODULES:
-#                 print(f'Starting {module}')
-#                 mymodule[module] = importlib.import_module(module)
-#                 t = threading.Thread(target=mymodule[module].do_work, args=())
-#                 t.daemon = True
-#                 t.start()
-#                 time.sleep(2)
-#         else:
-#             print(f'No modules to load {SIGNALLING_MODULES}')
-#     except Exception as e:
-#         print(e)

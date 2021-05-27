@@ -10,6 +10,7 @@ __pycache__/
 /trades.txt
 /.idea/
 /creds.yml
+/src/signals/*.exs
 
 # Distribution / packaging
 .Python

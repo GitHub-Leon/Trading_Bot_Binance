@@ -14,10 +14,10 @@ from src.update_globals import update_bot_paused
 def pause_bot():
     """Pause the script when external indicators detect a bearish trend in the market"""
 
-    # start counting for how long the bot's been paused
+    # start counting for how long the bot has been paused
     start_time = time.perf_counter()
 
-    while os.path.isfile("signals/paused.exc"):
+    while os.path.isfile("src/signals/paused.exc"):
 
         if not bot_paused:
             print(
