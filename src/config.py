@@ -8,11 +8,9 @@ from .helpers import parameters
 from .helpers import handle_creds
 
 # global variables
-global session_profit, historical_prices, hsp_head, volatility_cooloff
+global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
 session_profit = 0
-historical_prices = {}
-hsp_head = 0
-volatility_cooloff = 0
+bot_paused = False
 
 
 # Load arguments then parse settings
@@ -38,7 +36,7 @@ parsed_config = parameters.load_config(config_file)
 parsed_creds = parameters.load_config(creds_file)
 parsed_auth = parameters.load_config(auth_file)
 
-DEBUG = False
+DEBUG = True  # default False
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
@@ -48,6 +46,7 @@ DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
 
 # Load trading options
 PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
+TRADING_FEE = parsed_config['trading_options']['TRADING_FEE']
 QUANTITY = parsed_config['trading_options']['QUANTITY']
 CUSTOM_LIST = parsed_config['trading_options']['CUSTOM_LIST']
 MAX_COINS = parsed_config['trading_options']['MAX_COINS']
@@ -94,11 +93,18 @@ if CUSTOM_LIST:
 else:
     tickers = None
 
+# rolling window of prices; cyclical queue
+historical_prices = [None] * (TIME_DIFFERENCE * RECHECK_INTERVAL)
+hsp_head = -1
+
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
 
 # path to the saved coins_bought file
 coins_bought_file_path = 'coins_bought.json'
+
+# prevent including a coin in volatile_coins if it has already appeared there less than TIME_DIFFERENCE minutes ago
+volatility_cooloff = {}
 
 # use separate files for testnet and live
 if TEST_MODE:
@@ -111,7 +117,7 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
 
 
 def bot_wait():
-    if TEST_MODE:
+    if not TEST_MODE:
         print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)
 

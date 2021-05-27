@@ -1,63 +1,35 @@
-from binance.helpers import round_step_size
+import json
+import os
+from datetime import datetime
+import sys
 
 # local dependencies
-from src.classes.colors import txcolors
 from src.config import coins_bought, client, LOG_TRADES
-from src.strategies.default.get_price import get_price
 from src.save_trade import write_log
-from src.remove_coins import remove_from_portfolio
 
 
 def sell_all():
-    current_prices = get_price()
-    coins_sold = {}
+    sys.path.append('..')
 
-    for coin in coins_bought:
-        last_price = float(current_prices[coin]['price'])
-        buy_price = float(coins_bought[coin]['bought_at'])
-        price_change = float((last_price - buy_price) / buy_price * 100)
+    with open('../coins_bought.json', 'r') as f:
+        coins = json.load(f)
 
-        # colored output depending on profit or loss
-        if last_price < buy_price:
-            print(f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price} : {price_change:.2f}%{txcolors.DEFAULT}")
-        elif last_price > buy_price:
-            print(f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price} : {price_change:.2f}%{txcolors.DEFAULT}")
-
-        try:
-            try:
-                rounded_amount = round_step_size(coins_bought[coin]['volume'], coins_bought[coin]['step_size'])
-            except:
-                tick_size = float(
-                    next(
-                        filter(
-                            lambda f: f['filterType'] == 'LOT_SIZE',
-                            client.get_symbol_info(coin)['filters']
-                        )
-                    )['stepSize']
-                )
-                rounded_amount = round_step_size(coins_bought[coin]['volume'], tick_size)
-
-            client.create_order(
+        for coin in list(coins):
+            sell_coin = client.create_order(
                 symbol=coin,
                 side='SELL',
                 type='MARKET',
-                quantity=rounded_amount,
+                quantity=coins[coin]['volume']
             )
 
-        except Exception as e:
-            print(e)
-
-        # run the else block if coin has been sold and create a dict for each coin sold
-        else:
-            coins_sold[coin] = coins_bought[coin]
-            # Log trade
+            buy_price = float(coins[coin]['bought_at'])
+            last_price = float(sell_coin['fills'][0]['price'])
+            profit = (last_price - buy_price) * coins[coin]['volume']
+            price_change = float((last_price - buy_price) / buy_price * 100)
 
             if LOG_TRADES:
-                profit = (last_price - buy_price) * coins_sold[coin]['volume']
+                timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
                 write_log(
-                    f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+                    f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
 
-    return coins_sold
-
-
-remove_from_portfolio(sell_all())   # Executes sell_all and removes them from portfolio
+    os.remove('../coins_bought.json')

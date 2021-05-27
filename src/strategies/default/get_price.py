@@ -4,37 +4,29 @@ from datetime import datetime
 
 # local dependencies
 from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, historical_prices, hsp_head
+from src.update_globals import update_hsp_head, update_historical_prices
 
 
 def get_price(add_to_historical=True):
     """Return the current price for all coins on binance"""
-    global hsp_head, historical_prices
-
     initial_price = {}
     prices = client.get_all_tickers()
 
     for coin in prices:
 
-        # Only return USDT pairs and exclude margin symbols like BTCDOWNUSDT, filter by custom list if defined.
         if CUSTOM_LIST:
-            coin_is_in_ticker = any(item + PAIR_WITH in coin['symbol'] for item in tickers)
-        else:  # only Return coin(PAIR_WITH) pairs and exclude margin symbols like BTCDOWNUSDT
-            coin_is_in_ticker = PAIR_WITH in coin['symbol']
-
-        coin_is_not_in_blocklist = all(item not in coin['symbol'] for item in FIATS)
-
-        if coin_is_in_ticker and coin_is_not_in_blocklist:
-            initial_price[coin['symbol']] = {
-                'price': coin['price'],
-                'time': datetime.now(),
-            }
+            if any(item + PAIR_WITH == coin['symbol'] for item in tickers) and all(item not in coin['symbol'] for item in FIATS):
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+        else:
+            if PAIR_WITH in coin['symbol'] and all(item not in coin['symbol'] for item in FIATS):
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
 
     if add_to_historical:
-        hsp_head += 1
+        update_hsp_head(hsp_head + 1)
 
         if hsp_head == RECHECK_INTERVAL:
-            hsp_head = 0
+            update_hsp_head(0)
 
-        historical_prices[hsp_head] = initial_price
+        update_historical_prices(initial_price, hsp_head)
 
     return initial_price

@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 # local dependencies
 from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, QUANTITY, session_profit, historical_prices, hsp_head, volatility_cooloff
 from src.strategies.default.get_price import get_price
-from src.pause_bot import pause_bot
+from src.helpers.scripts.pause_bot import pause_bot
 from src.classes.colors import txcolors
 from src.strategies.external_signals import external_signals
 
@@ -23,15 +23,13 @@ def wait_for_price():
 
     pause_bot()
 
-    if historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
-            minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
+    if historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
         # sleep for exactly the amount of time required
-        time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                    datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
+        time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
 
-    print(f'Working...Session profit:{session_profit:.2f}% Est:${(QUANTITY * session_profit) / 100:.2f}')
+    print(f'Working... Session profit:{session_profit:.2f}% Est:${(QUANTITY * session_profit) / 100:.2f}')
 
-    # retreive latest prices
+    # retrieve latest prices
     get_price()
 
     # calculate the difference in prices
@@ -41,9 +39,7 @@ def wait_for_price():
         min_price = min(historical_prices, key=lambda x: float("inf") if x is None else float(x[coin]['price']))
         max_price = max(historical_prices, key=lambda x: -1 if x is None else float(x[coin]['price']))
 
-        threshold_check = (-1.0 if min_price[coin]['time'] > max_price[coin]['time'] else 1.0) * (
-                    float(max_price[coin]['price']) - float(min_price[coin]['price'])) / float(
-            min_price[coin]['price']) * 100
+        threshold_check = (-1.0 if min_price[coin]['time'] > max_price[coin]['time'] else 1.0) * (float(max_price[coin]['price']) - float(min_price[coin]['price'])) / float(min_price[coin]['price']) * 100
 
         # each coin with higher gains than our CHANGE_IN_PRICE is added to the volatile_coins dict if less than MAX_COINS is not reached.
         if threshold_check > CHANGE_IN_PRICE:
@@ -73,12 +69,12 @@ def wait_for_price():
 
     # Here goes new code for external signalling
     externals = external_signals()
-    exnumber = 0
+    ex_number = 0
 
-    for excoin in externals:
-        if excoin not in volatile_coins and excoin not in coins_bought and (len(coins_bought) + exnumber) < MAX_COINS:
-            volatile_coins[excoin] = 1
-            exnumber += 1
-            print(f'External signal received on {excoin}, calculating volume in {PAIR_WITH}')
+    for ex_coin in externals:
+        if ex_coin not in volatile_coins and ex_coin not in coins_bought and (len(coins_bought) + ex_number) < MAX_COINS:
+            volatile_coins[ex_coin] = 1
+            ex_number += 1
+            print(f'External signal received on {ex_coin}, calculating volume in {PAIR_WITH}')
 
     return volatile_coins, len(volatile_coins), historical_prices[hsp_head]

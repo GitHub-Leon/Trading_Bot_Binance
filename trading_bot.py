@@ -12,11 +12,13 @@ from src.update_portfolio import update_portfolio
 from src.remove_coins import remove_from_portfolio
 from src.config import bot_wait
 from src.helpers.scripts.sell_all_coins import sell_all
+from src.strategies.default.get_price import get_price
 
 
 def main():
     bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
 
+    get_price()  # seed initial prices
     while True:
         orders, last_price, volume = buy()
         update_portfolio(orders, last_price, volume)

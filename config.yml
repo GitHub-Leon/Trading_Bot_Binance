@@ -3,6 +3,7 @@ script_options:
   # Switch between testnet and mainnet
   # Setting this to False will use REAL funds, use at your own risk
   TEST_MODE: False
+
   LOG_TRADES: True
   LOG_FILE: 'trades.txt'
 
@@ -13,7 +14,7 @@ trading_options:
   PAIR_WITH: USDT
 
   # Fees in percent
-  TRADING_FEE: 0.1
+  TRADING_FEE: 0.075
 
   # Total amount per trade
   QUANTITY: 15
@@ -32,13 +33,13 @@ trading_options:
     - UP
 
   # Maximum number of coins to hold
-  MAX_COINS: 5
+  MAX_COINS: 1
 
-  # the amount of time in SECONDS to calculate the difference from the current price
-  TIME_DIFFERENCE: 30
+  # the amount of time in MINUTES to calculate the difference from the current price
+  TIME_DIFFERENCE: 1
 
   # Number of times to check for TP/SL during each TIME_DIFFERENCE Minimum 1
-  RECHECK_INTERVAL: 6
+  RECHECK_INTERVAL: 60
 
 # Options that apply to specific strategies
 strategy_options:
@@ -47,7 +48,7 @@ strategy_options:
     USE_DEFAULT_STRATEGY: True
 
     # the difference in % between the first and second checks for the price.
-    CHANGE_IN_PRICE: 0.8
+    CHANGE_IN_PRICE: 0.1
 
     # define in % when to sell a coin that's not making a profit
     STOP_LOSS: 1.75
