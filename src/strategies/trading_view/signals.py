@@ -1,14 +1,13 @@
-import time
 import glob
+import importlib
 import os
-
 # used to create threads & dynamic loading of modules
 import threading
-import importlib
+import time
 
+from src.classes.colors import txcolors
 # local dependencies
 from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER
-from src.classes.colors import txcolors
 
 
 def load_signals():

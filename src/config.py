@@ -3,10 +3,10 @@ import os
 import time
 
 from binance.client import Client  # needed for the binance API and websockets
+from colorama import init
 
 from .helpers import handle_creds
 from .helpers import parameters
-from colorama import init
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
@@ -127,4 +127,3 @@ def bot_wait():
     if not TEST_MODE:
         print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)
-

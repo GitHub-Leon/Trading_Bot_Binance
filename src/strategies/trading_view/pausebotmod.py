@@ -1,7 +1,8 @@
-from tradingview_ta import TA_Handler, Interval
 import os
-import time
 import threading
+import time
+
+from tradingview_ta import TA_Handler, Interval
 
 from src.config import SIGNALS_FOLDER
 

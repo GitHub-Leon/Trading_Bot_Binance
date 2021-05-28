@@ -1,19 +1,19 @@
 # The main modules that executes the script repeatedly
 
-# local dependencies
-from src.console.login import login
-from src.console.output.startup import startup
-from src.console.output.exit import before_exit
+from src.config import bot_wait
 from src.console.input.console_input import console_input
 from src.console.input.console_input import input_check
-from src.strategies.default.trade import buy
-from src.strategies.default.sell import sell_coins
-from src.update_portfolio import update_portfolio
-from src.remove_coins import remove_from_portfolio
-from src.config import bot_wait
+# local dependencies
+from src.console.login import login
+from src.console.output.exit import before_exit
+from src.console.output.startup import startup
 from src.helpers.scripts.sell_all_coins import sell_all
+from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
+from src.strategies.default.sell import sell_coins
+from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
+from src.update_portfolio import update_portfolio
 
 
 def main():

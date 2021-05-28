@@ -19,9 +19,9 @@ def sell_coins():
 
     for coin in list(coins_bought):
         TP = float(coins_bought[coin]['bought_at']) + (
-                    float(coins_bought[coin]['bought_at']) * coins_bought[coin]['take_profit']) / 100
+                float(coins_bought[coin]['bought_at']) * coins_bought[coin]['take_profit']) / 100
         SL = float(coins_bought[coin]['bought_at']) + (
-                    float(coins_bought[coin]['bought_at']) * coins_bought[coin]['stop_loss']) / 100
+                float(coins_bought[coin]['bought_at']) * coins_bought[coin]['stop_loss']) / 100
 
         last_price = float(last_prices[coin]['price'])
         buy_price = float(coins_bought[coin]['bought_at'])
@@ -68,7 +68,7 @@ def sell_coins():
                 coins_sold[coin] = coins_bought[coin]
 
                 # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
-                volatility_cooloff[coin] = datetime.now()
+                volatility_cooloff(coin, datetime.now())
                 update_volatility_cooloff(coin, datetime.now())
 
                 # Log trade

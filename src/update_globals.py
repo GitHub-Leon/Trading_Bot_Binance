@@ -19,4 +19,3 @@ def update_volatility_cooloff(coin, time):
 
 def update_bot_paused(bot_paused):
     config.bot_paused = bot_paused
-

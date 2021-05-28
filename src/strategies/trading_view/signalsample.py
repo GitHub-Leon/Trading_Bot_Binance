@@ -1,10 +1,9 @@
-from tradingview_ta import TA_Handler, Interval
-
 # use for environment variables
 import os
-
 # used for directory handling
 import time
+
+from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
 from src.config import PAIR_WITH, SIGNALS_FILE, DEBUG, CUSTOM_LIST_FILE

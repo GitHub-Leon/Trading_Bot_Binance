@@ -6,7 +6,6 @@ from datetime import datetime
 # local dependencies
 from .colors import txcolors
 
-
 old_out = sys.stdout
 
 

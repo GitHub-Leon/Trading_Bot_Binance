@@ -5,14 +5,15 @@ from datetime import datetime, timedelta
 
 from src.classes.colors import txcolors
 # local dependencies
-from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, QUANTITY, \
-    session_profit, historical_prices, hsp_head, volatility_cooloff
+from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS
 from src.helpers.scripts.pause_bot import pause_bot
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_signals
+from src.update_globals import update_volatility_cooloff
 
 
 def wait_for_price():
+    from src.config import hsp_head, volatility_cooloff, historical_prices
     """calls the initial price and ensures the correct amount of time has passed
     before reading the current price again"""
 
@@ -29,7 +30,7 @@ def wait_for_price():
             minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
         # sleep for exactly the amount of time required
         time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                    datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
+                datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
 
     # retrieve latest prices
     get_price()
@@ -42,7 +43,7 @@ def wait_for_price():
         max_price = max(historical_prices, key=lambda x: -1 if x is None else float(x[coin]['price']))
 
         threshold_check = (-1.0 if min_price[coin]['time'] > max_price[coin]['time'] else 1.0) * (
-                    float(max_price[coin]['price']) - float(min_price[coin]['price'])) / float(
+                float(max_price[coin]['price']) - float(min_price[coin]['price'])) / float(
             min_price[coin]['price']) * 100
 
         # each coin with higher gains than our CHANGE_IN_PRICE is added to the volatile_coins dict if less than MAX_COINS is not reached.
@@ -50,14 +51,14 @@ def wait_for_price():
             coins_up += 1
 
             if coin not in volatility_cooloff:
-                volatility_cooloff[coin] = datetime.now() - timedelta(minutes=TIME_DIFFERENCE)
+                update_volatility_cooloff(coin, datetime.now() - timedelta(minutes=TIME_DIFFERENCE))
 
             # only include coin as volatile if it hasn't been picked up in the last TIME_DIFFERENCE minutes already
             if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=TIME_DIFFERENCE):
-                volatility_cooloff[coin] = datetime.now()
+                volatility_cooloff(coin, datetime.now())
 
                 if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
-                    volatile_coins[coin] = round(threshold_check, 3)
+                    update_volatility_cooloff(coin, round(threshold_check, 3))
                     print(
                         f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
 
