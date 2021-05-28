@@ -1,4 +1,5 @@
 import mysql.connector
+
 from src.config import DB_USERNAME, DB_PASSWORD, DB_NAME
 
 
@@ -9,4 +10,3 @@ def connect_to_database():
         password=DB_PASSWORD,
         database=DB_NAME
     )
-

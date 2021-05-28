@@ -14,6 +14,7 @@ from src.update_globals import update_volatility_cooloff
 
 def wait_for_price():
     from src.config import hsp_head, volatility_cooloff, historical_prices
+
     """calls the initial price and ensures the correct amount of time has passed
     before reading the current price again"""
 
@@ -55,10 +56,10 @@ def wait_for_price():
 
             # only include coin as volatile if it hasn't been picked up in the last TIME_DIFFERENCE minutes already
             if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=TIME_DIFFERENCE):
-                volatility_cooloff(coin, datetime.now())
+                update_volatility_cooloff(coin, datetime.now())
 
                 if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
-                    update_volatility_cooloff(coin, round(threshold_check, 3))
+                    volatile_coins[coin] = round(threshold_check, 3)
                     print(
                         f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
 

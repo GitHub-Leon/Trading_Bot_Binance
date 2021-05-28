@@ -4,7 +4,6 @@ import datetime
 import getpass
 # regex
 import re
-
 # sending auth. mail
 import smtplib
 import ssl
@@ -15,11 +14,11 @@ from email.mime.text import MIMEText
 # generate auth. code
 import vcode
 
+from src.check_package import check_package
 # Local dependencies
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
 from src.helpers.database_connection import connect_to_database  # Database
-from src.check_package import check_package
 
 
 # functionalities
@@ -108,7 +107,8 @@ def new_login(firstname, lastname, pw, email, birthday):
         db_cursor = db.cursor()
 
         query = "insert into Users values(null, %s, %s, %s, STR_TO_DATE(%s, '%d/%m/%Y'), %s, null, STR_TO_DATE(%s, '%Y-%m-%d'), %s, %s)"
-        db_cursor.execute(query, (firstname, lastname, email, birthday, pw, datetime.date.today(), 999, 999))  # 999 - free package and muster address
+        db_cursor.execute(query, (firstname, lastname, email, birthday, pw, datetime.date.today(), 999,
+                                  999))  # 999 - free package and muster address
         db.commit()
     except:
         return False

@@ -1,5 +1,5 @@
-from src.helpers.database_connection import connect_to_database
 from src.config import FREE_PACKAGE_ID
+from src.helpers.database_connection import connect_to_database
 
 
 def check_package(email):

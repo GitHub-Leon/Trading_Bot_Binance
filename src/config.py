@@ -65,18 +65,12 @@ TAKE_PROFIT = parsed_config['strategy_options']['volatility']['TAKE_PROFIT']
 USE_TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['USE_TRAILING_STOP_LOSS']
 TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['TRAILING_STOP_LOSS']
 TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILING_TAKE_PROFIT']
-RSI_TIME_INTERVAL = parsed_config['strategy_options']['stoch_rsi']['TIME_INTERVAL']
-RSI_PERIOD = parsed_config['strategy_options']['stoch_rsi']['PERIOD']
-USE_STOCH_RSI = parsed_config['strategy_options']['stoch_rsi']['USE_STOCH_RSI']
-RSI_BUY_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_BUY_TRIGGER']
-RSI_SELL_TRIGGER = parsed_config['strategy_options']['stoch_rsi']['RSI_SELL_TRIGGER']
 SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLING_MODULES']
 
 # Load auth vars
 SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
 SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
 CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
-
 
 # Database connection
 DB_USERNAME = "bot"
@@ -85,7 +79,6 @@ DB_NAME = "bot_2"
 
 # Packages
 FREE_PACKAGE_ID = 999
-
 
 if DEBUG_SETTING or args.debug:
     DEBUG = True

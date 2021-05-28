@@ -11,7 +11,7 @@ from src.update_globals import update_session_profit, update_volatility_cooloff
 
 
 def sell_coins():
-    from src.config import hsp_head, session_profit, volatility_cooloff
+    from src.config import hsp_head, session_profit
     """Sell coins that have reached the STOP LOSS or TAKE PROFIT threshold."""
 
     last_prices = get_price(False)  # don't populate rolling window
@@ -68,7 +68,7 @@ def sell_coins():
                 coins_sold[coin] = coins_bought[coin]
 
                 # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
-                volatility_cooloff(coin, datetime.now())
+                update_volatility_cooloff(coin, datetime.now())
                 update_volatility_cooloff(coin, datetime.now())
 
                 # Log trade
@@ -84,7 +84,7 @@ def sell_coins():
         if hsp_head == 1:
             if len(coins_bought) > 0:
                 print(
-                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price} : {txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}% Est:${(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}{txcolors.DEFAULT}')
+                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price} : {txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est:{txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}{txcolors.DEFAULT}')
 
         if hsp_head == 1 and len(coins_bought) == 0:
             print(f'Not holding any coins')

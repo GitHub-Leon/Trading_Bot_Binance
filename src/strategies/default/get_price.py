@@ -29,6 +29,7 @@ def get_price(add_to_historical=True):
 
         if hsp_head == RECHECK_INTERVAL:
             update_hsp_head(0)
+            hsp_head = 0
 
         update_historical_prices(initial_price, hsp_head)
 
