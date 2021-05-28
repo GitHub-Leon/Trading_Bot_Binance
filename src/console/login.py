@@ -1,28 +1,24 @@
 # password input
+# date
+import datetime
 import getpass
-
 # regex
 import re
-
-# Database
-from src.helpers.database_connection import connect_to_database
 
 # sending auth. mail
 import smtplib
 import ssl
+import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # generate auth. code
 import vcode
 
-# date
-import datetime
-import time
-
 # Local dependencies
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
+from src.helpers.database_connection import connect_to_database  # Database
 from src.check_package import check_package
 
 
