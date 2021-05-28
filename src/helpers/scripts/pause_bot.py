@@ -4,7 +4,7 @@ from datetime import timedelta
 
 # local dependencies
 from src.classes.colors import txcolors
-from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, bot_paused, session_profit, hsp_head, DEBUG
+from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, DEBUG
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
 from src.strategies.default.sell import sell_coins
@@ -12,6 +12,8 @@ from src.update_globals import update_bot_paused
 
 
 def pause_bot():
+    from src.config import bot_paused, session_profit, hsp_head
+
     """Pause the script when external indicators detect a bearish trend in the market"""
 
     # start counting for how long the bot has been paused

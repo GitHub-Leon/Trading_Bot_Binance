@@ -101,7 +101,6 @@ else:
 # rolling window of prices; cyclical queue
 historical_prices = [None] * (TIME_DIFFERENCE * RECHECK_INTERVAL)
 hsp_head = -1
-
 session_profit = 0
 bot_paused = False
 

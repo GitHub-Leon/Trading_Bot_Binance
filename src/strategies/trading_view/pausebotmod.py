@@ -1,9 +1,9 @@
-from tradingview_ta import TA_Handler, Interval, Exchange
+from tradingview_ta import TA_Handler, Interval
 import os
 import time
 import threading
 
-from src.config import SIGNALS_FOLDER, DEBUG
+from src.config import SIGNALS_FOLDER
 
 INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 
@@ -11,7 +11,7 @@ EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
 SYMBOL = 'BTCUSDT'
 THRESHOLD = 7  # 7 of 15 MA's indicating sell
-TIME_TO_WAIT = 1  # Minutes to wait between analysis
+TIME_TO_WAIT = 5  # Minutes to wait between analysis
 
 
 def analyze():

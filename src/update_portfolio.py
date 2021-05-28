@@ -1,14 +1,11 @@
 import json
 
 # local dependencies
-from src.config import coins_bought, coins_bought_file_path, STOP_LOSS, TAKE_PROFIT, DEBUG, client
+from src.config import coins_bought, coins_bought_file_path, STOP_LOSS, TAKE_PROFIT, DEBUG
 
 
 def update_portfolio(orders, last_price, volume):
     """add every coin bought to our portfolio for tracking/selling later"""
-
-    if DEBUG:
-        print(orders)
 
     for coin in orders:
 
