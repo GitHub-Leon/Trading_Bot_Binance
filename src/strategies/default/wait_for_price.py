@@ -31,8 +31,6 @@ def wait_for_price():
         time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
                     datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
 
-    print(f'Working... Session profit:{session_profit:.2f}% Est:${(QUANTITY * session_profit) / 100:.2f}')
-
     # retrieve latest prices
     get_price()
 

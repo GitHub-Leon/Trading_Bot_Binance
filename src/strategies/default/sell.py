@@ -39,7 +39,7 @@ def sell_coins():
             continue
 
         # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case
-        if last_price < SL or last_price > TP and not USE_TRAILING_STOP_LOSS:
+        if last_price < SL or (last_price > TP and not USE_TRAILING_STOP_LOSS):
             if last_price < buy_price:
                 print(
                     f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price} : {price_change:.2f}%{txcolors.DEFAULT}")
@@ -47,44 +47,44 @@ def sell_coins():
                 print(
                     f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price} : {price_change:.2f}%{txcolors.DEFAULT}")
 
-                # try to create a real order
-                try:
-                    if not TEST_MODE:
-                        sell_coins_limit = client.create_order(
-                            symbol=coin,
-                            side='SELL',
-                            type='MARKET',
-                            quantity=coins_bought[coin]['volume']
+            # try to create a real order
+            try:
+                if not TEST_MODE:
+                    sell_coins_limit = client.create_order(
+                        symbol=coin,
+                        side='SELL',
+                        type='MARKET',
+                        quantity=coins_bought[coin]['volume']
 
-                        )
+                    )
 
-                # error handling here in case position cannot be placed
-                except Exception as e:
-                    print(e)
+            # error handling here in case position cannot be placed
+            except Exception as e:
+                print(e)
 
-                # run the else block if coin has been sold and create a dict for each coin sold
-                else:
-                    coins_sold[coin] = coins_bought[coin]
+            # run the else block if coin has been sold and create a dict for each coin sold
+            else:
+                coins_sold[coin] = coins_bought[coin]
 
-                    # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
-                    volatility_cooloff[coin] = datetime.now()
+                # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
+                volatility_cooloff[coin] = datetime.now()
 
-                    # Log trade
-                    if LOG_TRADES:
-                        profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
-                                    1 - (TRADING_FEE * 2))  # adjust for trading fee here
-                        write_log(
-                            f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change - (TRADING_FEE * 2):.2f}%")
-                        update_session_profit(session_profit + (price_change - (TRADING_FEE * 2)))
-                continue
+                # Log trade
+                if LOG_TRADES:
+                    profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
+                            1 - (TRADING_FEE * 2))  # adjust for trading fee here
+                    write_log(
+                        f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change - (TRADING_FEE * 2):.2f}%")
+                    update_session_profit(session_profit + (price_change - (TRADING_FEE * 2)))
+            continue
 
             # no action; print once every TIME_DIFFERENCE
-            if hsp_head == 1:
-                if len(coins_bought) > 0:
-                    print(
-                        f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price} : {txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}% Est:${(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}{txcolors.DEFAULT}')
+        if hsp_head == 1:
+            if len(coins_bought) > 0:
+                print(
+                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price} : {txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}% Est:${(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}{txcolors.DEFAULT}')
 
         if hsp_head == 1 and len(coins_bought) == 0:
             print(f'Not holding any coins')
 
-        return coins_sold
+    return coins_sold

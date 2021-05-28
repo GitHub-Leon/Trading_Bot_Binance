@@ -34,7 +34,8 @@ def load_signals():
     try:
         if len(SIGNALLING_MODULES) > 0:
             for module in SIGNALLING_MODULES:
-                print(f'Starting {module}')
+                if DEBUG:
+                    print(f'Starting {module}')
                 my_module[module] = importlib.import_module('.' + module, TRADING_VIEW_FOLDER)
                 t = threading.Thread(target=my_module[module].do_work, args=())
                 t.daemon = True

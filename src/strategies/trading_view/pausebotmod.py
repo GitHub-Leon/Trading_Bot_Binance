@@ -3,7 +3,7 @@ import os
 import time
 import threading
 
-from src.config import SIGNALS_FOLDER
+from src.config import SIGNALS_FOLDER, DEBUG
 
 INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 
@@ -12,7 +12,6 @@ SCREENER = 'CRYPTO'
 SYMBOL = 'BTCUSDT'
 THRESHOLD = 7  # 7 of 15 MA's indicating sell
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
-FULL_LOG = False  # List analysis result to console
 
 
 def analyze():

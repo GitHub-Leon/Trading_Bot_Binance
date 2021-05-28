@@ -25,6 +25,7 @@ VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
 SIGNALS_FOLDER = 'src/signals'
 SIGNALS_FILE = 'src/signals/signalsample.exs'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
+CUSTOM_LIST_FILE = 'tickers.txt'
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'

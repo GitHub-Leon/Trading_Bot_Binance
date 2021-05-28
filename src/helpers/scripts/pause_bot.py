@@ -4,7 +4,7 @@ from datetime import timedelta
 
 # local dependencies
 from src.classes.colors import txcolors
-from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, bot_paused, session_profit, hsp_head
+from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, bot_paused, session_profit, hsp_head, DEBUG
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
 from src.strategies.default.sell import sell_coins
@@ -20,8 +20,9 @@ def pause_bot():
     while os.path.isfile("src/signals/paused.exs"):
 
         if not bot_paused:
-            print(
-                f'{txcolors.WARNING}Pausing buying due to change in market conditions, stop loss and take profit will continue to work...{txcolors.DEFAULT}')
+            if DEBUG:
+                print(
+                    f'{txcolors.WARNING}Pausing buying due to change in market conditions, stop loss and take profit will continue to work...{txcolors.DEFAULT}')
             update_bot_paused(True)
 
         # Sell function needs to work even while paused
