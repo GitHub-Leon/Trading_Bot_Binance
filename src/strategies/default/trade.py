@@ -38,7 +38,7 @@ def buy():
 
             # try to create a real order if the test orders did not raise an exception
             try:
-                client.create_order(
+                buy_limit = client.create_order(
                     symbol=coin,
                     side='BUY',
                     type='MARKET',

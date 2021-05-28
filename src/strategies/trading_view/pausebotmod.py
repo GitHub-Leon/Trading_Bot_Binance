@@ -3,6 +3,8 @@ import os
 import time
 import threading
 
+from src.config import SIGNALS_FOLDER
+
 INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 
 EXCHANGE = 'BINANCE'
@@ -51,10 +53,10 @@ def do_work():
 
         paused = analyze()
         if paused:
-            with open('src/signals/paused.exc', 'a+') as f:
+            with open(SIGNALS_FOLDER + '/paused.exs', 'a+') as f:
                 f.write('yes')
         else:
-            if os.path.isfile("src/signals/paused.exc"):
-                os.remove('src/signals/paused.exc')
+            if os.path.isfile(SIGNALS_FOLDER + '/paused.exs'):
+                os.remove(SIGNALS_FOLDER + '/paused.exs')
 
         time.sleep((TIME_TO_WAIT * 60))

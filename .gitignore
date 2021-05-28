@@ -6,11 +6,11 @@ __pycache__/
 # extensions
 *.so
 /coins_bought.json
-/testnet_coins_bought.json
+/test_mode_coins_bought.json
 /trades.txt
 /.idea/
 /creds.yml
-/src/signals/*.exs
+*.exs
 
 # Distribution / packaging
 .Python

@@ -17,7 +17,7 @@ def pause_bot():
     # start counting for how long the bot has been paused
     start_time = time.perf_counter()
 
-    while os.path.isfile("src/signals/paused.exc"):
+    while os.path.isfile("src/signals/paused.exs"):
 
         if not bot_paused:
             print(
@@ -39,7 +39,7 @@ def pause_bot():
         stop_time = time.perf_counter()
         time_elapsed = timedelta(seconds=int(stop_time - start_time))
 
-        # resume the bot and ser pause_bot to False
+        # resume the bot and set pause_bot to False
         if bot_paused:
             print(
                 f'{txcolors.WARNING}Resuming buying due to change in market conditions, total sleep time: {time_elapsed}{txcolors.DEFAULT}')

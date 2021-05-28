@@ -17,6 +17,7 @@ def wait_for_price():
     before reading the current price again"""
 
     volatile_coins = {}
+    externals = {}
 
     coins_up = 0
     coins_down = 0

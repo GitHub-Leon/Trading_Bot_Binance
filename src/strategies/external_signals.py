@@ -2,8 +2,8 @@
 import glob
 import os
 
-from ..classes.colors import txcolors
-from ..config import DEBUG
+from src.classes.colors import txcolors
+from src.config import DEBUG, SIGNALS_FOLDER
 
 
 def external_signals():
@@ -11,7 +11,7 @@ def external_signals():
     signals = {}
 
     # check directory and load pairs from files into external_list
-    signals = glob.glob("signals/*.exs")
+    signals = glob.glob(SIGNALS_FOLDER + "/*.exs")
     for filename in signals:
         for line in open(filename):
             symbol = line.strip()
@@ -19,6 +19,7 @@ def external_signals():
         try:
             os.remove(filename)
         except:
-            if DEBUG: print(f'{txcolors.WARNING}Could not remove external signalling file{txcolors.DEFAULT}')
+            if DEBUG:
+                print(f'{txcolors.WARNING}Could not remove external signalling file{txcolors.DEFAULT}')
 
     return external_list

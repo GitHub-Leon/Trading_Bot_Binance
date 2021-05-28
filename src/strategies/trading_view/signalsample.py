@@ -7,15 +7,15 @@ import os
 import time
 
 # local dependencies
-from src.config import PAIR_WITH
+from src.config import PAIR_WITH, SIGNALS_FILE
 
 MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
 MY_FIRST_INTERVAL = Interval.INTERVAL_1_MINUTE
 MY_SECOND_INTERVAL = Interval.INTERVAL_5_MINUTES
-TA_BUY_THRESHOLD = 10  # How many of the 26 indicators to indicate a buy
+TA_BUY_THRESHOLD = 1  # How many of the 26 indicators to indicate a buy
 TICKERS = 'signalsample.txt'
-TIME_TO_WAIT = 4  # Minutes to wait between analysis
+TIME_TO_WAIT = 1  # Minutes to wait between analysis
 FULL_LOG = False  # List analysis result to console
 
 
@@ -27,8 +27,8 @@ def analyze(pairs):
     second_analysis = {}
     first_handler = {}
     second_handler = {}
-    if os.path.exists('src/signals/signalsample.exs'):
-        os.remove('src/signals/signalsample.exs')
+    if os.path.exists(SIGNALS_FILE):
+        os.remove(SIGNALS_FILE)
 
     for pair in pairs:
         first_handler[pair] = TA_Handler(
@@ -63,9 +63,6 @@ def analyze(pairs):
         second_tacheck = second_analysis.summary['BUY']
         if FULL_LOG:
             print(f'{pair} First {first_tacheck} Second {second_tacheck}')
-        else:
-            pass
-            #print(".", end='')
 
         if first_tacheck > taMax:
             taMax = first_tacheck
@@ -73,7 +70,7 @@ def analyze(pairs):
         if first_tacheck >= TA_BUY_THRESHOLD and second_tacheck >= TA_BUY_THRESHOLD:
             signal_coins[pair] = pair
             print(f'Signal detected on {pair}')
-            with open('src/signals/signalsample.exs', 'a+') as f:
+            with open(SIGNALS_FILE, 'a+') as f:
                 f.write(pair + '\n')
     print(f'Max signal by {taMaxCoin} at {taMax} on shortest timeframe')
 
@@ -94,6 +91,7 @@ def do_work():
         if len(signal_coins) == 0:
             print(f'No coins above {TA_BUY_THRESHOLD} threshold')
         else:
-            print(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on both timeframes')
-        print(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
+            print(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} threshold on both timeframes')
+            print(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
+
         time.sleep((TIME_TO_WAIT * 60))

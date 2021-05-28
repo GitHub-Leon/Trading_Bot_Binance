@@ -6,12 +6,14 @@ from binance.client import Client  # needed for the binance API and websockets
 
 from .helpers import handle_creds
 from .helpers import parameters
+from colorama import init
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
 
 # Load arguments then parse settings
 args = parameters.parse_args()
+mymodule = {}
 
 # Paths
 WELCOME_TEXT_FILE = 'src/console/output/welcome.txt'
@@ -20,6 +22,9 @@ PASSWORD_REGEX_FILE = './src/helpers/password_regex.txt'
 BIRTHDAY_REGEX_FILE = './src/helpers/birthday_regex.txt'
 VERIFICATION_MAIL_PLAIN_TEXT_FILE = './src/helpers/mail_verification_plain.txt'
 VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
+SIGNALS_FOLDER = 'src/signals'
+SIGNALS_FILE = 'src/signals/signalsample.exs'
+TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -72,7 +77,9 @@ SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
 CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
 
 if DEBUG_SETTING or args.debug:
-    DEBUG = False
+    DEBUG = True
+
+init()  # colorama
 
 # Loads credentials
 access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
@@ -97,14 +104,14 @@ hsp_head = -1
 session_profit = 0
 bot_paused = False
 
+# prevent including a coin in volatile_coins if it has already appeared there less than TIME_DIFFERENCE minutes ago
+volatility_cooloff = {}
+
 # try to load all the coins bought by the bot if the file exists and is not empty
 coins_bought = {}
 
 # path to the saved coins_bought file
 coins_bought_file_path = 'coins_bought.json'
-
-# prevent including a coin in volatile_coins if it has already appeared there less than TIME_DIFFERENCE minutes ago
-volatility_cooloff = {}
 
 # use separate files for testnet and live
 if TEST_MODE:
