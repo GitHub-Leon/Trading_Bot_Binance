@@ -5,7 +5,6 @@ import getpass
 import re
 
 # Database
-import mysql.connector
 from src.helpers.database_connection import connect_to_database
 
 # sending auth. mail
@@ -24,6 +23,7 @@ import time
 # Local dependencies
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
+from src.check_package import check_package
 
 
 # functionalities
@@ -107,12 +107,15 @@ def check_login(email, user_given_pw):
 
 
 def new_login(firstname, lastname, pw, email, birthday):
-    db = connect_to_database()
-    db_cursor = db.cursor()
+    try:
+        db = connect_to_database()
+        db_cursor = db.cursor()
 
-    query = "insert into Users values(null, %s, %s, %s, STR_TO_DATE(%s, '%d/%m/%Y'), %s, null, STR_TO_DATE(%s, '%Y-%m-%d'), %s, %s)"
-    db_cursor.execute(query, (firstname, lastname, email, birthday, pw, datetime.date.today(), 999, 999))  # 999 - free package and muster address
-    db.commit()
+        query = "insert into Users values(null, %s, %s, %s, STR_TO_DATE(%s, '%d/%m/%Y'), %s, null, STR_TO_DATE(%s, '%Y-%m-%d'), %s, %s)"
+        db_cursor.execute(query, (firstname, lastname, email, birthday, pw, datetime.date.today(), 999, 999))  # 999 - free package and muster address
+        db.commit()
+    except:
+        return False
     return True
 
 
@@ -148,6 +151,7 @@ def login():
                 return True
 
             if check_login(email, pw):
+                check_package(email)
                 return True
             print("Email or Password is incorrect!")
     else:
@@ -199,7 +203,10 @@ def login():
                 if not re.search("[y|Y]", input("If you want you can request a new auth. code.(Y/N) - ")):
                     return False
 
-        new_login(firstname, lastname, password, email, birthday)
+        if not new_login(firstname, lastname, password, email, birthday):
+            print("Creating a new account failed.\n"
+                  "Please try again!")
+            return False
         print("Your registration is ready.\n"
               "If you need help please use the command 'help' or contact us!")
         return True

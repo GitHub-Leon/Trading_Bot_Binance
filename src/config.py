@@ -65,6 +65,10 @@ DB_PASSWORD = "asdfasdf"
 DB_NAME = "bot_2"
 
 
+# Packages
+FREE_PACKAGE_ID = 999
+
+
 if DEBUG_SETTING or args.debug:
     DEBUG = False
 
