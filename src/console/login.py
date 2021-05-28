@@ -4,6 +4,7 @@ import datetime
 import getpass
 # regex
 import re
+
 # sending auth. mail
 import smtplib
 import ssl
@@ -17,12 +18,18 @@ import vcode
 # Local dependencies
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
+from src.helpers.database_connection import connect_to_database  # Database
+from src.check_package import check_package
 
 
 # functionalities
 
 def check_email(email):  # verifies correct email regex
-    return re.search(open(EMAIL_REGEX_FILE, "r").read(), email)
+    regex_check = re.search(open(EMAIL_REGEX_FILE, "r").read(), email)
+
+    if user_exist(email) and regex_check:  # user not in database and email valid
+        return True
+    return False
 
 
 def check_password(password):  # verifies correct password regex
@@ -82,6 +89,45 @@ def send_mail_verification(email, firstname, lastname):
     return send_verification_code
 
 
+def check_login(email, user_given_pw):
+    db = connect_to_database()
+    db_cursor = db.cursor()
+
+    query = "select Password from Users where Email like %s"
+    db_cursor.execute(query, (email,))
+    user_pw = db_cursor.fetchone()
+
+    if user_pw[0] == user_given_pw:
+        return True
+    return False
+
+
+def new_login(firstname, lastname, pw, email, birthday):
+    try:
+        db = connect_to_database()
+        db_cursor = db.cursor()
+
+        query = "insert into Users values(null, %s, %s, %s, STR_TO_DATE(%s, '%d/%m/%Y'), %s, null, STR_TO_DATE(%s, '%Y-%m-%d'), %s, %s)"
+        db_cursor.execute(query, (firstname, lastname, email, birthday, pw, datetime.date.today(), 999, 999))  # 999 - free package and muster address
+        db.commit()
+    except:
+        return False
+    return True
+
+
+def user_exist(email):
+    db = connect_to_database()
+    db_cursor = db.cursor()
+
+    query = "select Email from Users where Email like %s"
+    db_cursor.execute(query, (email,))
+    user_email = db_cursor.fetchone()
+
+    if user_email != None:
+        return False
+    return True
+
+
 # Return True or False. True if LogIn was successful. False if LogIn failed.
 
 def login():
@@ -92,12 +138,18 @@ def login():
 
     # ask about username and password and creates an account if the user doesn´t have one.
     if re.search("[y|Y]", input("Do you already have an account?(Y/N) - ")):
-        email = input("Email: ")
-        pw = getpass.getpass()
+        while True:
+            email = input("Email: ")
+            pw = getpass.getpass()
 
-        if email == "admin" and pw == "admin":
-            print("Welcome admin!")
-            return True
+            if email == "admin" and pw == "admin":
+                print("Welcome admin!")
+                return True
+
+            if check_login(email, pw):
+                check_package(email)
+                return True
+            print("Email or Password is incorrect!")
     else:
         # Create account
         print("Let´s create one!\n")
@@ -109,7 +161,7 @@ def login():
         email = input("Email: ")
         while not check_email(email):  # verifies correct email regex
             print("Please enter a valid email address!")
-            email = input("email: ")
+            email = input("Email: ")
 
         # password input
         password = getpass.getpass()
@@ -147,6 +199,10 @@ def login():
                 if not re.search("[y|Y]", input("If you want you can request a new auth. code.(Y/N) - ")):
                     return False
 
+        if not new_login(firstname, lastname, password, email, birthday):
+            print("Creating a new account failed.\n"
+                  "Please try again!")
+            return False
         print("Your registration is ready.\n"
               "If you need help please use the command 'help' or contact us!")
         return True

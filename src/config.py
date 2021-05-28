@@ -77,6 +77,16 @@ SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
 SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
 CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
 
+
+# Database connection
+DB_USERNAME = "bot"
+DB_PASSWORD = "asdfasdf"
+DB_NAME = "bot_2"
+
+# Packages
+FREE_PACKAGE_ID = 999
+
+
 if DEBUG_SETTING or args.debug:
     DEBUG = True
 
