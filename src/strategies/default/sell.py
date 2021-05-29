@@ -11,13 +11,14 @@ from src.update_globals import update_session_profit, update_volatility_cooloff
 
 
 def sell_coins():
-    from src.config import hsp_head, session_profit
     """Sell coins that have reached the STOP LOSS or TAKE PROFIT threshold."""
 
     last_prices = get_price(False)  # don't populate rolling window
     coins_sold = {}
 
     for coin in list(coins_bought):
+        from src.config import hsp_head, session_profit  # to update values
+
         TP = float(coins_bought[coin]['bought_at']) + (
                 float(coins_bought[coin]['bought_at']) * coins_bought[coin]['take_profit']) / 100
         SL = float(coins_bought[coin]['bought_at']) + (
