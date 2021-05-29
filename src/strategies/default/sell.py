@@ -36,7 +36,7 @@ def sell_coins():
 
             if DEBUG:
                 print(
-                    f"{coin} TP reached, adjusting TP {coins_bought[coin]['take_profit']:.2f}  and SL {coins_bought[coin]['stop_loss']:.2f} accordingly to lock-in profit")
+                    f"{coin} TP reached, adjusting TP {coins_bought[coin]['take_profit']:.2f} and SL {coins_bought[coin]['stop_loss']:.2f} accordingly to lock-in profit")
 
             continue
 
@@ -44,10 +44,10 @@ def sell_coins():
         if last_price < SL or (last_price > TP and not USE_TRAILING_STOP_LOSS):
             if last_price < buy_price:
                 print(
-                    f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price} : {price_change:.2f}%{txcolors.DEFAULT}")
+                    f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
             elif last_price > buy_price:
                 print(
-                    f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price} : {price_change:.2f}%{txcolors.DEFAULT}")
+                    f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
             # try to create a real order
             try:
@@ -78,14 +78,14 @@ def sell_coins():
                             1 - (TRADING_FEE * 2))  # adjust for trading fee here
                     write_log(
                         f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change - (TRADING_FEE * 2):.2f}%")
-                    update_session_profit(session_profit + (price_change - (TRADING_FEE * 2)))
+                    update_session_profit(price_change - (TRADING_FEE * 2))
             continue
 
             # no action; print once every TIME_DIFFERENCE
         if hsp_head == 1:
             if len(coins_bought) > 0:
                 print(
-                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price} : {txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est:{txcolors.SELL_PROFIT if price_change >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}{txcolors.DEFAULT}')
+                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}${txcolors.DEFAULT}')
 
         if hsp_head == 1 and len(coins_bought) == 0:
             print(f'Not holding any coins')

@@ -19,7 +19,7 @@ def pause_bot():
     # start counting for how long the bot has been paused
     start_time = time.perf_counter()
 
-    while os.path.isfile("src/signals/paused.exs"):
+    while os.path.isfile("src/signals/paused.exc"):
 
         if not bot_paused:
             if DEBUG:

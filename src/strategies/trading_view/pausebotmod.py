@@ -53,10 +53,10 @@ def do_work():
 
         paused = analyze()
         if paused:
-            with open(SIGNALS_FOLDER + '/paused.exs', 'a+') as f:
+            with open(SIGNALS_FOLDER + '/paused.exc', 'a+') as f:
                 f.write('yes')
         else:
-            if os.path.isfile(SIGNALS_FOLDER + '/paused.exs'):
-                os.remove(SIGNALS_FOLDER + '/paused.exs')
+            if os.path.isfile(SIGNALS_FOLDER + '/paused.exc'):
+                os.remove(SIGNALS_FOLDER + '/paused.exc')
 
         time.sleep((TIME_TO_WAIT * 60))
