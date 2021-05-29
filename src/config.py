@@ -77,6 +77,9 @@ DB_USERNAME = "bot"
 DB_PASSWORD = "asdfasdf"
 DB_NAME = "bot_2"
 
+# Desktop notification
+DESKTOP_NOTIFICATIONS = True
+
 # Packages
 FREE_PACKAGE_ID = 999
 
