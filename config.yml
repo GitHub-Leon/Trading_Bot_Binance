@@ -5,7 +5,6 @@ script_options:
   TEST_MODE: True
 
   LOG_TRADES: True
-  LOG_FILE: 'trades.txt'
 
 
 # These options apply to the trading methods the script executes

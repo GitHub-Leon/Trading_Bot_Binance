@@ -5,7 +5,7 @@ from datetime import datetime
 
 # local dependencies
 from src.config import client, LOG_TRADES
-from src.save_trade import write_log
+from src.helpers.scripts import logger
 
 
 def sell_all():
@@ -29,7 +29,7 @@ def sell_all():
 
             if LOG_TRADES:
                 timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
-                write_log(
+                logger.trade_log(
                     f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
 
     os.remove('../coins_bought.json')

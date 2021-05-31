@@ -7,7 +7,8 @@ __pycache__/
 *.so
 /coins_bought.json
 /test_mode_coins_bought.json
-/trades.txt
+/log/trades.log
+/log/input.log
 /.idea/
 /creds.yml
 *.exs

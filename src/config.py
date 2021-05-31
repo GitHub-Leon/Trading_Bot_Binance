@@ -8,6 +8,7 @@ from colorama import init
 from .helpers import handle_creds
 from .helpers import parameters
 
+
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
 
@@ -26,6 +27,9 @@ SIGNALS_FOLDER = 'src/signals'
 SIGNALS_FILE = 'src/signals/signalsample.exs'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
 CUSTOM_LIST_FILE = 'tickers.txt'
+TRADE_LOG_FILE = './log/trades.log'
+INPUT_LOG_FILE = './log/input.log'
+DEBUG_LOG_FILE = './log/debug.log'
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -44,7 +48,6 @@ DEBUG = False  # default False
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
-LOG_FILE = parsed_config['script_options'].get('LOG_FILE')
 DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
 
 # Load trading options
