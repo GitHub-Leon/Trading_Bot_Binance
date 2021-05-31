@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 # extensions
+/config.yml
 *.so
 /coins_bought.json
 /test_mode_coins_bought.json
@@ -11,7 +12,6 @@ __pycache__/
 /.idea/
 /creds.yml
 *.exs
-/config.yml
 
 # Distribution / packaging
 .Python
