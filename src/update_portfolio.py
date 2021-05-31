@@ -2,6 +2,7 @@ import json
 
 # local dependencies
 from src.config import coins_bought, coins_bought_file_path, STOP_LOSS, TAKE_PROFIT, DEBUG
+from src.helpers.scripts.balance_report import balance_report
 
 
 def update_portfolio(orders, last_price, volume):
@@ -25,3 +26,6 @@ def update_portfolio(orders, last_price, volume):
 
         if DEBUG:
             print(f'Order with id {orders[coin][0]["orderId"]} placed and saved to file')
+
+        # print balance report
+        balance_report()

@@ -2,12 +2,14 @@
 
 from datetime import datetime
 
-from src.classes.colors import txcolors
+from src.classes.TxColor import txcolors
 from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP_LOSS, USE_TRAILING_STOP_LOSS, \
-    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY
+    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH
 from src.save_trade import write_log
 from src.strategies.default.get_price import get_price
 from src.update_globals import update_session_profit, update_volatility_cooloff
+from src.helpers.decimals import decimals
+from src.helpers.scripts.balance_report import balance_report
 
 
 def sell_coins():
@@ -70,22 +72,24 @@ def sell_coins():
 
                 # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
                 update_volatility_cooloff(coin, datetime.now())
-                update_volatility_cooloff(coin, datetime.now())
 
                 # Log trade
                 if LOG_TRADES:
                     profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
                             1 - (TRADING_FEE * 2))  # adjust for trading fee here
                     write_log(
-                        f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change - (TRADING_FEE * 2):.2f}%")
+                        f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.{decimals()}f} {price_change - (TRADING_FEE * 2):.2f}%")
                     update_session_profit(price_change - (TRADING_FEE * 2))
+
+                # print balance report
+                balance_report()
             continue
 
             # no action; print once every TIME_DIFFERENCE
         if hsp_head == 1:
             if len(coins_bought) > 0:
                 print(
-                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}${txcolors.DEFAULT}')
+                    f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
 
         if hsp_head == 1 and len(coins_bought) == 0:
             print(f'Not holding any coins')

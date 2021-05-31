@@ -3,7 +3,7 @@
 import time
 from datetime import datetime, timedelta
 
-from src.classes.colors import txcolors
+from src.classes.TxColor import txcolors
 # local dependencies
 from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS
 from src.helpers.scripts.pause_bot import pause_bot

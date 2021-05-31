@@ -2,9 +2,10 @@
 
 import json
 
-from src.classes.colors import txcolors
+from src.classes.TxColor import txcolors
 # local dependencies
-from src.config import coins_bought, coins_bought_file_path, QUANTITY, LOG_TRADES
+from src.config import coins_bought, coins_bought_file_path, QUANTITY, LOG_TRADES, PAIR_WITH
+from src.helpers.decimals import decimals
 
 
 def remove_from_portfolio(coins_sold):
@@ -20,7 +21,7 @@ def remove_from_portfolio(coins_sold):
     if coins_sold != {} and LOG_TRADES:
         if session_profit >= 0:
             print(
-                f'Working... Session profit:{txcolors.SELL_PROFIT}{session_profit:.2f}%{txcolors.DEFAULT} Est:{txcolors.SELL_PROFIT}{(QUANTITY * session_profit) / 100:.2f}${txcolors.DEFAULT}')
+                f'Working... Session profit:{txcolors.SELL_PROFIT}{session_profit:.2f}%{txcolors.DEFAULT} Est:{txcolors.SELL_PROFIT}{(QUANTITY * session_profit) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
         if session_profit < 0:
             print(
-                f'Working... Session profit:{txcolors.SELL_LOSS}{session_profit:.2f}%{txcolors.DEFAULT} Est:{txcolors.SELL_LOSS}{(QUANTITY * session_profit) / 100:.2f}${txcolors.DEFAULT}')
+                f'Working... Session profit:{txcolors.SELL_LOSS}{session_profit:.2f}%{txcolors.DEFAULT} Est:{txcolors.SELL_LOSS}{(QUANTITY * session_profit) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')

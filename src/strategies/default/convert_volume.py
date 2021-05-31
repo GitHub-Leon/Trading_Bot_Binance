@@ -23,7 +23,6 @@ def convert_volume():
             if lot_size[coin] < 0:
                 lot_size[coin] = 0
 
-
         except Exception as e:
             if DEBUG:
                 print(e)

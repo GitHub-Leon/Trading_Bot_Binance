@@ -3,12 +3,13 @@ import time
 from datetime import timedelta
 
 # local dependencies
-from src.classes.colors import txcolors
-from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, DEBUG
+from src.classes.TxColor import txcolors
+from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, DEBUG, PAIR_WITH
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
 from src.strategies.default.sell import sell_coins
 from src.update_globals import update_bot_paused
+from src.helpers.decimals import decimals
 
 
 def pause_bot():
@@ -34,7 +35,7 @@ def pause_bot():
 
         # pausing here
         if hsp_head == 1:
-            print(f'Paused... Session profit:{session_profit:.2f}% Est:${(QUANTITY * session_profit) / 100:.2f}')
+            print(f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit)/100:.{decimals()}f} {PAIR_WITH}')
         time.sleep((TIME_DIFFERENCE * 60) / RECHECK_INTERVAL)
 
     else:

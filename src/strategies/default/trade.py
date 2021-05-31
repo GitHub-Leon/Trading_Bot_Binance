@@ -3,7 +3,7 @@
 import time
 from datetime import datetime
 
-from src.classes.colors import txcolors
+from src.classes.TxColor import txcolors
 from src.config import coins_bought, LOG_TRADES, TEST_MODE, client
 from src.save_trade import write_log
 # import local modules

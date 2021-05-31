@@ -1,4 +1,5 @@
 # The main modules that executes the script repeatedly
+import sys
 
 # local dependencies
 from src.config import bot_wait
@@ -14,12 +15,16 @@ from src.strategies.default.sell import sell_coins
 from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
 from src.update_portfolio import update_portfolio
+from src.classes.StampedOut import StampedOut
 
 
 def main():
     bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
     load_signals()  # loads signals into bot
     get_price()  # seed initial prices
+
+    sys.stdout = StampedOut()  # timestamp
+
     while True:
         orders, last_price, volume = buy()
         update_portfolio(orders, last_price, volume)

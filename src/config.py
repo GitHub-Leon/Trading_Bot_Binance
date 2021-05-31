@@ -25,7 +25,7 @@ VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
 SIGNALS_FOLDER = 'src/signals'
 SIGNALS_FILE = 'src/signals/signalsample.exs'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
-CUSTOM_LIST_FILE = 'tickers.txt'
+CUSTOM_LIST_FILE = 'tickers_ETH.txt'
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -100,7 +100,7 @@ client = Client(access_key, secret_key)
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
 if CUSTOM_LIST:
-    tickers = [line.strip() for line in open('tickers.txt')]
+    tickers = [line.strip() for line in open(CUSTOM_LIST_FILE)]
 else:
     tickers = None
 
