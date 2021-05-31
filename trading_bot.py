@@ -1,7 +1,6 @@
 # The main modules that executes the script repeatedly
 import sys
 import time
-from subprocess import Popen  # for automatic restart
 
 # local dependencies
 from src.config import bot_wait
@@ -18,6 +17,7 @@ from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
 from src.update_portfolio import update_portfolio
 from src.classes.StampedOut import StampedOut
+from src.classes.TxColor import txcolors
 
 
 def main():
@@ -36,8 +36,8 @@ def main():
                 remove_from_portfolio(coins_sold)
 
         except Exception:  # restarts bot if exception is caught (e.g. connection lost)
+            print(f'{txcolors.WARNING}Error occured! Restarting bot in 1 min{txcolors.DEFAULT}')
             time.sleep(60)  # wait 1 min before restarting bot
-            print('Error occured! Restarting bot in 1 min')
 
 
 if __name__ == '__main__':

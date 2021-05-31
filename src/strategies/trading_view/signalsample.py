@@ -10,10 +10,10 @@ from src.config import PAIR_WITH, SIGNALS_FILE, DEBUG, CUSTOM_LIST_FILE
 
 MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
-MY_FIRST_INTERVAL = Interval.INTERVAL_1_MINUTE
-MY_SECOND_INTERVAL = Interval.INTERVAL_5_MINUTES
-TA_BUY_THRESHOLD = 15  # How many of the 26 indicators to indicate a buy
-TIME_TO_WAIT = 4  # Minutes to wait between analysis
+MY_FIRST_INTERVAL = Interval.INTERVAL_5_MINUTES
+MY_SECOND_INTERVAL = Interval.INTERVAL_15_MINUTES
+TA_BUY_THRESHOLD = 16  # How many of the 26 indicators to indicate a buy
+TIME_TO_WAIT = 5  # Minutes to wait between analysis
 
 
 def analyze(pairs):
@@ -49,11 +49,12 @@ def analyze(pairs):
             first_analysis = first_handler[pair].get_analysis()
             second_analysis = second_handler[pair].get_analysis()
         except Exception as e:
-            print("Exeption:")
-            print(e)
-            print(f'Coin: {pair}')
-            print(f'First handler: {first_handler[pair]}')
-            print(f'Second handler: {second_handler[pair]}')
+            if DEBUG:
+                print("Exeption:")
+                print(e)
+                print(f'Coin: {pair}')
+                print(f'First handler: {first_handler[pair]}')
+                print(f'Second handler: {second_handler[pair]}')
             tacheckS = 0
 
         first_tacheck = first_analysis.summary['BUY']
