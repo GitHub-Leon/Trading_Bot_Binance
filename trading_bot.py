@@ -27,8 +27,6 @@ def main():
             load_signals()  # loads signals into bot
             get_price()  # seed initial prices
 
-            sys.stdout = StampedOut()  # timestamp
-
             while True:
                 orders, last_price, volume = buy()
                 update_portfolio(orders, last_price, volume)
@@ -38,11 +36,16 @@ def main():
         except Exception:  # restarts bot if exception is caught (e.g. connection lost)
             print(f'{txcolors.WARNING}Error occured! Restarting bot in 1 min{txcolors.DEFAULT}')
             time.sleep(60)  # wait 1 min before restarting bot
+            print("Trying to start again...")
+            time.sleep(5)
 
 
 if __name__ == '__main__':
     if login():  # verifies correct login data before starting the bot
         startup()  # before commands can be used
+
+        sys.stdout = StampedOut()  # timestamp
+
         while True:
             command = console_input()
             if command == "start":
