@@ -29,7 +29,7 @@ def analyze():
     try:
         analysis = handler.get_analysis()
     except Exception as e:
-        print("pausebotmod:")
+        print("Pausebot_standard:")
         print("Exception:")
         print(e)
 

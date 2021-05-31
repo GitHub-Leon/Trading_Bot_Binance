@@ -9,14 +9,14 @@ import threading
 from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER
 
 OSC_INDICATORS = ['MACD', 'Stoch.RSI', 'Mom']  # Indicators to use in Oscillator analysis
-OSC_THRESHOLD = 3  # Must be less or equal to number of items in OSC_INDICATORS
+OSC_THRESHOLD = 2  # Must be less or equal to number of items in OSC_INDICATORS
 MA_INDICATORS = ['EMA10', 'EMA20']  # Indicators to use in Moving averages analysis
 MA_THRESHOLD = 2  # Must be less or equal to number of items in MA_INDICATORS
-INTERVAL = Interval.INTERVAL_15_MINUTES  # Timeframe for analysis
+INTERVAL = Interval.INTERVAL_5_MINUTES  # Timeframe for analysis
 
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
-TIME_TO_WAIT = 3  # Minutes to wait between analysis
+TIME_TO_WAIT = 4  # Minutes to wait between analysis
 
 
 def analyze(pairs):
@@ -40,7 +40,7 @@ def analyze(pairs):
             analysis = handler[pair].get_analysis()
         except Exception as e:  # outputs exceptions and details
             if DEBUG:
-                print("Signalsample:")
+                print("Signal_standard:")
                 print("Exception:")
                 print(e)
                 print(f'Coin: {pair}')

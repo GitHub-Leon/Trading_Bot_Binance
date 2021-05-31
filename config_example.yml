@@ -7,7 +7,6 @@ script_options:
   LOG_TRADES: True
   LOG_FILE: 'trades.txt'
 
-
 # These options apply to the trading methods the script executes
 trading_options:
   # select what to pair the coins to and pull all coins paired with PAIR_WITH
@@ -19,7 +18,7 @@ trading_options:
   # Total amount per trade
   QUANTITY: 15
 
-  # Use custom tickers.txt list for filtering pairs
+  # Use custom tickers_USDT.txt list for filtering pairs
   CUSTOM_LIST: False
 
   # List of pairs to exclude
@@ -51,10 +50,10 @@ strategy_options:
     CHANGE_IN_PRICE: 2
 
     # define in % when to sell a coin that's not making a profit
-    STOP_LOSS: 1.75
+    STOP_LOSS: 1
 
     # define in % when to take profit on a profitable coin
-    TAKE_PROFIT: 2
+    TAKE_PROFIT: 0.5
 
   trailing_sl:
     # whether to use trailing stop loss or not; default is True
@@ -67,5 +66,5 @@ strategy_options:
 
   trading_view:
     SIGNALLING_MODULES:
-      - pausebotmod
-      - signalsample
+      - pausebot_standard
+      - signal_standard
