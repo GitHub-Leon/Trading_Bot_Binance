@@ -52,6 +52,7 @@ def do_work():
             exit()
 
         paused = analyze()
+
         if paused:
             with open(SIGNALS_FOLDER + '/paused.exc', 'a+') as f:
                 f.write('yes')

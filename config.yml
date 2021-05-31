@@ -39,7 +39,7 @@ trading_options:
   TIME_DIFFERENCE: 1
 
   # Number of times to check for TP/SL during each TIME_DIFFERENCE Minimum 1
-  RECHECK_INTERVAL: 8
+  RECHECK_INTERVAL: 12
 
 # Options that apply to specific strategies
 strategy_options:
@@ -48,7 +48,7 @@ strategy_options:
     USE_DEFAULT_STRATEGY: True
 
     # the difference in % between the first and second checks for the price.
-    CHANGE_IN_PRICE: 2
+    CHANGE_IN_PRICE: 5
 
     # define in % when to sell a coin that's not making a profit
     STOP_LOSS: 1
@@ -68,3 +68,4 @@ strategy_options:
   trading_view:
     SIGNALLING_MODULES:
       - signalsample
+      - custom_1

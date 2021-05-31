@@ -30,6 +30,8 @@ def sell_all():
             if LOG_TRADES:
                 timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
                 write_log(
-                    f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+                    f"{timestamp} Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
 
+    # delete files who store current coins bought
+    os.remove('../test_mode_coins_bought.json')
     os.remove('../coins_bought.json')

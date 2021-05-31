@@ -1,19 +1,19 @@
-# use for environment variables
-import os
-# used for directory handling
-import time
-
 from tradingview_ta import TA_Handler, Interval
 
+# use for environment variables
+import os
+import time
+import threading
+
 # local dependencies
-from src.config import PAIR_WITH, SIGNALS_FILE, DEBUG, CUSTOM_LIST_FILE
+from src.config import PAIR_WITH, SIGNALS_FOLDER, DEBUG, CUSTOM_LIST_FILE
 
 MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
 MY_FIRST_INTERVAL = Interval.INTERVAL_5_MINUTES
-MY_SECOND_INTERVAL = Interval.INTERVAL_15_MINUTES
-TA_BUY_THRESHOLD = 16  # How many of the 26 indicators to indicate a buy
-TIME_TO_WAIT = 5  # Minutes to wait between analysis
+MY_SECOND_INTERVAL = Interval.INTERVAL_1_MINUTE
+TA_BUY_THRESHOLD = 18  # How many of the 26 indicators to indicate a buy
+TIME_TO_WAIT = 2  # Minutes to wait between analysis
 
 
 def analyze(pairs):
@@ -24,8 +24,8 @@ def analyze(pairs):
     second_analysis = {}
     first_handler = {}
     second_handler = {}
-    if os.path.exists(SIGNALS_FILE):
-        os.remove(SIGNALS_FILE)
+    if os.path.exists(SIGNALS_FOLDER + '/signalsample.exs'):
+        os.remove(SIGNALS_FOLDER + '/signalsample.exs')
 
     for pair in pairs:
         first_handler[pair] = TA_Handler(
@@ -48,7 +48,7 @@ def analyze(pairs):
         try:
             first_analysis = first_handler[pair].get_analysis()
             second_analysis = second_handler[pair].get_analysis()
-        except Exception as e:
+        except Exception as e:  # outputs exceptions and details
             if DEBUG:
                 print("Exeption:")
                 print(e)
@@ -71,7 +71,7 @@ def analyze(pairs):
             if DEBUG:
                 print(f'Signal detected on {pair}')
 
-            with open(SIGNALS_FILE, 'a+') as f:
+            with open(SIGNALS_FOLDER + '/signalsample.exs', 'a+') as f:
                 f.write(pair + '\n')
 
     if DEBUG:
@@ -89,6 +89,9 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
+        if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
+            exit()
+
         if DEBUG:
             print(f'Analyzing {len(pairs)} coins')
 
