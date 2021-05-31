@@ -26,6 +26,3 @@ def update_portfolio(orders, last_price, volume):
 
         if DEBUG:
             print(f'Order with id {orders[coin][0]["orderId"]} placed and saved to file')
-
-        # print balance report
-        balance_report()

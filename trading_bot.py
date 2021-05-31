@@ -1,5 +1,6 @@
 # The main modules that executes the script repeatedly
 import sys
+import time
 
 # local dependencies
 from src.config import bot_wait
@@ -19,17 +20,22 @@ from src.classes.StampedOut import StampedOut
 
 
 def main():
-    bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
-    load_signals()  # loads signals into bot
-    get_price()  # seed initial prices
+    try:
+        bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
+        load_signals()  # loads signals into bot
+        get_price()  # seed initial prices
 
-    sys.stdout = StampedOut()  # timestamp
+        sys.stdout = StampedOut()  # timestamp
 
-    while True:
-        orders, last_price, volume = buy()
-        update_portfolio(orders, last_price, volume)
-        coins_sold = sell_coins()
-        remove_from_portfolio(coins_sold)
+        while True:
+            orders, last_price, volume = buy()
+            update_portfolio(orders, last_price, volume)
+            coins_sold = sell_coins()
+            remove_from_portfolio(coins_sold)
+
+    except Exception:  # restarts bot if exception is caught (e.g. connection lost)
+        time.sleep(60)  # wait 1 min before restarting bot
+        main()
 
 
 if __name__ == '__main__':
