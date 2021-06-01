@@ -9,6 +9,7 @@ __pycache__/
 /test_mode_coins_bought.json
 /log/trades.log
 /log/input.log
+/log/debug.log
 /.idea/
 /creds.yml
 *.exs
