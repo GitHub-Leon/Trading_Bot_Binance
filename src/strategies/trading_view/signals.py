@@ -15,25 +15,22 @@ def load_signals():
     debug_log("Load signals", False)
     signals = glob.glob(SIGNALS_FOLDER + "/*.exs")
 
-    try:
-        for filename in signals:
-            for line in open(filename):
-                try:
-                    os.remove(filename)
-                except:
-                    debug_log("Could not remove external signalling file", True)
-                    if DEBUG:
-                        print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
-
-        if os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
+    for filename in signals:
+        for line in open(filename):
             try:
-                os.remove(SIGNALS_FOLDER + "/paused.exc")
+                os.remove(filename)
             except:
                 debug_log("Could not remove external signalling file", True)
                 if DEBUG:
                     print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
-    except Exception as e:
-        debug_log("Error while reading and deleting signal files. Error-Message: " + str(e), True)
+
+    if os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
+        try:
+            os.remove(SIGNALS_FOLDER + "/paused.exc")
+        except:
+            debug_log("Could not remove external signalling file", True)
+            if DEBUG:
+                print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
 
     my_module = {}
 
