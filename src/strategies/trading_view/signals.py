@@ -5,7 +5,7 @@ import os
 import threading
 import time
 
-from src.classes.colors import txcolors
+from src.classes.TxColor import txcolors
 # local dependencies
 from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER
 from src.helpers.scripts.logger import debug_log

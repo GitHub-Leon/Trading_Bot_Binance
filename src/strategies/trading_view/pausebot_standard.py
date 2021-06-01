@@ -31,9 +31,6 @@ def analyze():
         analysis = handler.get_analysis()
     except Exception as e:
         debug_log("Error while pausebotmod. Error-Message:" + str(e), True)
-        print("pausebotmod:")
-        print("Exception:")
-        print(e)
 
     ma_sell = analysis.moving_averages['SELL']
     if ma_sell >= THRESHOLD:

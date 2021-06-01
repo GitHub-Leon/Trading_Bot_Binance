@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 
 # local dependencies
-from .colors import txcolors
+from .TxColor import txcolors
 
 old_out = sys.stdout
 
@@ -26,6 +26,3 @@ class StampedOut:
 
     def flush(self):
         pass
-
-
-sys.stdout = StampedOut()

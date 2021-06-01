@@ -10,10 +10,9 @@ from src.helpers.scripts import logger
 
 def sell_all():
     logger.debug_log("Trying to sell all coins", False)
-    sys.path.append('..')
-
-    try:
-        with open('../coins_bought.json', 'r') as f:
+    # sells every coin in coins_bought.json and deletes file afterwards
+    if os.path.exists('coins_bought.json'):
+        with open('coins_bought.json', 'r') as f:
             coins = json.load(f)
 
             for coin in list(coins):
@@ -34,8 +33,9 @@ def sell_all():
                     timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
                     logger.trade_log(
                         f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
-    except OSError as e:
-        logger.debug_log("Error while reading coins bought file. Error-Message: " + str(e), True)
-        return
 
-    os.remove('../coins_bought.json')
+        os.remove('coins_bought.json')
+
+    # delete test_mode_coins_bought.json
+    if os.path.exists('test_mode_coins_bought.json'):
+        os.remove('test_mode_coins_bought.json')

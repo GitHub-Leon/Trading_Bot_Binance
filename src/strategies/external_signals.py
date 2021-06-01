@@ -2,7 +2,7 @@
 import glob
 import os
 
-from src.classes.colors import txcolors
+from src.classes.TxColor import txcolors
 from src.config import DEBUG, SIGNALS_FOLDER
 from src.helpers.scripts.logger import debug_log
 

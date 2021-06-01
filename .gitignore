@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 # extensions
+/config.yml
 *.so
 /coins_bought.json
 /test_mode_coins_bought.json
@@ -135,3 +136,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+config.yml

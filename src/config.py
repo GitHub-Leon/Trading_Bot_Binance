@@ -16,17 +16,8 @@ global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paus
 args = parameters.parse_args()
 mymodule = {}
 
-# Paths
-WELCOME_TEXT_FILE = 'src/console/output/welcome.txt'
-EMAIL_REGEX_FILE = './src/helpers/email_regex.txt'
-PASSWORD_REGEX_FILE = './src/helpers/password_regex.txt'
-BIRTHDAY_REGEX_FILE = './src/helpers/birthday_regex.txt'
-VERIFICATION_MAIL_PLAIN_TEXT_FILE = './src/helpers/mail_verification_plain.txt'
-VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
-SIGNALS_FOLDER = 'src/signals'
-SIGNALS_FILE = 'src/signals/signalsample.exs'
-TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
-CUSTOM_LIST_FILE = 'tickers.txt'
+DEBUG = False  # default False
+
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -40,7 +31,6 @@ parsed_config = parameters.load_config(config_file)
 parsed_creds = parameters.load_config(creds_file)
 parsed_auth = parameters.load_config(auth_file)
 
-DEBUG = False  # default False
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
@@ -72,6 +62,18 @@ SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
 SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
 CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
 
+# Paths
+WELCOME_TEXT_FILE = 'src/console/output/welcome.txt'
+EMAIL_REGEX_FILE = './src/helpers/email_regex.txt'
+PASSWORD_REGEX_FILE = './src/helpers/password_regex.txt'
+BIRTHDAY_REGEX_FILE = './src/helpers/birthday_regex.txt'
+VERIFICATION_MAIL_PLAIN_TEXT_FILE = './src/helpers/mail_verification_plain.txt'
+VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
+SIGNALS_FOLDER = 'src/signals'
+TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
+CUSTOM_LIST_FILE = 'tickers_' + PAIR_WITH + '.txt'
+
+
 # Database connection
 DB_USERNAME = "bot"
 DB_PASSWORD = "asdfasdf"
@@ -100,7 +102,7 @@ client = Client(access_key, secret_key)
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
 if CUSTOM_LIST:
-    tickers = [line.strip() for line in open('tickers.txt')]
+    tickers = [line.strip() for line in open(CUSTOM_LIST_FILE)]
 else:
     tickers = None
 

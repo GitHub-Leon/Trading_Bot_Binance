@@ -14,12 +14,13 @@ from email.mime.text import MIMEText
 # generate auth. code
 import vcode
 
-from src.check_package import check_package
 # Local dependencies
+from src.check_package import check_package
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
 from src.helpers.database_connection import connect_to_database  # Database
 from src.helpers.scripts.logger import debug_log
+from src.classes.TxColor import txcolors
 
 
 # functionalities
@@ -185,11 +186,11 @@ def login():
     except OSError as e:
         debug_log(str(e), True)
 
-    print("SignIn with your email and password.\n"
-          "Password isn´t shown because of safety.\n")
+    print(f"{txcolors.WARNING}SignIn with your email and password.\n{txcolors.DEFAULT}"
+          f"{txcolors.WARNING}Password isn´t shown because of safety.\n{txcolors.DEFAULT}")
 
     # ask about username and password and creates an account if the user doesn´t have one.
-    if re.search("[y|Y]", input("Do you already have an account?(Y/N) - ")):
+    if re.search("[y|Y]", input(f"Do you already have an account?(Y/N) - ")):
         while True:
             debug_log("Ask for email", False)
             email = input("Email: ")
@@ -198,7 +199,7 @@ def login():
 
             if email == "admin" and pw == "admin":
                 debug_log("Admin logged in", False)
-                print("Welcome admin!")
+                print(f"{txcolors.WARNING}Welcome admin!{txcolors.DEFAULT}")
                 return True
 
             if check_login(email, pw):
@@ -208,11 +209,11 @@ def login():
                 return True
 
             debug_log("Email or password is incorrect", False)
-            print("Email or Password is incorrect!")
+            print(f"{txcolors.WARNING}Email or Password is incorrect!{txcolors.DEFAULT}")
     else:
         # Create account
         debug_log("Create Account", False)
-        print("Let´s create one!\n")
+        print(f"{txcolors.WARNING}Let´s create one!\n{txcolors.DEFAULT}")
 
         debug_log("Ask for first and last name", False)
         firstname = input("Tell us your first name! - ")
@@ -223,7 +224,7 @@ def login():
         email = input("Email: ")
         while not check_email(email):  # verifies correct email regex
             debug_log("Invalid email", False)
-            print("Please enter a valid email address!")
+            print(f"{txcolors.WARNING}Please enter a valid email address!{txcolors.DEFAULT}")
             email = input("Email: ")
 
         # password input
@@ -231,7 +232,7 @@ def login():
         password = getpass.getpass()
         while not check_password(password):  # verifies correct password regex
             debug_log("Invalid password", False)
-            print("The Password must contain at least one letter, one digit and a minimum of eight characters ")
+            print(f"{txcolors.WARNING}The Password must contain at least one letter, one digit and a minimum of eight characters {txcolors.DEFAULT}")
             password = getpass.getpass()
 
         # birthday input
@@ -239,7 +240,7 @@ def login():
         birthday = input("Please tell us you birthday!(DD/MM/YYYY) - ")
         while not check_birthday(birthday):  # verifies correct birthday regex
             debug_log("Invalid Birthday", False)
-            print("Please enter a valid birthday!")
+            print(f"{txcolors.WARNING}Please enter a valid birthday!{txcolors.DEFAULT}")
             birthday = input("Please tell us your birthday! (DD/MM/YYYY) - ")
 
         # Sends auth. Mail
@@ -248,8 +249,8 @@ def login():
         while send_verification_code != user_given_auth_code:
             debug_log("Send verification code to email", False)
             send_verification_code = send_mail_verification(email, firstname, lastname)
-            print("\nPlease check your mailbox and verify you account!\n"
-                  "The code is only " + str(round(CODE_EXPIRE_DURATION / 60, 0)) + " minutes valid.")
+            print(f"{txcolors.WARNING}\nPlease check your mailbox and verify you account!\n{txcolors.DEFAULT}"
+                  f"{txcolors.WARNING}The code is only{txcolors.DEFAULT} " + str(round(CODE_EXPIRE_DURATION / 60, 0)) + f" {txcolors.WARNING}minutes valid.{txcolors.DEFAULT}")
 
             start_time = time.time()
 
@@ -266,19 +267,19 @@ def login():
 
             if not time.time() - start_time < CODE_EXPIRE_DURATION:
                 debug_log("Verification code is inactive", False)
-                print("Seems like the auth. code isn´t active anymore.")
+                print(f"{txcolors.WARNING}Seems like the auth. code isn´t active anymore.{txcolors.DEFAULT}")
                 user_given_auth_code = "x"
-                if not re.search("[y|Y]", input("If you want you can request a new auth. code.(Y/N) - ")):
+                if not re.search("[y|Y]", input(f"If you want you can request a new auth. code.(Y/N) - ")):
                     return False
                 debug_log("User wants a new verification code", False)
 
         if not new_login(firstname, lastname, password, email, birthday):
             debug_log("New account creation failed", False)
-            print("Creating a new account failed.\n"
-                  "Please try again!")
+            print(f"{txcolors.WARNING}Creating a new account failed.\n{txcolors.DEFAULT}"
+                  f"{txcolors.WARNING}Please try again!{txcolors.DEFAULT}")
             return False
 
         debug_log("Registration is ready", False)
-        print("Your registration is ready.\n"
-              "If you need help please use the command 'help' or contact us!")
+        print(f"{txcolors.WARNING}Your registration is ready.\n{txcolors.DEFAULT}"
+              f"{txcolors.WARNING}If you need help please use the command 'help' or contact us!{txcolors.DEFAULT}")
         return True

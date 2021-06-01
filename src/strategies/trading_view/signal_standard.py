@@ -1,18 +1,18 @@
-# use for environment variables
-import os
-# used for directory handling
-import time
-
 from tradingview_ta import TA_Handler, Interval
 
+# use for environment variables
+import os
+import time
+import threading
+
 # local dependencies
-from src.config import PAIR_WITH, SIGNALS_FILE, DEBUG, CUSTOM_LIST_FILE
+from src.config import PAIR_WITH, SIGNALS_FOLDER, DEBUG, CUSTOM_LIST_FILE
 from src.helpers.scripts.logger import debug_log
 
 MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
-MY_FIRST_INTERVAL = Interval.INTERVAL_1_MINUTE
-MY_SECOND_INTERVAL = Interval.INTERVAL_5_MINUTES
+MY_FIRST_INTERVAL = Interval.INTERVAL_5_MINUTES
+MY_SECOND_INTERVAL = Interval.INTERVAL_1_MINUTE
 TA_BUY_THRESHOLD = 18  # How many of the 26 indicators to indicate a buy
 TIME_TO_WAIT = 4  # Minutes to wait between analysis
 
@@ -26,8 +26,8 @@ def analyze(pairs):
     second_analysis = {}
     first_handler = {}
     second_handler = {}
-    if os.path.exists(SIGNALS_FILE):
-        os.remove(SIGNALS_FILE)
+    if os.path.exists(SIGNALS_FOLDER + '/signal_standard.exs'):
+        os.remove(SIGNALS_FOLDER + '/signal_standard.exs')
 
     for pair in pairs:
         first_handler[pair] = TA_Handler(
@@ -52,11 +52,6 @@ def analyze(pairs):
             second_analysis = second_handler[pair].get_analysis()
         except Exception as e:
             debug_log(f"Error while getting analysis. Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}", True)
-            print("Exeption:")
-            print(e)
-            print(f'Coin: {pair}')
-            print(f'First handler: {first_handler[pair]}')
-            print(f'Second handler: {second_handler[pair]}')
             tacheckS = 0
 
         first_tacheck = first_analysis.summary['BUY']
@@ -76,7 +71,7 @@ def analyze(pairs):
                 print(f'Signal detected on {pair}')
 
             try:
-                with open(SIGNALS_FILE, 'a+') as f:
+                with open(SIGNALS_FOLDER + '/signal_standard.exs', 'a+') as f:
                     f.write(pair + '\n')
             except OSError as e:
                 debug_log("Error while writing to signals file. Error-Message: " + str(e), True)
@@ -97,6 +92,9 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
+        if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
+            exit()
+
         debug_log(f'Analyzing {len(pairs)} coins', False)
         if DEBUG:
             print(f'Analyzing {len(pairs)} coins')
