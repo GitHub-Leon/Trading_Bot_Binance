@@ -9,27 +9,32 @@ from src.helpers.scripts import logger
 
 
 def sell_all():
+    logger.debug_log("Trying to sell all coins", False)
     sys.path.append('..')
 
-    with open('../coins_bought.json', 'r') as f:
-        coins = json.load(f)
+    try:
+        with open('../coins_bought.json', 'r') as f:
+            coins = json.load(f)
 
-        for coin in list(coins):
-            sell_coin = client.create_order(
-                symbol=coin,
-                side='SELL',
-                type='MARKET',
-                quantity=coins[coin]['volume']
-            )
+            for coin in list(coins):
+                sell_coin = client.create_order(
+                    symbol=coin,
+                    side='SELL',
+                    type='MARKET',
+                    quantity=coins[coin]['volume']
+                )
 
-            buy_price = float(coins[coin]['bought_at'])
-            last_price = float(sell_coin['fills'][0]['price'])
-            profit = (last_price - buy_price) * coins[coin]['volume']
-            price_change = float((last_price - buy_price) / buy_price * 100)
+                buy_price = float(coins[coin]['bought_at'])
+                last_price = float(sell_coin['fills'][0]['price'])
+                profit = (last_price - buy_price) * coins[coin]['volume']
+                price_change = float((last_price - buy_price) / buy_price * 100)
 
-            if LOG_TRADES:
-                timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
-                logger.trade_log(
-                    f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+                if LOG_TRADES:
+                    logger.debug_log("Log trades in log file", False)
+                    timestamp = datetime.now().strftime("%d/%m %H:%M:%S")
+                    logger.trade_log(
+                        f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+    except OSError as e:
+        logger.debug_log("Error while reading coins bought file. Error-Message: " + str(e), True)
 
     os.remove('../coins_bought.json')
