@@ -12,7 +12,7 @@ MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
 MY_FIRST_INTERVAL = Interval.INTERVAL_5_MINUTES
 MY_SECOND_INTERVAL = Interval.INTERVAL_1_MINUTE
-TA_BUY_THRESHOLD = 17  # How many of the 26 indicators to indicate a buy
+TA_BUY_THRESHOLD = 18  # How many of the 26 indicators to indicate a buy
 TIME_TO_WAIT = 4  # Minutes to wait between analysis
 
 

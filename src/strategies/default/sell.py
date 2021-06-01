@@ -44,10 +44,10 @@ def sell_coins():
 
         # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case
         if last_price < SL or (last_price > TP and not USE_TRAILING_STOP_LOSS):
-            if last_price/buy_price - TRADING_FEE*2 < 1:
+            if price_change - (TRADING_FEE * 2) < 0:
                 print(
                     f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-            elif last_price/buy_price - TRADING_FEE*2 < 1:
+            elif price_change - (TRADING_FEE * 2) >= 0:
                 print(
                     f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
