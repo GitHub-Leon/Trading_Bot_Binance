@@ -4,6 +4,7 @@ import time
 
 from tradingview_ta import TA_Handler, Interval
 
+# local dependencies
 from src.config import SIGNALS_FOLDER
 from src.helpers.scripts.logger import debug_log
 
@@ -35,11 +36,15 @@ def analyze():
     ma_sell = analysis.moving_averages['SELL']
     if ma_sell >= THRESHOLD:
         paused = True
-        debug_log(f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup', False)
+        debug_log(
+            f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup',
+            False)
         print(
             f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup')
     else:
-        debug_log(f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ', False)
+        debug_log(
+            f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ',
+            False)
         print(
             f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ')
         paused = False

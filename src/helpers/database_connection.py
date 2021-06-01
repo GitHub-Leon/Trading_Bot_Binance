@@ -1,5 +1,6 @@
 import mysql.connector
 
+# local dependencies
 from src.config import DB_USERNAME, DB_PASSWORD, DB_NAME
 from src.helpers.scripts.logger import debug_log
 

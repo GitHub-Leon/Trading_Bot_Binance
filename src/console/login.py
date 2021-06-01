@@ -14,13 +14,13 @@ from email.mime.text import MIMEText
 # generate auth. code
 import vcode
 
-# Local dependencies
+# local dependencies
 from src.check_package import check_package
+from src.classes.TxColor import txcolors
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
 from src.helpers.database_connection import connect_to_database  # Database
 from src.helpers.scripts.logger import debug_log
-from src.classes.TxColor import txcolors
 
 
 # functionalities
@@ -232,7 +232,8 @@ def login():
         password = getpass.getpass()
         while not check_password(password):  # verifies correct password regex
             debug_log("Invalid password", False)
-            print(f"{txcolors.WARNING}The Password must contain at least one letter, one digit and a minimum of eight characters {txcolors.DEFAULT}")
+            print(
+                f"{txcolors.WARNING}The Password must contain at least one letter, one digit and a minimum of eight characters {txcolors.DEFAULT}")
             password = getpass.getpass()
 
         # birthday input
@@ -250,7 +251,8 @@ def login():
             debug_log("Send verification code to email", False)
             send_verification_code = send_mail_verification(email, firstname, lastname)
             print(f"{txcolors.WARNING}\nPlease check your mailbox and verify you account!\n{txcolors.DEFAULT}"
-                  f"{txcolors.WARNING}The code is only{txcolors.DEFAULT} " + str(round(CODE_EXPIRE_DURATION / 60, 0)) + f" {txcolors.WARNING}minutes valid.{txcolors.DEFAULT}")
+                  f"{txcolors.WARNING}The code is only{txcolors.DEFAULT} " + str(
+                round(CODE_EXPIRE_DURATION / 60, 0)) + f" {txcolors.WARNING}minutes valid.{txcolors.DEFAULT}")
 
             start_time = time.time()
 

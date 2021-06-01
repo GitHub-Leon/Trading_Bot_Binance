@@ -3,8 +3,14 @@ import sys
 import time
 
 # local dependencies
-from src.helpers.scripts.logger import debug_log
+from src.classes.StampedOut import StampedOut
+from src.classes.TxColor import txcolors
 from src.config import bot_wait
+from src.console.input import processing_input
+from src.console.input.console_input import console_input
+from src.console.login import login
+from src.console.output.before_start import print_before_start
+from src.helpers.scripts.logger import debug_log
 from src.helpers.scripts.sell_all_coins import sell_all
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
@@ -12,12 +18,6 @@ from src.strategies.default.sell import sell_coins
 from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
 from src.update_portfolio import update_portfolio
-from src.console.input.console_input import console_input
-from src.console.login import login
-from src.console.output.before_start import print_before_start
-from src.console.input import processing_input
-from src.classes.StampedOut import StampedOut
-from src.classes.TxColor import txcolors
 
 
 def main():

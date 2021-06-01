@@ -1,6 +1,6 @@
 import os
 
-# Local Dependencies
+# local dependencies
 from src.config import DEFAULT_CONFIG_FILE
 from src.helpers.scripts.logger import debug_log
 

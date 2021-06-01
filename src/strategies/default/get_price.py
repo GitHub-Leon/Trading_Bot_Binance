@@ -4,8 +4,8 @@ from datetime import datetime
 
 # local dependencies
 from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL
-from src.update_globals import update_hsp_head, update_historical_prices
 from src.helpers.scripts.logger import debug_log
+from src.update_globals import update_hsp_head, update_historical_prices
 
 
 def get_price(add_to_historical=True):

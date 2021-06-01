@@ -1,6 +1,6 @@
 from win10toast_click import ToastNotifier
 
-# Local dependencies
+# local dependencies
 from src.config import DESKTOP_NOTIFICATIONS
 from src.helpers.scripts.logger import debug_log
 
@@ -18,7 +18,8 @@ def desktop_notify(title, message, click_callback_func):
         message,  # message
         icon_path="./img/icon.ico",  # 'icon_path'
         duration=10,  # for how many seconds toast should be visible; None = leave notification in Notification Center
-        threaded=True,  # True = run other code in parallel; False = code execution will wait till notification disappears
+        threaded=True,
+        # True = run other code in parallel; False = code execution will wait till notification disappears
         callback_on_click=click_callback_func  # click notification to run function
     )
     return True

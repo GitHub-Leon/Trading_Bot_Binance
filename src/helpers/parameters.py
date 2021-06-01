@@ -1,9 +1,9 @@
 import argparse
+
 import yaml
 
-# local dependencices
+# local dependencies
 from src.helpers.scripts.logger import debug_log
-
 
 DEFAULT_SETTINGS_FILE = 'settings.json'
 

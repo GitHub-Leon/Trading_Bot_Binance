@@ -1,9 +1,10 @@
-from src.console.output.help import helps
-from src.settings import settings
+# local dependencies
 from src.console.output.exit import init_exit
+from src.console.output.help import helps
 from src.helpers.scripts import logger
-from trading_bot import startup
 from src.helpers.scripts.logger import debug_log
+from src.settings import settings
+from trading_bot import startup
 
 
 def input_check(command):
@@ -32,4 +33,3 @@ def logging(command, is_valid):
     if not is_valid:
         print("Invalid command")
     logger.input_log(command, is_valid)
-

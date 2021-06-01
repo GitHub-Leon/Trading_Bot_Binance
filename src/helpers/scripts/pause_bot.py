@@ -5,12 +5,12 @@ from datetime import timedelta
 # local dependencies
 from src.classes.TxColor import txcolors
 from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, DEBUG, PAIR_WITH
+from src.helpers.decimals import decimals
+from src.helpers.scripts.logger import debug_log
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
 from src.strategies.default.sell import sell_coins
 from src.update_globals import update_bot_paused
-from src.helpers.scripts.logger import debug_log
-from src.helpers.decimals import decimals
 
 
 def pause_bot():
@@ -25,7 +25,9 @@ def pause_bot():
     while os.path.isfile("src/signals/paused.exc"):
 
         if not bot_paused:
-            debug_log("Pausing buying due to change in market conditions, stop loss and take profit will continue to work...", False)
+            debug_log(
+                "Pausing buying due to change in market conditions, stop loss and take profit will continue to work...",
+                False)
             if DEBUG:
                 print(
                     f'{txcolors.WARNING}Pausing buying due to change in market conditions, stop loss and take profit will continue to work...{txcolors.DEFAULT}')
@@ -40,8 +42,11 @@ def pause_bot():
         # pausing here
         debug_log("Bot is pausing", False)
         if hsp_head == 1:
-            debug_log(f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit)/100:.{decimals()}f} {PAIR_WITH}', False)
-            print(f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit)/100:.{decimals()}f} {PAIR_WITH}')
+            debug_log(
+                f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit) / 100:.{decimals()}f} {PAIR_WITH}',
+                False)
+            print(
+                f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit) / 100:.{decimals()}f} {PAIR_WITH}')
         time.sleep((TIME_DIFFERENCE * 60) / RECHECK_INTERVAL)
 
     else:

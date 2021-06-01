@@ -4,7 +4,8 @@ from src.config import PAIR_WITH
 
 def is_fiat():
     # check if we are using a fiat as a base currency
-    fiats = ['USDT', 'BUSD', 'AUD', 'BRL', 'EUR', 'GBP', 'RUB', 'TRY', 'TUSD', 'USDC', 'PAX', 'BIDR', 'DAI', 'IDRT', 'UAH', 'NGN', 'VAI', 'BVND']
+    fiats = ['USDT', 'BUSD', 'AUD', 'BRL', 'EUR', 'GBP', 'RUB', 'TRY', 'TUSD', 'USDC', 'PAX', 'BIDR', 'DAI', 'IDRT',
+             'UAH', 'NGN', 'VAI', 'BVND']
 
     if PAIR_WITH in fiats:
         return True

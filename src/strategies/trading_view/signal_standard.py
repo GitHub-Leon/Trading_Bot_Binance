@@ -1,9 +1,9 @@
-from tradingview_ta import TA_Handler, Interval
-
 # use for environment variables
 import os
-import time
 import threading
+import time
+
+from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
 from src.config import PAIR_WITH, SIGNALS_FOLDER, DEBUG, CUSTOM_LIST_FILE
@@ -51,7 +51,9 @@ def analyze(pairs):
             first_analysis = first_handler[pair].get_analysis()
             second_analysis = second_handler[pair].get_analysis()
         except Exception as e:
-            debug_log(f"Error while getting analysis. Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}", True)
+            debug_log(
+                f"Error while getting analysis. Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}",
+                True)
             tacheckS = 0
 
         first_tacheck = first_analysis.summary['BUY']

@@ -1,7 +1,7 @@
-from datetime import datetime
 import os
+from datetime import datetime
 
-# Local Vars
+# local dependencies
 from src.config_log import TRADE_LOG_FILE, INPUT_LOG_FILE, DEBUG_LOG_FILE
 
 os.mkdir("log")

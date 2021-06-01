@@ -8,7 +8,6 @@ from colorama import init
 from .helpers import handle_creds
 from .helpers import parameters
 
-
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
 
@@ -17,7 +16,6 @@ args = parameters.parse_args()
 mymodule = {}
 
 DEBUG = False  # default False
-
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -30,7 +28,6 @@ auth_file = args.config if args.config else DEFAULT_CONFIG_AUTH_FILE
 parsed_config = parameters.load_config(config_file)
 parsed_creds = parameters.load_config(creds_file)
 parsed_auth = parameters.load_config(auth_file)
-
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
@@ -72,7 +69,6 @@ VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
 SIGNALS_FOLDER = 'src/signals'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
 CUSTOM_LIST_FILE = 'tickers_' + PAIR_WITH + '.txt'
-
 
 # Database connection
 DB_USERNAME = "bot"
