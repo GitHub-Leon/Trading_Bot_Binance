@@ -8,11 +8,11 @@ import threading
 # local dependencies
 from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER
 
-OSC_INDICATORS = ['MACD', 'Stoch.RSI', 'Mom']  # Indicators to use in Oscillator analysis
-OSC_THRESHOLD = 3  # Must be less or equal to number of items in OSC_INDICATORS
-MA_INDICATORS = ['EMA10', 'EMA20']  # Indicators to use in Moving averages analysis
+OSC_INDICATORS = ['Stoch.RSI']  # Indicators to use in Oscillator analysis
+OSC_THRESHOLD = 1  # Must be less or equal to number of items in OSC_INDICATORS
+MA_INDICATORS = ['MA100', 'EMA100']  # Indicators to use in Moving averages analysis
 MA_THRESHOLD = 2  # Must be less or equal to number of items in MA_INDICATORS
-INTERVAL = Interval.INTERVAL_5_MINUTES  # Timeframe for analysis
+INTERVAL = Interval.INTERVAL_15_MINUTES  # Timeframe for analysis
 
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
@@ -24,8 +24,8 @@ def analyze(pairs):
     analysis = {}
     handler = {}
 
-    if os.path.exists(SIGNALS_FOLDER + '/custom_1.exs'):
-        os.remove(SIGNALS_FOLDER + '/custom_1.exs')
+    if os.path.exists(SIGNALS_FOLDER + '/custom_2.exs'):
+        os.remove(SIGNALS_FOLDER + '/custom_2.exs')
 
     for pair in pairs:
         handler[pair] = TA_Handler(
@@ -40,7 +40,7 @@ def analyze(pairs):
             analysis = handler[pair].get_analysis()
         except Exception as e:  # outputs exceptions and details
             if DEBUG:
-                print("Custom_1:")
+                print("Custom_2:")
                 print("Exception:")
                 print(e)
                 print(f'Coin: {pair}')
@@ -58,16 +58,16 @@ def analyze(pairs):
 
         if DEBUG:
             print(
-                f'Custom_1:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}')
+                f'Custom_2:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}')
 
         if oscCheck >= OSC_THRESHOLD and maCheck >= MA_THRESHOLD:  # writes the coins that should be bought in a file
             signal_coins[pair] = pair
 
             if DEBUG:
                 print(
-                    f'Custom_1: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
+                    f'Custom_2: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
 
-            with open(SIGNALS_FOLDER + '/custom_1.exs', 'a+') as f:
+            with open(SIGNALS_FOLDER + '/custom_2.exs', 'a+') as f:
                 f.write(pair + '\n')
 
     return signal_coins
@@ -86,12 +86,12 @@ def do_work():
             exit()
 
         if DEBUG:
-            print(f'Custom_1: Analyzing {len(pairs)} coins')
+            print(f'Custom_2: Analyzing {len(pairs)} coins')
 
         signal_coins = analyze(pairs)
 
         if DEBUG:
             print(
-                f'Custom_1: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
+                f'Custom_2: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
 
         time.sleep((TIME_TO_WAIT * 60))

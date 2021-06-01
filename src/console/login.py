@@ -14,11 +14,12 @@ from email.mime.text import MIMEText
 # generate auth. code
 import vcode
 
-from src.check_package import check_package
 # Local dependencies
+from src.check_package import check_package
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
     PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
 from src.helpers.database_connection import connect_to_database  # Database
+from src.classes.TxColor import txcolors
 
 
 # functionalities
@@ -133,76 +134,76 @@ def user_exist(email):
 def login():
     print(open(WELCOME_TEXT_FILE, "r").read())
 
-    print("SignIn with your email and password.\n"
-          "Password isn´t shown because of safety.\n")
+    print(f"{txcolors.WARNING}SignIn with your email and password.\n{txcolors.DEFAULT}"
+          f"{txcolors.WARNING}Password isn´t shown because of safety.\n{txcolors.DEFAULT}")
 
     # ask about username and password and creates an account if the user doesn´t have one.
-    if re.search("[y|Y]", input("Do you already have an account?(Y/N) - ")):
+    if re.search("[y|Y]", input(f"Do you already have an account?(Y/N) - ")):
         while True:
-            email = input("Email: ")
+            email = input(f"Email: ")
             pw = getpass.getpass()
 
             if email == "admin" and pw == "admin":
-                print("Welcome admin!")
+                print(f"{txcolors.WARNING}Welcome admin!{txcolors.DEFAULT}")
                 return True
 
             if check_login(email, pw):
                 check_package(email)
                 return True
-            print("Email or Password is incorrect!")
+            print(f"{txcolors.WARNING}Email or Password is incorrect!{txcolors.DEFAULT}")
     else:
         # Create account
-        print("Let´s create one!\n")
+        print(f"{txcolors.WARNING}Let´s create one!\n{txcolors.DEFAULT}")
 
-        firstname = input("Tell us your first name! - ")
-        lastname = input("Tell us your last name! - ")
+        firstname = input(f"Tell us your first name! - ")
+        lastname = input(f"Tell us your last name! - ")
 
         # email input
-        email = input("Email: ")
+        email = input(f"Email: ")
         while not check_email(email):  # verifies correct email regex
-            print("Please enter a valid email address!")
-            email = input("Email: ")
+            print(f"{txcolors.WARNING}Please enter a valid email address!{txcolors.DEFAULT}")
+            email = input(f"Email: ")
 
         # password input
         password = getpass.getpass()
         while not check_password(password):  # verifies correct password regex
-            print("The Password must contain at least one letter, one digit and a minimum of eight characters ")
+            print(f"{txcolors.WARNING}The Password must contain at least one letter, one digit and a minimum of eight characters {txcolors.DEFAULT}")
             password = getpass.getpass()
 
         # birthday input
-        birthday = input("Please tell us you birthday!(DD/MM/YYYY) - ")
+        birthday = input(f"Please tell us you birthday!(DD/MM/YYYY) - ")
         while not check_birthday(birthday):  # verifies correct birthday regex
-            print("Please enter a valid birthday!")
-            birthday = input("Please tell us your birthday! (DD/MM/YYYY) - ")
+            print(f"{txcolors.WARNING}Please enter a valid birthday!{txcolors.DEFAULT}")
+            birthday = input(f"Please tell us your birthday! (DD/MM/YYYY) - ")
 
         # Sends auth. Mail
         send_verification_code = "send_code"
         user_given_auth_code = "user_code"
         while send_verification_code != user_given_auth_code:
             send_verification_code = send_mail_verification(email, firstname, lastname)
-            print("\nPlease check your mailbox and verify you account!\n"
-                  "The code is only " + str(round(CODE_EXPIRE_DURATION / 60, 0)) + " minutes valid.")
+            print(f"{txcolors.WARNING}\nPlease check your mailbox and verify you account!\n{txcolors.DEFAULT}"
+                  f"{txcolors.WARNING}The code is only{txcolors.DEFAULT} " + str(round(CODE_EXPIRE_DURATION / 60, 0)) + f" {txcolors.WARNING}minutes valid.{txcolors.DEFAULT}")
 
             start_time = time.time()
 
             # Check if user auth. was a success
-            user_given_auth_code = input("Enter your Verification Code! - ")
+            user_given_auth_code = input(f"Enter your Verification Code! - ")
 
             while send_verification_code != user_given_auth_code and time.time() - start_time < CODE_EXPIRE_DURATION:
-                user_given_auth_code = input("Please check your auth. code again! Or exit(x) - ")
+                user_given_auth_code = input(f"Please check your auth. code again! Or exit(x) - ")
                 if re.search("[x|X]", user_given_auth_code):
                     return False
 
             if not time.time() - start_time < CODE_EXPIRE_DURATION:
-                print("Seems like the auth. code isn´t active anymore.")
+                print(f"{txcolors.WARNING}Seems like the auth. code isn´t active anymore.{txcolors.DEFAULT}")
                 user_given_auth_code = "x"
-                if not re.search("[y|Y]", input("If you want you can request a new auth. code.(Y/N) - ")):
+                if not re.search("[y|Y]", input(f"If you want you can request a new auth. code.(Y/N) - ")):
                     return False
 
         if not new_login(firstname, lastname, password, email, birthday):
-            print("Creating a new account failed.\n"
-                  "Please try again!")
+            print(f"{txcolors.WARNING}Creating a new account failed.\n{txcolors.DEFAULT}"
+                  f"{txcolors.WARNING}Please try again!{txcolors.DEFAULT}")
             return False
-        print("Your registration is ready.\n"
-              "If you need help please use the command 'help' or contact us!")
+        print(f"{txcolors.WARNING}Your registration is ready.\n{txcolors.DEFAULT}"
+              f"{txcolors.WARNING}If you need help please use the command 'help' or contact us!{txcolors.DEFAULT}")
         return True
