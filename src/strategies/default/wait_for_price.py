@@ -44,7 +44,6 @@ def wait_for_price():
     for coin in historical_prices[hsp_head]:
 
         # minimum and maximum prices over time period
-        debug_log("Minimum and maximum prices over time period", False)
         min_price = min(historical_prices, key=lambda x: float("inf") if x is None else float(x[coin]['price']))
         max_price = max(historical_prices, key=lambda x: -1 if x is None else float(x[coin]['price']))
 

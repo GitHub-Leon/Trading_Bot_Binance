@@ -1,7 +1,7 @@
 from datetime import datetime
 
 # Local Vars
-from src.config import TRADE_LOG_FILE, INPUT_LOG_FILE, DEBUG_LOG_FILE
+from src.config_log import TRADE_LOG_FILE, INPUT_LOG_FILE, DEBUG_LOG_FILE
 
 
 def trade_log(logline):
@@ -32,3 +32,6 @@ def debug_log(logline, is_error):
     except:
         return False
     return True
+
+
+debug_log("------------------------- START -------------------------", False)

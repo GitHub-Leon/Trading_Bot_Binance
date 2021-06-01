@@ -1,6 +1,7 @@
 # The main modules that executes the script repeatedly
 
 # local dependencies
+from src.helpers.scripts.logger import debug_log
 from src.config import bot_wait
 from src.helpers.scripts.sell_all_coins import sell_all
 from src.remove_coins import remove_from_portfolio
@@ -13,7 +14,6 @@ from src.console.input.console_input import console_input
 from src.console.login import login
 from src.console.output.before_start import print_before_start
 from src.console.input import processing_input
-from src.helpers.scripts.logger import debug_log
 
 
 def main():
@@ -37,7 +37,7 @@ def startup():
 
 
 if __name__ == '__main__':
-    debug_log("------------------------- START -------------------------", False)
+    debug_log("------------------------- START_BOT -------------------------", False)
     if login():  # verifies correct login data before starting the bot
         print_before_start()  # before commands can be used
         while True:

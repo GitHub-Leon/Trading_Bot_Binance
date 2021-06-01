@@ -27,9 +27,6 @@ SIGNALS_FOLDER = 'src/signals'
 SIGNALS_FILE = 'src/signals/signalsample.exs'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
 CUSTOM_LIST_FILE = 'tickers.txt'
-TRADE_LOG_FILE = './log/trades.log'
-INPUT_LOG_FILE = './log/input.log'
-DEBUG_LOG_FILE = './log/debug.log'
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'

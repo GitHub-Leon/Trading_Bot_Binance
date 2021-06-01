@@ -36,5 +36,6 @@ def sell_all():
                         f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
     except OSError as e:
         logger.debug_log("Error while reading coins bought file. Error-Message: " + str(e), True)
+        return
 
     os.remove('../coins_bought.json')
