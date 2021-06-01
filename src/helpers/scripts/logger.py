@@ -4,7 +4,9 @@ from datetime import datetime
 # local dependencies
 from src.config_log import TRADE_LOG_FILE, INPUT_LOG_FILE, DEBUG_LOG_FILE
 
-os.mkdir("log")
+
+if not os.path.exists('log'):  # only create folder, if it does not exist already
+    os.mkdir('log')
 
 
 def trade_log(logline):
