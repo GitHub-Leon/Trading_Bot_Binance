@@ -10,7 +10,7 @@ from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER
 
 OSC_INDICATORS = ['Stoch.RSI']  # Indicators to use in Oscillator analysis
 OSC_THRESHOLD = 1  # Must be less or equal to number of items in OSC_INDICATORS
-MA_INDICATORS = ['MA100', 'EMA100']  # Indicators to use in Moving averages analysis
+MA_INDICATORS = ['SMA100', 'EMA100']  # Indicators to use in Moving averages analysis
 MA_THRESHOLD = 2  # Must be less or equal to number of items in MA_INDICATORS
 INTERVAL = Interval.INTERVAL_15_MINUTES  # Timeframe for analysis
 
