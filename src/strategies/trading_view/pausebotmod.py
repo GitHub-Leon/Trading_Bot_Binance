@@ -5,6 +5,7 @@ import time
 from tradingview_ta import TA_Handler, Interval
 
 from src.config import SIGNALS_FOLDER
+from src.helpers.scripts.logger import debug_log
 
 INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 
@@ -29,6 +30,7 @@ def analyze():
     try:
         analysis = handler.get_analysis()
     except Exception as e:
+        debug_log("Error while pausebotmod. Error-Message:" + str(e), True)
         print("pausebotmod:")
         print("Exception:")
         print(e)
@@ -36,9 +38,11 @@ def analyze():
     ma_sell = analysis.moving_averages['SELL']
     if ma_sell >= THRESHOLD:
         paused = True
+        debug_log(f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup', False)
         print(
             f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup')
     else:
+        debug_log(f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ', False)
         print(
             f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ')
         paused = False
@@ -52,11 +56,14 @@ def do_work():
             exit()
 
         paused = analyze()
-        if paused:
-            with open(SIGNALS_FOLDER + '/paused.exc', 'a+') as f:
-                f.write('yes')
-        else:
-            if os.path.isfile(SIGNALS_FOLDER + '/paused.exc'):
-                os.remove(SIGNALS_FOLDER + '/paused.exc')
+        try:
+            if paused:
+                with open(SIGNALS_FOLDER + '/paused.exc', 'a+') as f:
+                    f.write('yes')
+            else:
+                if os.path.isfile(SIGNALS_FOLDER + '/paused.exc'):
+                    os.remove(SIGNALS_FOLDER + '/paused.exc')
+        except OSError as e:
+            debug_log("Error while writing or removing signal file. Error-Message: " + str(e), True)
 
         time.sleep((TIME_TO_WAIT * 60))

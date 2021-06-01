@@ -1,12 +1,8 @@
 # The main modules that executes the script repeatedly
 
 # local dependencies
+from src.helpers.scripts.logger import debug_log
 from src.config import bot_wait
-from src.console.input.console_input import console_input
-from src.console.input.processing_input import input_check
-from src.console.login import login
-from src.console.output.exit import before_exit
-from src.console.output.startup import startup
 from src.helpers.scripts.sell_all_coins import sell_all
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
@@ -14,6 +10,10 @@ from src.strategies.default.sell import sell_coins
 from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
 from src.update_portfolio import update_portfolio
+from src.console.input.console_input import console_input
+from src.console.login import login
+from src.console.output.before_start import print_before_start
+from src.console.input import processing_input
 
 
 def main():
@@ -27,18 +27,19 @@ def main():
         remove_from_portfolio(coins_sold)
 
 
+def startup():
+    try:
+        debug_log("Start the bot", False)
+        main()
+    except KeyboardInterrupt:
+        debug_log("Exit the bot", False)
+        sell_all()
+
+
 if __name__ == '__main__':
+    debug_log("------------------------- START_BOT -------------------------", False)
     if login():  # verifies correct login data before starting the bot
-        startup()  # before commands can be used
+        print_before_start()  # before commands can be used
         while True:
             command = console_input()
-            if command == "start":
-                try:
-                    main()
-                except KeyboardInterrupt:
-                    sell_all()
-            elif command == "exit":
-                before_exit()
-                exit()
-            else:
-                input_check(command)
+            processing_input.input_check(command)

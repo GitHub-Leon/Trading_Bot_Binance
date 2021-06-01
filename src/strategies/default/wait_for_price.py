@@ -10,11 +10,13 @@ from src.helpers.scripts.pause_bot import pause_bot
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_signals
 from src.update_globals import update_volatility_cooloff
+from src.helpers.scripts.logger import debug_log
 
 
 def wait_for_price():
     from src.config import hsp_head, volatility_cooloff, historical_prices
 
+    debug_log("Call the initial price and ensure the correct amount of time has passed before the current price again", False)
     """calls the initial price and ensures the correct amount of time has passed
     before reading the current price again"""
 
@@ -30,6 +32,7 @@ def wait_for_price():
     if historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
             minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
         # sleep for exactly the amount of time required
+        debug_log("Sleep for exactly the amount of time required", False)
         time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
                 datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
 
@@ -37,6 +40,7 @@ def wait_for_price():
     get_price()
 
     # calculate the difference in prices
+    debug_log("Calculate the difference in prices", False)
     for coin in historical_prices[hsp_head]:
 
         # minimum and maximum prices over time period
@@ -60,10 +64,12 @@ def wait_for_price():
 
                 if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
                     volatile_coins[coin] = round(threshold_check, 3)
+                    debug_log(f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}', False)
                     print(
                         f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
 
                 else:
+                    debug_log(f'{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins', False)
                     print(
                         f'{txcolors.WARNING}{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins{txcolors.DEFAULT}')
 
@@ -74,6 +80,7 @@ def wait_for_price():
             coins_unchanged += 1
 
     # Here goes new code for external signalling
+    debug_log("Executing external code for external signalling", False)
     externals = external_signals()
     ex_number = 0
 
@@ -82,6 +89,7 @@ def wait_for_price():
                 len(coins_bought) + ex_number) < MAX_COINS:
             volatile_coins[ex_coin] = 1
             ex_number += 1
+            debug_log(f'External signal received on {ex_coin}, calculating volume in {PAIR_WITH}', False)
             print(f'External signal received on {ex_coin}, calculating volume in {PAIR_WITH}')
 
     return volatile_coins, len(volatile_coins), historical_prices[hsp_head]

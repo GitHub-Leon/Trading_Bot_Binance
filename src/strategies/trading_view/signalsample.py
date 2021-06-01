@@ -7,6 +7,7 @@ from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
 from src.config import PAIR_WITH, SIGNALS_FILE, DEBUG, CUSTOM_LIST_FILE
+from src.helpers.scripts.logger import debug_log
 
 MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
@@ -17,6 +18,7 @@ TIME_TO_WAIT = 4  # Minutes to wait between analysis
 
 
 def analyze(pairs):
+    debug_log(f"Analyze pairs", False)
     taMax = 0
     taMaxCoin = 'none'
     signal_coins = {}
@@ -49,6 +51,7 @@ def analyze(pairs):
             first_analysis = first_handler[pair].get_analysis()
             second_analysis = second_handler[pair].get_analysis()
         except Exception as e:
+            debug_log(f"Error while getting analysis. Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}", True)
             print("Exeption:")
             print(e)
             print(f'Coin: {pair}')
@@ -58,6 +61,7 @@ def analyze(pairs):
 
         first_tacheck = first_analysis.summary['BUY']
         second_tacheck = second_analysis.summary['BUY']
+        debug_log(f'{pair} First {first_tacheck} Second {second_tacheck}', False)
         if DEBUG:
             print(f'{pair} First {first_tacheck} Second {second_tacheck}')
 
@@ -67,12 +71,17 @@ def analyze(pairs):
         if first_tacheck >= TA_BUY_THRESHOLD and second_tacheck >= TA_BUY_THRESHOLD:
             signal_coins[pair] = pair
 
+            debug_log(f'Signal detected on {pair}', False)
             if DEBUG:
                 print(f'Signal detected on {pair}')
 
-            with open(SIGNALS_FILE, 'a+') as f:
-                f.write(pair + '\n')
+            try:
+                with open(SIGNALS_FILE, 'a+') as f:
+                    f.write(pair + '\n')
+            except OSError as e:
+                debug_log("Error while writing to signals file. Error-Message: " + str(e), True)
 
+    debug_log(f'Max signal by {taMaxCoin} at {taMax} on shortest timeframe', False)
     if DEBUG:
         print(f'Max signal by {taMaxCoin} at {taMax} on shortest timeframe')
 
@@ -88,15 +97,20 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
+        debug_log(f'Analyzing {len(pairs)} coins', False)
         if DEBUG:
             print(f'Analyzing {len(pairs)} coins')
 
         signal_coins = analyze(pairs)
 
-        if DEBUG:
-            if len(signal_coins) == 0:
+        if len(signal_coins) == 0:
+            debug_log(f'No coins above {TA_BUY_THRESHOLD} threshold', False)
+            if DEBUG:
                 print(f'No coins above {TA_BUY_THRESHOLD} threshold')
-            else:
+        else:
+            debug_log(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} threshold on both timeframes', False)
+            debug_log(f'Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+            if DEBUG:
                 print(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} threshold on both timeframes')
                 print(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
 

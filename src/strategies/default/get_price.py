@@ -5,15 +5,18 @@ from datetime import datetime
 # local dependencies
 from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL
 from src.update_globals import update_hsp_head, update_historical_prices
+from src.helpers.scripts.logger import debug_log
 
 
 def get_price(add_to_historical=True):
+    debug_log("Get price", False)
     from src.config import hsp_head  # import to init value
 
     """Return the current price for all coins on binance"""
     initial_price = {}
     prices = client.get_all_tickers()
 
+    debug_log("Check prices for all coins in tickers file", False)
     for coin in prices:
 
         if CUSTOM_LIST:

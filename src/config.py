@@ -8,6 +8,7 @@ from colorama import init
 from .helpers import handle_creds
 from .helpers import parameters
 
+
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
 
@@ -44,7 +45,6 @@ DEBUG = False  # default False
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
-LOG_FILE = parsed_config['script_options'].get('LOG_FILE')
 DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
 
 # Load trading options
