@@ -1,7 +1,10 @@
 from datetime import datetime
+import os
 
 # Local Vars
 from src.config_log import TRADE_LOG_FILE, INPUT_LOG_FILE, DEBUG_LOG_FILE
+
+os.mkdir("log")
 
 
 def trade_log(logline):
