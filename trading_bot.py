@@ -1,5 +1,4 @@
 # The main modules that executes the script repeatedly
-import sys
 import time
 
 # local dependencies
@@ -16,7 +15,6 @@ from src.console.input.console_input import console_input
 from src.console.login import login
 from src.console.output.before_start import print_before_start
 from src.console.input import processing_input
-from src.classes.StampedOut import StampedOut
 from src.classes.TxColor import txcolors
 
 
@@ -53,7 +51,6 @@ def startup():
 if __name__ == '__main__':
     if login():  # verifies correct login data before starting the bot
         print_before_start()  # before commands can be used
-        sys.stdout = StampedOut()  # timestamp
 
         while True:
             command = console_input()
