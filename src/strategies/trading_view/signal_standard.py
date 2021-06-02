@@ -26,6 +26,7 @@ def analyze(pairs):
     second_analysis = {}
     first_handler = {}
     second_handler = {}
+
     if os.path.exists(SIGNALS_FOLDER + '/signal_standard.exs'):
         os.remove(SIGNALS_FOLDER + '/signal_standard.exs')
 
@@ -52,7 +53,7 @@ def analyze(pairs):
             second_analysis = second_handler[pair].get_analysis()
         except Exception as e:
             debug_log(
-                f"Error while getting analysis. Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}",
+                f"Error while getting analysis.(signal_standard.py) Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}",
                 True)
             tacheckS = 0
 
