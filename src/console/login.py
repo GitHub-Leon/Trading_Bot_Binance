@@ -18,7 +18,7 @@ import vcode
 from src.check_package import check_package
 from src.classes.TxColor import txcolors
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
-    PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE
+    PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE, NO_AUTH_CONFIG
 from src.helpers.database_connection import connect_to_database  # Database
 from src.helpers.scripts.logger import debug_log
 
@@ -211,6 +211,10 @@ def login():
             debug_log("Email or password is incorrect", False)
             print(f"{txcolors.WARNING}Email or Password is incorrect!{txcolors.DEFAULT}")
     else:
+        if NO_AUTH_CONFIG:
+            debug_log("No new login possible. There is no Mail auth file", True)
+            print("No sign up possible.")
+            return False
         # Create account
         debug_log("Create Account", False)
         print(f"{txcolors.WARNING}Let´s create one!\n{txcolors.DEFAULT}")

@@ -7,6 +7,7 @@ from colorama import init
 
 from .helpers import handle_creds
 from .helpers import parameters
+from src.helpers.scripts.logger import debug_log
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
@@ -22,12 +23,13 @@ DEFAULT_CONFIG_FILE = 'config.yml'
 DEFAULT_CREDS_FILE = 'creds.yml'
 DEFAULT_CONFIG_AUTH_FILE = 'config_auth.yml'
 
+# Config loader
 config_file = args.config if args.config else DEFAULT_CONFIG_FILE
 creds_file = args.creds if args.creds else DEFAULT_CREDS_FILE
 auth_file = args.config if args.config else DEFAULT_CONFIG_AUTH_FILE
-parsed_config = parameters.load_config(config_file)
-parsed_creds = parameters.load_config(creds_file)
-parsed_auth = parameters.load_config(auth_file)
+parsed_config = parameters.load_config(config_file, True)
+parsed_creds = parameters.load_config(creds_file, True)
+parsed_auth = parameters.load_config(auth_file, False)
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
@@ -55,9 +57,13 @@ TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILIN
 SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLING_MODULES']
 
 # Load auth vars
-SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
-SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
-CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
+try:
+    SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
+    SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
+    CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
+except TypeError as e:
+    debug_log("No email auth file. No sign up possible", True)
+    NO_AUTH_CONFIG = True
 
 # Paths
 WELCOME_TEXT_FILE = 'src/console/output/welcome.txt'
@@ -89,6 +95,8 @@ init()  # colorama
 # Loads credentials
 access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
 
+debug_log(f'loaded config below\n{json.dumps(parsed_config, indent=4)}', False)
+debug_log(f'Your credentials have been loaded from {creds_file}', False)
 if DEBUG:
     print(f'loaded config below\n{json.dumps(parsed_config, indent=4)}')
     print(f'Your credentials have been loaded from {creds_file}')
@@ -129,5 +137,6 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
 
 def bot_wait():
     if not TEST_MODE:
+        debug_log("Mainnet security measure", False)
         print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)

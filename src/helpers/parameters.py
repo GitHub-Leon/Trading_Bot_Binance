@@ -8,14 +8,17 @@ from src.helpers.scripts.logger import debug_log
 DEFAULT_SETTINGS_FILE = 'settings.json'
 
 
-def load_config(file):
-    debug_log(f'Load config file {file}', False)
+def load_config(file, important):
+    debug_log(f'Trying to load config file {file}', False)
 
     try:
         with open(file) as file:
             return yaml.load(file, Loader=yaml.FullLoader)
     except OSError as e:
         debug_log(f'Error while loading config file {file}', True)
+        if important:
+            print(f'No config file {file}')
+            exit()
     return False
 
 
@@ -31,7 +34,7 @@ def write_config(file, content):
 
 
 def parse_args():
-    debug_log("Parse arguments of config file", False)
+    debug_log("Trying to parse arguments of config file", False)
     x = argparse.ArgumentParser()
     x.add_argument('--debug', '-d', help="extra logging", action='store_true')
     x.add_argument('--config', '-c', help="Path to config.yml")
