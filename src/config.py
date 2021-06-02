@@ -61,6 +61,7 @@ try:
     SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
     SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
     CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
+    NO_AUTH_CONFIG = False
 except TypeError as e:
     debug_log("No email auth file. No sign up possible", True)
     NO_AUTH_CONFIG = True
@@ -95,7 +96,6 @@ init()  # colorama
 # Loads credentials
 access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
 
-debug_log(f'loaded config below\n{json.dumps(parsed_config, indent=4)}', False)
 debug_log(f'Your credentials have been loaded from {creds_file}', False)
 if DEBUG:
     print(f'loaded config below\n{json.dumps(parsed_config, indent=4)}')
