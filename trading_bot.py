@@ -41,6 +41,7 @@ def main():
 
 
 def startup():
+    debug_log("------------------------- START_BOT -------------------------", False)
     try:
         debug_log("Start the bot", False)
         main()
@@ -50,7 +51,6 @@ def startup():
 
 
 if __name__ == '__main__':
-    debug_log("------------------------- START_BOT -------------------------", False)
     if login():  # verifies correct login data before starting the bot
         print_before_start()  # before commands can be used
         sys.stdout = StampedOut()  # timestamp
