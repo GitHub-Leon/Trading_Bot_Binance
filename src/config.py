@@ -75,7 +75,7 @@ VERIFICATION_MAIL_PLAIN_TEXT_FILE = './src/helpers/mail_verification_plain.txt'
 VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
 SIGNALS_FOLDER = 'src/signals'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
-CUSTOM_LIST_FILE = 'tickers_' + PAIR_WITH + '.txt'
+CUSTOM_LIST_FILE = './tickers/tickers_' + PAIR_WITH + '.txt'
 
 # Database connection
 DB_USERNAME = "bot"
