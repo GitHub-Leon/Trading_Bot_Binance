@@ -16,6 +16,7 @@ from src.console.login import login
 from src.console.output.before_start import print_before_start
 from src.console.input import processing_input
 from src.classes.TxColor import txcolors
+from src.update_globals import set_default_values
 
 
 def main():
@@ -42,6 +43,7 @@ def startup():
     debug_log("------------------------- START_BOT -------------------------", False)
     try:
         debug_log("Start the bot", False)
+        set_default_values()
         main()
     except KeyboardInterrupt:
         debug_log("Exit the bot", False)

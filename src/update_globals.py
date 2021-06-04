@@ -26,3 +26,8 @@ def update_volatility_cooloff(coin, time):
 def update_bot_paused(bot_paused):
     debug_log("Update bot paused", False)
     config.bot_paused = bot_paused
+
+
+def set_default_values():
+    debug_log("Set all values to default", False)
+    config.session_profit = 0
