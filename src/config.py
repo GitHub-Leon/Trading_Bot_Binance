@@ -34,6 +34,7 @@ parsed_auth = parameters.load_config(auth_file, False)
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
+AMERICAN_USER = parsed_config['script_options']['AMERICAN_USER']
 DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
 
 # Load trading options
@@ -102,7 +103,10 @@ if DEBUG:
     print(f'Your credentials have been loaded from {creds_file}')
 
 # Authenticate with the client
-client = Client(access_key, secret_key)
+if AMERICAN_USER:
+    client = Client(access_key, secret_key, tld='us')
+else:
+    client = Client(access_key, secret_key)
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
 if CUSTOM_LIST:
