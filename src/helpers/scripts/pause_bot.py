@@ -39,14 +39,6 @@ def pause_bot():
         remove_from_portfolio(coins_sold)
         get_price(True)
 
-        # pausing here
-        debug_log("Bot is pausing", False)
-        if hsp_head == 1:
-            debug_log(
-                f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit) / 100:.{decimals()}f} {PAIR_WITH}',
-                False)
-            print(
-                f'Paused... Session profit:{session_profit:.2f}% Est: {(QUANTITY * session_profit) / 100:.{decimals()}f} {PAIR_WITH}')
         time.sleep((TIME_DIFFERENCE * 60) / RECHECK_INTERVAL)
 
     else:
