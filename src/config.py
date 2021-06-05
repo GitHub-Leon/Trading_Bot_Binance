@@ -36,6 +36,7 @@ TEST_MODE = parsed_config['script_options']['TEST_MODE']
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
 AMERICAN_USER = parsed_config['script_options']['AMERICAN_USER']
 DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
+PRINT_CONFIG_AT_START = parsed_config['script_options']['PRINT_CONFIG_AT_START']
 
 # Load trading options
 PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
@@ -96,11 +97,6 @@ init()  # colorama
 
 # Loads credentials
 access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
-
-debug_log(f'Your credentials have been loaded from {creds_file}', False)
-if DEBUG:
-    print(f'loaded config below\n{json.dumps(parsed_config, indent=4)}')
-    print(f'Your credentials have been loaded from {creds_file}')
 
 # Authenticate with the client
 if AMERICAN_USER:

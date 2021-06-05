@@ -7,3 +7,5 @@ class txcolors:
     SELL_PROFIT = '\033[32m'
     DIM = '\033[2m\033[35m'
     DEFAULT = '\033[39m'
+    BOLD = '\033[1m'
+    SLIM = '\033[0m'
