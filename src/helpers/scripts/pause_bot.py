@@ -4,8 +4,7 @@ from datetime import timedelta
 
 # local dependencies
 from src.classes.TxColor import txcolors
-from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, QUANTITY, DEBUG, PAIR_WITH
-from src.helpers.decimals import decimals
+from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, DEBUG, SIGNALS_FOLDER
 from src.helpers.scripts.logger import debug_log
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
@@ -14,7 +13,7 @@ from src.update_globals import update_bot_paused
 
 
 def pause_bot():
-    from src.config import bot_paused, session_profit, hsp_head
+    from src.config import bot_paused
 
     debug_log("Pause the script when external indicators detect a bearish trend in the market", False)
     """Pause the script when external indicators detect a bearish trend in the market"""
@@ -22,7 +21,7 @@ def pause_bot():
     # start counting for how long the bot has been paused
     start_time = time.perf_counter()
 
-    while os.path.isfile("src/signals/paused.exc"):
+    while os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
 
         if not bot_paused:
             debug_log(
@@ -42,6 +41,7 @@ def pause_bot():
         time.sleep((TIME_DIFFERENCE * 60) / RECHECK_INTERVAL)
 
     else:
+        from src.config import bot_paused  # update glob var for print and debug_log
         # stop counting the pause time
         stop_time = time.perf_counter()
         time_elapsed = timedelta(seconds=int(stop_time - start_time))

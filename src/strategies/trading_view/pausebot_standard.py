@@ -13,7 +13,7 @@ INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
 SYMBOL = 'BTCUSDT'
-THRESHOLD = 7  # 7 of 15 MA's indicating sell
+THRESHOLD = 7  # x of 15 MA's indicating sell
 TIME_TO_WAIT = 5  # Minutes to wait between analysis
 
 
@@ -37,16 +37,16 @@ def analyze():
     if ma_sell >= THRESHOLD:
         paused = True
         debug_log(
-            f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup',
+            f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup',
             False)
         print(
-            f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup')
+            f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup')
     else:
         debug_log(
-            f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ',
+            f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup ',
             False)
         print(
-            f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} Waiting {TIME_TO_WAIT} minutes for next market checkup ')
+            f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup ')
         paused = False
 
     return paused
