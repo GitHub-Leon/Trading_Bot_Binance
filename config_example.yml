@@ -3,8 +3,9 @@ script_options:
   # Switch between testnet and mainnet
   # Setting this to False will use REAL funds, use at your own risk
   TEST_MODE: True
-
   LOG_TRADES: True
+  AMERICAN_USER: False
+  PRINT_CONFIG_AT_START: False
 
 # These options apply to the trading methods the script executes
 trading_options:
