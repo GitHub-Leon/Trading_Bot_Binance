@@ -1,9 +1,13 @@
 import numpy as np
 import time
+import os
+import threading
+from datetime import datetime
 
 # local dependencies
-from src.config import client, coins_bought
-from datetime import datetime
+from src.config import client, coins_bought, SIGNALS_FOLDER, CUSTOM_LIST_FILE, PAIR_WITH, DEBUG
+from src.helpers.scripts.logger import debug_log
+from src.strategies.default.get_price import get_price
 
 
 MY_EXCHANGE = 'BINANCE'
@@ -47,37 +51,40 @@ def kline_factory_timestamp(interval, period):
 
 def get_rsi_series(coins):
     timestamp = kline_factory_timestamp(RSI_TIME_INTERVAL, RSI_PERIOD)
-    rsi_coins = {}
+    coins_rsi = {}
 
-    for coin in coins:
-        series = client.get_historical_klines(coin['symbol'], RSI_TIME_INTERVAL, timestamp)
+    for coin in list(coins):
+        series = client.get_historical_klines(coin, RSI_TIME_INTERVAL, timestamp)
 
-        rsi_coins[coin['symbol']] = {
-            'price': coin['price'],
+        coins_rsi[coin] = {
+            'price': coins[coin]['price'],
             'time': datetime.now(),
             'series': series
         }
 
-    return rsi_coins
+    print(coins_rsi)
+    return coins_rsi
 
 
-def check_rsi_buy_signal(coins_rsi):
+def check_rsi_buy_signal(coins):
     coins_with_buy_signal = {}
+    coins_rsi = get_rsi_series(coins)
 
     for coin in coins_rsi:
-        rsi_result = rsi(coin['symbol']['series'])
+        rsi_result = rsi(coins_rsi[coin]['series'])
 
         # Filters out coins who triggers the buy signal
         if rsi_result > RSI_BUY_TRIGGER:
-            coins_with_buy_signal[coin['symbol']] = coin
+            coins_with_buy_signal[coin]['symbol'] = coin
 
     return coins_with_buy_signal
 
 
 def check_rsi_sell_signal():
     coins_with_sell_signal = {}
+    coins_rsi = get_rsi_series(list(coins_bought))
 
-    for coin in list(coins_bought):
+    for coin in coins_rsi:
         rsi_result = rsi(coin['symbol']['series'])
 
         # Filters out coins who triggers the sell signal from current coins
@@ -88,18 +95,18 @@ def check_rsi_sell_signal():
 
 
 # calculating RSI
-def rsi(series, period):
+def rsi(series):
     delta = series.diff().dropna()
     ups = delta * 0
     downs = ups.copy()
     ups[delta > 0] = delta[delta > 0]
     downs[delta < 0] = -delta[delta < 0]
-    ups[ups.index[period - 1]] = np.mean(ups[:period])  # first value is sum of avg gains
-    ups = ups.drop(ups.index[:(period - 1)])
-    downs[downs.index[period - 1]] = np.mean(downs[:period])  # first value is sum of avg losses
-    downs = downs.drop(downs.index[:(period - 1)])
-    rs = ups.ewm(com=period - 1, min_periods=0, adjust=False, ignore_na=False).mean() / \
-         downs.ewm(com=period - 1, min_periods=0, adjust=False, ignore_na=False).mean()
+    ups[ups.index[RSI_PERIOD - 1]] = np.mean(ups[:RSI_PERIOD])  # first value is sum of avg gains
+    ups = ups.drop(ups.index[:(RSI_PERIOD - 1)])
+    downs[downs.index[RSI_PERIOD - 1]] = np.mean(downs[:RSI_PERIOD])  # first value is sum of avg losses
+    downs = downs.drop(downs.index[:(RSI_PERIOD - 1)])
+    rs = ups.ewm(com=RSI_PERIOD - 1, min_periods=0, adjust=False, ignore_na=False).mean() / \
+         downs.ewm(com=RSI_PERIOD - 1, min_periods=0, adjust=False, ignore_na=False).mean()
     return 100 - 100 / (1 + rs)
 
 
@@ -150,3 +157,84 @@ def stochrsi_ema(series, period, smoothK=3, smoothD=3):
     stochrsi_D = stochrsi_K.ewm(span=smoothD).mean()
 
     return stochrsi, stochrsi_K, stochrsi_D
+
+
+def analyze_buy(pairs):
+    coins_buy_signal = {}  # init
+
+    if os.path.exists(SIGNALS_FOLDER + '/buy_rsi.exs'):
+        os.remove(SIGNALS_FOLDER + '/buy_rsi.exs')
+
+    coins_buy_signal = check_rsi_buy_signal(pairs)
+
+    for pair in coins_buy_signal:
+        try:
+            with open(SIGNALS_FOLDER + '/buy_rsi.exs', 'a+') as f:
+                f.write(pair + '\n')
+        except OSError as e:
+            debug_log("Error while writing to signals file. Error-Message: " + str(e), True)
+
+    print(coins_buy_signal)
+    return coins_buy_signal
+
+
+def analyze_sell():
+    coins_sell_signal = {}  # init
+
+    if os.path.exists(SIGNALS_FOLDER + '/sell_rsi.exs'):
+        os.remove(SIGNALS_FOLDER + '/sell_rsi.exs')
+
+    coins_sell_signal = check_rsi_sell_signal()
+
+    for pair in coins_sell_signal:
+        try:
+            with open(SIGNALS_FOLDER + '/buy_rsi.exs', 'a+') as f:
+                f.write(pair + '\n')
+        except OSError as e:
+            debug_log("Error while writing to signals file. Error-Message: " + str(e), True)
+
+    print(coins_sell_signal)
+    return coins_sell_signal
+
+
+def do_work():
+    coins = {}
+
+    coins = get_price()
+
+    while True:
+        if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
+            exit()
+
+        debug_log(f'Analyzing {len(coins)} coins', False)
+        if DEBUG:
+            print(f'Analyzing {len(coins)} coins')
+
+        signal_buy_coins = analyze_buy(coins)
+        signal_sell_coins = analyze_sell()
+
+        # Buy coins output
+        if len(signal_buy_coins) == 0:
+            debug_log(f'No coins below {RSI_BUY_TRIGGER} threshold', False)
+            if DEBUG:
+                print(f'No coins below {RSI_BUY_TRIGGER} threshold')
+        else:
+            debug_log(f'{len(signal_buy_coins)} coins below {RSI_BUY_TRIGGER} threshold', False)
+            debug_log(f'Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+            if DEBUG:
+                print(f'{len(signal_buy_coins)} coins below {RSI_BUY_TRIGGER} threshold')
+                print(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
+
+        # Sell coins output
+        if len(signal_sell_coins) == 0:
+            debug_log(f'No coins above {RSI_SELL_TRIGGER} threshold', False)
+            if DEBUG:
+                print(f'No coins above {RSI_SELL_TRIGGER} threshold')
+        else:
+            debug_log(f'{len(signal_sell_coins)} coins above {RSI_SELL_TRIGGER} threshold', False)
+            debug_log(f'Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+            if DEBUG:
+                print(f'{len(signal_sell_coins)} coins above {RSI_SELL_TRIGGER} threshold')
+                print(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
+
+        time.sleep((TIME_TO_WAIT * 60))
