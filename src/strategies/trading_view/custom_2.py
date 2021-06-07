@@ -27,8 +27,8 @@ def analyze(pairs):
     analysis = {}
     handler = {}
 
-    if os.path.exists(SIGNALS_FOLDER + '/custom_2.exs'):
-        os.remove(SIGNALS_FOLDER + '/custom_2.exs')
+    if os.path.exists(SIGNALS_FOLDER + '/buy_custom_2.exs'):
+        os.remove(SIGNALS_FOLDER + '/buy_custom_2.exs')
 
     for pair in pairs:
         handler[pair] = TA_Handler(
@@ -76,7 +76,7 @@ def analyze(pairs):
                     f'Custom_2: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
 
             debug_log("Read signal file custom-2.exs", False)
-            with open(SIGNALS_FOLDER + '/custom_2.exs', 'a+') as f:
+            with open(SIGNALS_FOLDER + '/buy_custom_2.exs', 'a+') as f:
                 f.write(pair + '\n')
 
     return signal_coins

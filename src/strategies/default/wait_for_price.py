@@ -9,7 +9,7 @@ from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_P
 from src.helpers.scripts.logger import debug_log
 from src.helpers.scripts.pause_bot import pause_bot
 from src.strategies.default.get_price import get_price
-from src.strategies.external_signals import external_signals
+from src.strategies.external_signals import external_buy_signals
 from src.update_globals import update_volatility_cooloff
 
 
@@ -86,15 +86,15 @@ def wait_for_price():
 
     # Here goes new code for external signalling
     debug_log("Executing external code for external signalling", False)
-    externals = external_signals()
+    externals = external_buy_signals()
     ex_number = 0
 
     for ex_coin in externals:
         if ex_coin not in volatile_coins and ex_coin not in coins_bought and (
-                len(coins_bought) + ex_number) < MAX_COINS:
+                len(coins_bought) + ex_number + len(volatile_coins)) < MAX_COINS:
             volatile_coins[ex_coin] = 1
             ex_number += 1
-            debug_log(f'External signal received on {ex_coin}, calculating volume in {PAIR_WITH}', False)
-            print(f'External signal received on {ex_coin}, calculating volume in {PAIR_WITH}')
+            debug_log(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}', False)
+            print(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}')
 
     return volatile_coins, len(volatile_coins), historical_prices[hsp_head]

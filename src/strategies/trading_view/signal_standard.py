@@ -13,7 +13,7 @@ MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
 MY_FIRST_INTERVAL = Interval.INTERVAL_5_MINUTES
 MY_SECOND_INTERVAL = Interval.INTERVAL_1_MINUTE
-TA_BUY_THRESHOLD = 18  # How many of the 26 indicators to indicate a buy
+TA_BUY_THRESHOLD = 5  # How many of the 26 indicators to indicate a buy
 TIME_TO_WAIT = 4  # Minutes to wait between analysis
 
 
@@ -27,8 +27,8 @@ def analyze(pairs):
     first_handler = {}
     second_handler = {}
 
-    if os.path.exists(SIGNALS_FOLDER + '/signal_standard.exs'):
-        os.remove(SIGNALS_FOLDER + '/signal_standard.exs')
+    if os.path.exists(SIGNALS_FOLDER + '/buy_signal_standard.exs'):
+        os.remove(SIGNALS_FOLDER + '/buy_signal_standard.exs')
 
     for pair in pairs:
         first_handler[pair] = TA_Handler(
@@ -74,7 +74,7 @@ def analyze(pairs):
                 print(f'Signal detected on {pair}')
 
             try:
-                with open(SIGNALS_FOLDER + '/signal_standard.exs', 'a+') as f:
+                with open(SIGNALS_FOLDER + '/buy_signal_standard.exs', 'a+') as f:
                     f.write(pair + '\n')
             except OSError as e:
                 debug_log("Error while writing to signals file. Error-Message: " + str(e), True)
