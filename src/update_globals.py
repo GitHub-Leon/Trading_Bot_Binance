@@ -31,3 +31,8 @@ def update_bot_paused(bot_paused):
 def set_default_values():
     debug_log("Set all values to default", False)
     config.session_profit = 0
+
+
+def update_sell_bearish(sell_bearish):
+    debug_log("Update sell_bearish", False)
+    config.sell_bearish = sell_bearish

@@ -5,16 +5,17 @@ import time
 from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
-from src.config import SIGNALS_FOLDER
+from src.config import SIGNALS_FOLDER, SELL_WHEN_BEARISH
 from src.helpers.scripts.logger import debug_log
+from src.update_globals import update_sell_bearish
 
 INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
 SYMBOL = 'BTCUSDT'
-THRESHOLD = 7  # x of 15 MA's indicating sell
-TIME_TO_WAIT = 5  # Minutes to wait between analysis
+THRESHOLD = 6  # x of 15 MA's indicating sell
+TIME_TO_WAIT = 1  # Minutes to wait between analysis
 
 
 def analyze():
@@ -48,6 +49,12 @@ def analyze():
         print(
             f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup ')
         paused = False
+
+    # Sells all coins if SELL_WHEN_BEARISH is True and market turns bearish
+    if paused and SELL_WHEN_BEARISH:
+        update_sell_bearish(True)
+    elif not paused and SELL_WHEN_BEARISH:
+        update_sell_bearish(False)
 
     return paused
 

@@ -12,6 +12,9 @@ trading_options:
   # select what to pair the coins to and pull all coins paired with PAIR_WITH
   PAIR_WITH: USDT
 
+  # sell all currently owned coins when pausebot_standard stops bot because of bearish movement
+  SELL_WHEN_BEARISH: True
+
   # Fees in percent
   TRADING_FEE: 0.075
 

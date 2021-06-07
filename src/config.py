@@ -10,7 +10,7 @@ from .helpers import parameters
 from src.helpers.scripts.logger import debug_log
 
 # global variables
-global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused
+global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused, sell_bearish
 
 # Load arguments then parse settings
 args = parameters.parse_args()
@@ -40,6 +40,7 @@ PRINT_CONFIG_AT_START = parsed_config['script_options']['PRINT_CONFIG_AT_START']
 
 # Load trading options
 PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
+SELL_WHEN_BEARISH = parsed_config['trading_options']['SELL_WHEN_BEARISH']
 TRADING_FEE = parsed_config['trading_options']['TRADING_FEE']
 QUANTITY = parsed_config['trading_options']['QUANTITY']
 CUSTOM_LIST = parsed_config['trading_options']['CUSTOM_LIST']
@@ -115,6 +116,7 @@ historical_prices = [None] * (TIME_DIFFERENCE * RECHECK_INTERVAL)
 hsp_head = -1
 session_profit = 0
 bot_paused = False
+sell_bearish = False
 
 # prevent including a coin in volatile_coins if it has already appeared there less than TIME_DIFFERENCE minutes ago
 volatility_cooloff = {}
