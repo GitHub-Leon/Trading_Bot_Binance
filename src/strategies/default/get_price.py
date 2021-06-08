@@ -10,7 +10,6 @@ from src.update_globals import update_hsp_head, update_historical_prices
 
 def get_price(add_to_historical=True):
     debug_log("Get price", False)
-    from src.config import hsp_head  # import to init value
 
     """Return the current price for all coins on binance"""
     initial_price = {}
@@ -28,9 +27,11 @@ def get_price(add_to_historical=True):
                 initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
 
     if add_to_historical:
+        from src.config import hsp_head  # import to init value
         update_hsp_head(hsp_head + 1)
 
-        if hsp_head + 1 == RECHECK_INTERVAL:
+        from src.config import hsp_head  # import hsp_head again to update value
+        if hsp_head == RECHECK_INTERVAL:
             update_hsp_head(0)
 
         from src.config import hsp_head  # import hsp_head again to update value

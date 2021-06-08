@@ -14,7 +14,7 @@ INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
 SYMBOL = 'BTCUSDT'
-THRESHOLD = 6  # x of 15 MA's indicating sell
+THRESHOLD = 7  # x of 15 MA's indicating sell
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
 
 

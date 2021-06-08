@@ -4,3 +4,4 @@ PyYAML==5.4.1
 verification-code==1.0.0
 mysql-connector-python==8.0.25
 tradingview_ta==3.2.3
+numpy==1.19.5
