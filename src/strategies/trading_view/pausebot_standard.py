@@ -9,7 +9,7 @@ from src.config import SIGNALS_FOLDER, SELL_WHEN_BEARISH
 from src.helpers.scripts.logger import debug_log
 from src.update_globals import update_sell_bearish
 
-INTERVAL = Interval.INTERVAL_1_MINUTE  # Timeframe for analysis
+INTERVAL = Interval.INTERVAL_5_MINUTES  # Timeframe for analysis
 
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'

@@ -11,9 +11,9 @@ from src.helpers.scripts.logger import debug_log
 
 debug_log("Initialize OSC-Indicators, OSC-Threshold, MA-Indicators, MA-Threshold and Interval", False)
 OSC_INDICATORS = ['Stoch.RSI', 'RSI']  # Indicators to use in Oscillator analysis
-OSC_THRESHOLD = 1  # Must be less or equal to number of items in OSC_INDICATORS
-MA_INDICATORS = ['SMA50', 'EMA50']  # Indicators to use in Moving averages analysis
-MA_THRESHOLD = 2  # Must be less or equal to number of items in MA_INDICATORS
+OSC_THRESHOLD = 2  # Must be less or equal to number of items in OSC_INDICATORS
+MA_INDICATORS = ['SMA50', 'EMA50', 'EMA100']  # Indicators to use in Moving averages analysis
+MA_THRESHOLD = 3  # Must be less or equal to number of items in MA_INDICATORS
 INTERVAL = Interval.INTERVAL_15_MINUTES  # Timeframe for analysis
 
 debug_log("Define Exchange, Screener and Time-to-wait", False)
