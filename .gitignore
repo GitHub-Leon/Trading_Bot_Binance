@@ -12,6 +12,7 @@ __pycache__/
 /creds.yml
 *.exc
 *.exs
+*.csv
 
 # Distribution / packaging
 .Python

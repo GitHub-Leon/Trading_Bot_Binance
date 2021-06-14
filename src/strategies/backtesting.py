@@ -9,7 +9,7 @@ import backtrader.feeds as btfeeds
 from src.strategies.backtesting_data import get_historical_data, Client
 
 # Overall account balance
-account_balance = 1_000
+account_balance = 1_000_000
 
 # size of each trade in native currency
 # ie if backtesting on ETH, each trade will be 1ETH in size
@@ -20,10 +20,10 @@ take_profit = 10
 stop_loss = 5
 # The difference betweent the current candle price compared to the previous one
 # If higher than 1% we will buy
-buy_trigger = 1
+buy_trigger = 2
 
 # Get historical data and store filename
-filename = get_historical_data('ETHUSDT', '1 Jan 2021', Client.KLINE_INTERVAL_1MINUTE)
+filename = get_historical_data('NANOUSDT', '1 Jan 2021', Client.KLINE_INTERVAL_4HOUR)
 
 
 # Create a Strategy
@@ -93,6 +93,9 @@ class TestStrategy(bt.Strategy):
 
 
 if __name__ == '__main__':
+    # get current date
+    date = datetime.now().date()
+
     # Create a cerebro entity
     cerebro = bt.Cerebro()
 
@@ -105,7 +108,7 @@ if __name__ == '__main__':
         # Create a Data Feed
         dataname=filename,
         fromdate=datetime(2021, 1, 1),
-        todate=datetime(2021, 5, 24),
+        todate=datetime(date.year, date.month, date.day),
         nullvalue=0.0,
         dtformat=lambda x: datetime.utcfromtimestamp(float(x) / 1000.0),
         datetime=0,

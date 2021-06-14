@@ -15,7 +15,10 @@ def get_historical_data(coin, since, kline_interval):
     since = '1 Jan 2021'
     kline_interval = Client.KLINE_INTERVAL_1MINUTE
     """
-    if os.path.isfile(f'{coin}_{since}.csv'):
+    if not os.path.exists('src/backtesting_data'):  # creates directory for backtest data
+        os.makedirs('src/backtesting_data')
+
+    if os.path.isfile(f'src/backtesting_data/{coin}_{since}_{kline_interval}.csv'):  # creates file for coin data
         print('Datafile already exists, loading file...')
 
     else:
@@ -29,7 +32,7 @@ def get_historical_data(coin, since, kline_interval):
         fields = ['timestamp', 'high', 'low', 'open', 'close']
 
         # save the data
-        with open(f'{coin}_{since}.csv', 'w', newline='') as f:
+        with open(f'src/backtesting_data/{coin}_{since}_{kline_interval}.csv', 'w', newline='') as f:
 
             # using csv.writer method from CSV package
             write = csv.writer(f)
@@ -42,5 +45,5 @@ def get_historical_data(coin, since, kline_interval):
         # calculate how long it took to produce the file
         time_elapsed = round(end_time - start_time)
 
-        print(f'Historical data for {coin} saved as {coin}_{since}.csv. Time elapsed: {time_elapsed} seconds')
-    return f'{coin}_{since}.csv'
+        print(f'Historical data for {coin} saved as {coin}_{since}_{kline_interval}.csv. Time elapsed: {time_elapsed} seconds')
+    return f'src/backtesting_data/{coin}_{since}_{kline_interval}.csv'
