@@ -1,6 +1,7 @@
 from tradingview_ta import TA_Handler, Interval
 import os
 import time
+import threading
 
 # local dependencies
 from src.config import PAIR_WITH, CUSTOM_LIST_FILE, DEBUG, SIGNALS_FOLDER
@@ -109,7 +110,7 @@ def analyze(pairs):
                 (third_recommendation == "SELL" or third_recommendation == "STRONG_SELL"):
             # signal_coins[pair] = pair
 
-            debug_log(f'custom_3: Sell Signal detected on {pair}')
+            debug_log(f'custom_3: Sell Signal detected on {pair}', False)
             if DEBUG:
                 print(f'custom_3: Sell Signal detected on {pair}')
 
@@ -132,13 +133,24 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
-        print(f'custom_3: Analyzing {len(pairs)} coins')
+        if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
+            exit()
+
+        debug_log(f'custom_3: Analyzing {len(pairs)} coins', False)
+        if DEBUG:
+            print(f'custom_3: Analyzing {len(pairs)} coins')
+
         signal_coins = analyze(pairs)
+
         if len(signal_coins) == 0:
-            print(
-                f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+            debug_log(f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+            if DEBUG:
+                print(
+                    f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
         else:
-            print(
-                f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+            debug_log(f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+            if DEBUG:
+                print(
+                    f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
 
         time.sleep((TIME_TO_WAIT * 60))

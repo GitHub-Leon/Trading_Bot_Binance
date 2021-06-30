@@ -26,15 +26,15 @@ def sell_coins():
     externals = external_sell_signals()  # gets coins with sell signal provided by modules
 
     for ex_coin in externals:
-        if ex_coin in coins_bought:
+        if ex_coin in list(coins_bought):
             logger.debug_log(f'External SELL signal received on {ex_coin}', False)
             print(f'External SELL signal received on {ex_coin}')
 
-            coins_sold = coins_to_sell(ex_coin, coins_sold, last_prices)  # adds coin to coins that have to be sold
+            coins_sold = coins_to_sell(ex_coin, coins_sold, last_prices)  # adds coin to coins that have been sold already
 
     # standard sell signals (TP, SL or bearish market)
     for coin in list(coins_bought):
-        if coin not in list(coins_sold):
+        if coin not in coins_sold:
             from src.config import hsp_head, sell_bearish  # to update values
 
             TP = float(coins_bought[coin]['bought_at']) + (
@@ -71,13 +71,13 @@ def sell_coins():
                     logger.debug_log("Sell all coins because of bearish market condition", False)
                     if price_change - (TRADING_FEE * 2) < 0:
                         logger.debug_log(
-                            f"{txcolors.SELL_LOSS}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}",
+                            f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         print(
                             f"{txcolors.SELL_LOSS}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
                     elif price_change - (TRADING_FEE * 2) >= 0:
                         logger.debug_log(
-                            f"{txcolors.SELL_PROFIT}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}",
+                            f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         print(
                             f"{txcolors.SELL_PROFIT}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
@@ -88,22 +88,22 @@ def sell_coins():
                         False)
                     if price_change - (TRADING_FEE * 2) < 0:
                         logger.debug_log(
-                            f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}",
+                            f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         print(
                             f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
                     elif price_change - (TRADING_FEE * 2) >= 0:
                         logger.debug_log(
-                            f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}",
+                            f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         print(
                             f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
-                coins_sold = coins_to_sell(coin, coins_sold, last_prices)
+                coins_sold[coin] = coins_bought[coin]
 
             # no action; print once every TIME_DIFFERENCE
             if hsp_head == 1:
-                if len(coins_bought) > 0:
+                if len(coins_bought) > 0 and coin not in coins_sold:
                     logger.debug_log(
                         f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price}: {price_change - (TRADING_FEE * 2):.2f}% Est: {(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}$',
                         False)
@@ -144,13 +144,13 @@ def coins_to_sell(coin, coins_sold, last_prices):
 
         if price_change - (TRADING_FEE * 2) < 0:
             logger.debug_log(
-                f"{txcolors.SELL_LOSS}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}",
+                f"Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                 False)
             print(
                 f"{txcolors.SELL_LOSS}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
         elif price_change - (TRADING_FEE * 2) >= 0:
             logger.debug_log(
-                f"{txcolors.SELL_PROFIT}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}",
+                f"Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                 False)
             print(
                 f"{txcolors.SELL_PROFIT}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")

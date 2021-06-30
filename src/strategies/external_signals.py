@@ -44,7 +44,7 @@ def external_sell_signals():
             os.remove(filename)
             debug_log(f"Removed file {filename}", False)
         except:
-            debug_log(f'Could not remove external signalling file', True)
+            debug_log(f'Could not remove external signalling file {filename} SELL', True)
             if DEBUG:
                 print(f'{txcolors.WARNING}Could not remove external signalling file{txcolors.DEFAULT}')
 
