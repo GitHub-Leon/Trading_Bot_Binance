@@ -5,7 +5,7 @@ from datetime import datetime
 # local dependencies
 from src.classes.TxColor import txcolors
 from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP_LOSS, USE_TRAILING_STOP_LOSS, \
-    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH
+    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH, USE_DEFAULT_STRATEGY
 from src.helpers.decimals import decimals
 from src.helpers.scripts import logger
 from src.helpers.scripts.balance_report import balance_report
@@ -65,7 +65,7 @@ def sell_coins():
                 continue
 
             # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case
-            if last_price < SL or (last_price > TP and not USE_TRAILING_STOP_LOSS) or sell_bearish:
+            if (last_price < SL or (last_price > TP and not USE_TRAILING_STOP_LOSS)) and USE_DEFAULT_STRATEGY or sell_bearish:
 
                 if sell_bearish:  # in case market turns bearish
                     logger.debug_log("Sell all coins because of bearish market condition", False)

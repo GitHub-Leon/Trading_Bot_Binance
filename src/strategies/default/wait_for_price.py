@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # local dependencies
 from src.classes.TxColor import txcolors
-from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS
+from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, USE_DEFAULT_STRATEGY
 from src.helpers.scripts.logger import debug_log
 from src.helpers.scripts.pause_bot import pause_bot
 from src.strategies.default.get_price import get_price
@@ -63,20 +63,21 @@ def wait_for_price():
             if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=TIME_DIFFERENCE):
                 update_volatility_cooloff(coin, datetime.now())
 
-                if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
-                    volatile_coins[coin] = round(threshold_check, 3)
-                    debug_log(
-                        f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}',
-                        False)
-                    print(
-                        f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
+                if USE_DEFAULT_STRATEGY:
+                    if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
+                        volatile_coins[coin] = round(threshold_check, 3)
+                        debug_log(
+                            f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}',
+                            False)
+                        print(
+                            f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
 
-                else:
-                    debug_log(
-                        f'{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins',
-                        False)
-                    print(
-                        f'{txcolors.WARNING}{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins{txcolors.DEFAULT}')
+                    else:
+                        debug_log(
+                            f'{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins',
+                            False)
+                        print(
+                            f'{txcolors.WARNING}{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins{txcolors.DEFAULT}')
 
         elif threshold_check < CHANGE_IN_PRICE:
             coins_down += 1
