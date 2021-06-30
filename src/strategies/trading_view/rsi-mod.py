@@ -5,7 +5,7 @@ import time
 from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
-from src.config import PAIR_WITH, CUSTOM_LIST_FILE, SIGNALS_FOLDER, DEBUG
+from src.config import PAIR_WITH, CUSTOM_LIST_FILE, SIGNALS_FOLDER, DEBUG, bot_paused
 from src.helpers.scripts.logger import debug_log
 
 
@@ -118,7 +118,7 @@ def analyze(pairs):
                     f'Signals OSC: {pair} = RSI:{RSI}/{RSI1} DIFF: {RSI_DIFF} | STOCH_K/D:{STOCH_K}/{STOCH_D} DIFF: {STOCH_DIFF} | BUYS: {BUY_SIGS}_{BUY_SIGS2}/26 | {oscCheck}-{maCheck}')
 
 
-        if (RSI_MIN <= RSI <= RSI_MAX) and (RSI_DIFF >= RSI_BUY):
+        if (RSI_MIN <= RSI <= RSI_MAX) and (RSI_DIFF >= RSI_BUY) and not bot_paused:
             if (STOCH_DIFF >= STOCH_BUY) and (STOCH_MIN <= STOCH_K <= STOCH_MAX) and (STOCH_MIN <= STOCH_D <= STOCH_MAX):
                 if (BUY_SIGS >= MA_SUMMARY) and (BUY_SIGS2 >= MA_SUMMARY2) and (STOCH_K > STOCH_K1):
                     if oscCheck >= OSC_THRESHOLD and maCheck >= MA_THRESHOLD:

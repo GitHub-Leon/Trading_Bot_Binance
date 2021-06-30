@@ -6,7 +6,7 @@ import time
 from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
-from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER
+from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER, bot_paused
 from src.helpers.scripts.logger import debug_log
 
 debug_log("Initialize OSC-Indicators, OSC-Threshold, MA-Indicators, MA-Threshold and Interval", False)
@@ -91,7 +91,7 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
-        if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
+        if not threading.main_thread().is_alive() or bot_paused:  # kills itself, if the main bot isn't running
             exit()
 
         debug_log(f'Custom_1: Analyzing {len(pairs)} coins', False)
