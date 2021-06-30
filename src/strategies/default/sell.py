@@ -99,16 +99,23 @@ def sell_coins():
                         print(
                             f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
+                # add coins to sold ones
                 coins_sold[coin] = coins_bought[coin]
+
+                # print balance report
+                balance_report(coins_sold)
+
+                # update session profit
+                update_session_profit(price_change - (TRADING_FEE * 2))
 
             # no action; print once every TIME_DIFFERENCE
             if hsp_head == 1:
                 if len(coins_bought) > 0 and coin not in coins_sold:
                     logger.debug_log(
-                        f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price}: {price_change - (TRADING_FEE * 2):.2f}% Est: {(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}$',
+                        f'Not selling {coin} for now {buy_price} - {last_price}: {price_change - (TRADING_FEE * 2):.2f}% Est: {(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}$',
                         False)
                     print(
-                        f'TP or SL not yet reached, not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
+                        f'Not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
 
             if hsp_head == 1 and len(coins_bought) == 0:
                 logger.debug_log("Not holding any coins", False)
@@ -169,6 +176,6 @@ def coins_to_sell(coin, coins_sold, last_prices):
             update_session_profit(price_change - (TRADING_FEE * 2))
 
         # print balance report
-        balance_report()
+        balance_report(coins_sold)
 
     return coins_sold
