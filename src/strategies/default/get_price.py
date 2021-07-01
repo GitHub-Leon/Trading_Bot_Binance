@@ -1,9 +1,10 @@
 # This module fetches prices from binance API
 
 from datetime import datetime
+import re
 
 # local dependencies
-from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL
+from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, USE_LEVERAGE
 from src.helpers.scripts.logger import debug_log
 from src.update_globals import update_hsp_head, update_historical_prices
 
@@ -18,7 +19,9 @@ def get_price(add_to_historical=True):
     debug_log("Check prices for all coins in tickers file", False)
     for coin in prices:
 
-        if CUSTOM_LIST:
+        if USE_LEVERAGE and (re.match(r'.*DOWNUSDT$', coin['symbol']) or re.match(r'.*UPUSDT$', coin['symbol'])):
+            initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+        elif CUSTOM_LIST:
             if any(item + PAIR_WITH == coin['symbol'] for item in tickers) and all(
                     item not in coin['symbol'] for item in FIATS):
                 initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}

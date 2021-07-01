@@ -6,9 +6,6 @@ from datetime import timedelta
 from src.classes.TxColor import txcolors
 from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, DEBUG, SIGNALS_FOLDER
 from src.helpers.scripts.logger import debug_log
-from src.remove_coins import remove_from_portfolio
-from src.strategies.default.get_price import get_price
-from src.strategies.default.sell import sell_coins
 from src.update_globals import update_bot_paused
 
 
@@ -31,12 +28,6 @@ def pause_bot():
                 print(
                     f'{txcolors.WARNING}Pausing buying due to change in market conditions, stop loss and take profit will continue to work...{txcolors.DEFAULT}')
             update_bot_paused(True)
-
-        # Sell function needs to work even while paused
-        debug_log("Init sell function while paused", False)
-        coins_sold = sell_coins()
-        remove_from_portfolio(coins_sold)
-        get_price(True)
 
         time.sleep((TIME_DIFFERENCE * 60) / RECHECK_INTERVAL)
 

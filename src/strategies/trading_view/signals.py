@@ -16,13 +16,12 @@ def load_signals():
     signals = glob.glob(SIGNALS_FOLDER + "/*.exs")
 
     for filename in signals:
-        for line in open(filename):
-            try:
-                os.remove(filename)
-            except:
-                debug_log("Could not remove external signalling file", True)
-                if DEBUG:
-                    print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
+        try:
+            os.remove(filename)
+        except:
+            debug_log("Could not remove external signalling file", True)
+            if DEBUG:
+                print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
 
     if os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
         try:
@@ -30,20 +29,31 @@ def load_signals():
         except:
             debug_log("Could not remove external signalling file", True)
             if DEBUG:
-                print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
+                print(f'{txcolors.WARNING}Could not remove external signalling file paused.exc{txcolors.DEFAULT}')
 
     my_module = {}
 
     # load signalling modules
     debug_log("Load signalling modules", False)
     try:
+        if DEBUG:
+            debug_log(f'Starting pausebot', False)
+            print(f'Starting pausebot')
+        module = 'pause_bot'
+        my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
+        debug_log("Threading the modules", False)
+        t = threading.Thread(target=my_module[module].pause_bot, args=())
+        t.daemon = True
+        t.start()
+        time.sleep(2)
+
         if len(SIGNALLING_MODULES) > 0:
             for module in SIGNALLING_MODULES:
                 if DEBUG:
                     debug_log(f'Starting {module}', False)
                     print(f'Starting {module}')
                 my_module[module] = importlib.import_module('.' + module, TRADING_VIEW_FOLDER)
-                debug_log("Treading the modules", False)
+                debug_log("Threading the modules", False)
                 t = threading.Thread(target=my_module[module].do_work, args=())
                 t.daemon = True
                 t.start()

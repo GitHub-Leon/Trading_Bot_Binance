@@ -14,7 +14,7 @@ from src.update_globals import update_volatility_cooloff
 
 
 def wait_for_price():
-    from src.config import hsp_head, volatility_cooloff, historical_prices
+    from src.config import hsp_head, volatility_cooloff, historical_prices, bot_paused
 
     debug_log("Call the initial price and ensure the correct amount of time has passed before the current price again",
               False)
@@ -27,8 +27,6 @@ def wait_for_price():
     coins_up = 0
     coins_down = 0
     coins_unchanged = 0
-
-    pause_bot()
 
     if historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
             minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
@@ -63,7 +61,7 @@ def wait_for_price():
             if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=TIME_DIFFERENCE):
                 update_volatility_cooloff(coin, datetime.now())
 
-                if USE_DEFAULT_STRATEGY:
+                if USE_DEFAULT_STRATEGY and not bot_paused:
                     if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
                         volatile_coins[coin] = round(threshold_check, 3)
                         debug_log(

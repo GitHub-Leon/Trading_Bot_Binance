@@ -5,7 +5,7 @@ from datetime import datetime
 
 # local dependencies
 from src.classes.TxColor import txcolors
-from src.config import coins_bought, LOG_TRADES, TEST_MODE, client
+from src.config import coins_bought, LOG_TRADES, TEST_MODE, client, bot_paused, USE_LEVERAGE
 from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log
 from src.strategies.default.convert_volume import convert_volume

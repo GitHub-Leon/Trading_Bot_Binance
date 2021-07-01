@@ -1,6 +1,7 @@
 # This module handles the sell logic of our bot.
 
 from datetime import datetime
+import re  # regex
 
 # local dependencies
 from src.classes.TxColor import txcolors
@@ -46,6 +47,8 @@ def sell_coins():
             buy_price = float(coins_bought[coin]['bought_at'])
             price_change = float((last_price - buy_price) / buy_price * 100)
 
+            LEVERAGED_TOKEN = re.match(r'.*DOWNUSDT$', coin) or re.match(r'.*UPUSDT$', coin)  # if coin is leveraged
+
             # check that the price is above the take profit and readjust SL and TP accordingly if trialing stop loss used
             if last_price > TP and USE_TRAILING_STOP_LOSS:
                 logger.debug_log(
@@ -64,10 +67,10 @@ def sell_coins():
 
                 continue
 
-            # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case
+            # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case or when market is bearish
             if (last_price < SL or (last_price > TP and not USE_TRAILING_STOP_LOSS)) and USE_DEFAULT_STRATEGY or sell_bearish:
 
-                if sell_bearish:  # in case market turns bearish
+                if sell_bearish and not LEVERAGED_TOKEN:  # in case market turns bearish
                     logger.debug_log("Sell all coins because of bearish market condition", False)
                     if price_change - (TRADING_FEE * 2) < 0:
                         logger.debug_log(

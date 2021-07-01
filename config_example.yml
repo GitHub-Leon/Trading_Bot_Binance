@@ -13,19 +13,19 @@ trading_options:
   PAIR_WITH: USDT
 
   # sell all currently owned coins when pausebot_standard stops bot because of bearish movement
-  SELL_WHEN_BEARISH: True
+  SELL_WHEN_BEARISH: False
 
   # Fees in percent
   TRADING_FEE: 0.075
 
   # Total amount per trade
-  QUANTITY: 15
+  QUANTITY: 150
 
-  # Use custom tickers_USDT.txt list for filtering pairs
-  CUSTOM_LIST: False
+  # Use custom tickers.txt list for filtering pairs
+  CUSTOM_LIST: True
 
   # List of pairs to exclude
-  # by default we're excluding the most popular fiat pairs
+  # by default we're excluding the most popular fiat/leverage pairs
   FIATS:
     - EURUSDT
     - GBPUSDT
@@ -34,29 +34,31 @@ trading_options:
     - DOWN
     - UP
 
+  USE_LEVERAGE: False
+
   # Maximum number of coins to hold
-  MAX_COINS: 10
+  MAX_COINS: 20
 
   # the amount of time in MINUTES to calculate the difference from the current price
-  TIME_DIFFERENCE: 5
+  TIME_DIFFERENCE: 1
 
   # Number of times to check for TP/SL during each TIME_DIFFERENCE Minimum 1
-  RECHECK_INTERVAL: 20
+  RECHECK_INTERVAL: 6
+
+  # define in % when to sell a coin that's not making a profit
+  STOP_LOSS: 2
+
+  # define in % when to take profit on a profitable coin
+  TAKE_PROFIT: 0.5
 
 # Options that apply to specific strategies
 strategy_options:
   volatility:
     # whether to use default settings or not; default is True
-    USE_DEFAULT_STRATEGY: True
+    USE_DEFAULT_STRATEGY: False
 
     # the difference in % between the first and second checks for the price.
-    CHANGE_IN_PRICE: 2
-
-    # define in % when to sell a coin that's not making a profit
-    STOP_LOSS: 1
-
-    # define in % when to take profit on a profitable coin
-    TAKE_PROFIT: 0.5
+    CHANGE_IN_PRICE: 0.1
 
   trailing_sl:
     # whether to use trailing stop loss or not; default is True
@@ -64,10 +66,10 @@ strategy_options:
 
     # when hit TAKE_PROFIT, move STOP_LOSS to TRAILING_STOP_LOSS percentage points below TAKE_PROFIT hence locking in profit
     # when hit TAKE_PROFIT, move TAKE_PROFIT up by TRAILING_TAKE_PROFIT percentage points
-    TRAILING_STOP_LOSS: 0.5
-    TRAILING_TAKE_PROFIT: 0.1
+    TRAILING_STOP_LOSS: 0.02
+    TRAILING_TAKE_PROFIT: 0.01
 
   trading_view:
     SIGNALLING_MODULES:
-      - pausebot_standard
       - signal_standard
+      - pausebot_standard
