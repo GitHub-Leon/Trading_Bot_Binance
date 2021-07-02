@@ -16,11 +16,11 @@ SYMBOL = 'BTCUSDT'
 LEVERAGE_UP_COIN = 'BTCUPUSDT'
 LEVERAGE_DOWN_COIN = 'BTCDOWNUSDT'
 
-THRESHOLD_BUY_BTCDOWN = 10  # x of 15 MA's indicating sell
-THRESHOLD_SELL_BTCDOWN = 7  # x of 15 MA's indicating sell
+THRESHOLD_BUY_BTCDOWN = 11  # x of 15 MA's indicating sell
+THRESHOLD_SELL_BTCDOWN = 8  # x of 15 MA's indicating sell
 
-THRESHOLD_BUY_BTCUP = 10  # x of 15 MA's indicating buy
-THRESHOLD_SELL_BTCUP = 7  # x of 15 MA's indicating buy
+THRESHOLD_BUY_BTCUP = 11  # x of 15 MA's indicating buy
+THRESHOLD_SELL_BTCUP = 8  # x of 15 MA's indicating buy
 
 TIME_TO_WAIT = 1  # Minutes to wait between analysis
 
