@@ -2,6 +2,7 @@ from tradingview_ta import TA_Handler, Interval
 import os
 import time
 import threading
+import sys
 
 # local dependencies
 from src.config import PAIR_WITH, CUSTOM_LIST_FILE, DEBUG, SIGNALS_FOLDER
@@ -133,24 +134,31 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
-        if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
-            exit()
+        try:
+            if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
+                exit()
 
-        debug_log(f'custom_3: Analyzing {len(pairs)} coins', False)
-        if DEBUG:
-            print(f'custom_3: Analyzing {len(pairs)} coins')
-
-        signal_coins = analyze(pairs)
-
-        if len(signal_coins) == 0:
-            debug_log(f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+            debug_log(f'custom_3: Analyzing {len(pairs)} coins', False)
             if DEBUG:
-                print(
-                    f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
-        else:
-            debug_log(f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
-            if DEBUG:
-                print(
-                    f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+                print(f'custom_3: Analyzing {len(pairs)} coins')
 
-        time.sleep((TIME_TO_WAIT * 60))
+            signal_coins = analyze(pairs)
+
+            if len(signal_coins) == 0:
+                debug_log(f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+                if DEBUG:
+                    print(
+                        f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+            else:
+                debug_log(f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+                if DEBUG:
+                    print(
+                        f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+
+        except Exception as e:
+            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+            if DEBUG:
+                print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+
+        finally:  # wait, no matter if there's an error or not
+            time.sleep((TIME_TO_WAIT * 60))

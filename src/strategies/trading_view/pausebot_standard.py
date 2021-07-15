@@ -1,11 +1,12 @@
 import os
 import threading
 import time
+import sys
 
 from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
-from src.config import SIGNALS_FOLDER, SELL_WHEN_BEARISH
+from src.config import SIGNALS_FOLDER, SELL_WHEN_BEARISH, DEBUG
 from src.helpers.scripts.logger import debug_log
 from src.update_globals import update_sell_bearish
 
@@ -61,18 +62,26 @@ def analyze():
 
 def do_work():
     while True:
-        if not threading.main_thread().is_alive():
-            exit()
-
-        paused = analyze()
         try:
-            if paused:
-                with open(SIGNALS_FOLDER + '/paused.exc', 'a+') as f:
-                    f.write('yes')
-            else:
-                if os.path.isfile(SIGNALS_FOLDER + '/paused.exc'):
-                    os.remove(SIGNALS_FOLDER + '/paused.exc')
-        except OSError as e:
-            debug_log("Error while writing or removing signal file. Error-Message: " + str(e), True)
+            if not threading.main_thread().is_alive():
+                exit()
 
-        time.sleep((TIME_TO_WAIT * 60))
+            paused = analyze()
+            try:
+                if paused:
+                    with open(SIGNALS_FOLDER + '/paused.exc', 'a+') as f:
+                        f.write('yes')
+                else:
+                    if os.path.isfile(SIGNALS_FOLDER + '/paused.exc'):
+                        os.remove(SIGNALS_FOLDER + '/paused.exc')
+            except OSError as e:
+                debug_log("Error while writing or removing signal file. Error-Message: " + str(e), True)
+
+        except Exception as e:
+            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+            if DEBUG:
+                print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+
+        finally:  # wait, no matter if there's an error or not
+            time.sleep((TIME_TO_WAIT * 60))
+

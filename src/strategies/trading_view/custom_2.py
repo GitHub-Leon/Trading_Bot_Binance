@@ -2,6 +2,7 @@
 import os
 import threading
 import time
+import sys
 
 from tradingview_ta import TA_Handler, Interval
 
@@ -91,18 +92,26 @@ def do_work():
         pairs = [line.strip() + PAIR_WITH for line in open(CUSTOM_LIST_FILE)]
 
     while True:
-        if not threading.main_thread().is_alive() or bot_paused:  # kills itself, if the main bot isn't running or bot is paused
-            exit()
+        try:
+            if not threading.main_thread().is_alive() or bot_paused:  # kills itself, if the main bot isn't running or bot is paused
+                exit()
 
-        debug_log(f'Custom_2: Analyzing {len(pairs)} coins', False)
-        if DEBUG:
-            print(f'Custom_2: Analyzing {len(pairs)} coins')
+            debug_log(f'Custom_2: Analyzing {len(pairs)} coins', False)
+            if DEBUG:
+                print(f'Custom_2: Analyzing {len(pairs)} coins')
 
-        signal_coins = analyze(pairs)
+            signal_coins = analyze(pairs)
 
-        debug_log(f'Custom_2: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
-        if DEBUG:
-            print(
-                f'Custom_2: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
+            debug_log(f'Custom_2: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
+            if DEBUG:
+                print(
+                    f'Custom_2: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
 
-        time.sleep((TIME_TO_WAIT * 60))
+        except Exception as e:
+            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+            if DEBUG:
+                print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+
+        finally:  # wait, no matter if there's an error or not
+            time.sleep((TIME_TO_WAIT * 60))
+
