@@ -101,10 +101,14 @@ init()  # colorama
 access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
 
 # Authenticate with the client
-if AMERICAN_USER:
-    client = Client(access_key, secret_key, tld='us')
-else:
-    client = Client(access_key, secret_key)
+try:
+    if AMERICAN_USER:
+        client = Client(access_key, secret_key, tld='us')
+    else:
+        client = Client(access_key, secret_key)
+except Exception:
+    print("No connection to the internet.")
+    exit()
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
 if CUSTOM_LIST:
