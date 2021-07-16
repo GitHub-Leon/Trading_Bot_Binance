@@ -6,6 +6,7 @@ script_options:
   LOG_TRADES: True
   AMERICAN_USER: False
   PRINT_CONFIG_AT_START: False
+  DEBUG: False
 
 # These options apply to the trading methods the script executes
 trading_options:

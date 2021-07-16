@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import threading
 
 from binance.client import Client  # needed for the binance API and websockets
 from colorama import init
@@ -13,10 +14,9 @@ from src.helpers.scripts.logger import debug_log
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused, sell_bearish
 
 # Load arguments then parse settings
+lock = threading.Lock()
 args = parameters.parse_args()
 mymodule = {}
-
-DEBUG = False  # default False
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -67,7 +67,8 @@ try:
     CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
     NO_AUTH_CONFIG = False
 except TypeError as e:
-    debug_log("No email auth file. No sign up possible", True)
+    with lock:
+        debug_log("No email auth file. No sign up possible", True)
     NO_AUTH_CONFIG = True
 
 # Paths
@@ -107,7 +108,8 @@ try:
     else:
         client = Client(access_key, secret_key)
 except Exception:
-    print("No connection to the internet.")
+    with lock:
+        print("No connection to the internet.")
     exit()
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
@@ -144,6 +146,7 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
 
 def bot_wait():
     if not TEST_MODE:
-        debug_log("Mainnet security measure", False)
-        print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
+        with lock:
+            debug_log("Mainnet security measure", False)
+            print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)

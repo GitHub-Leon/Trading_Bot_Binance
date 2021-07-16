@@ -7,6 +7,7 @@ from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
 from src.config import PAIR_WITH, CUSTOM_LIST_FILE, SIGNALS_FOLDER, DEBUG, bot_paused
+from src.strategies.trading_view import lock
 from src.helpers.scripts.logger import debug_log
 
 
@@ -72,15 +73,16 @@ def analyze(pairs):
             analysis = handler[pair].get_analysis()
             analysis2 = handler2[pair].get_analysis()
         except Exception as e:
-            debug_log(
-                f"Error while getting analysis.(rsi-mod.py) Error-Message: {str(e)} With coin: {pair} Handler: {handler[pair]}",
-                True)
-            if DEBUG:
-                print("rsi-mod:")
-                print("Exception:")
-                print(e)
-                print(f'Coin: {pair}')
-                print(f'handler: {handler[pair]}')
+            with lock:
+                debug_log(
+                    f"Error while getting analysis.(rsi-mod.py) Error-Message: {str(e)} With coin: {pair} Handler: {handler[pair]}",
+                    True)
+                if DEBUG:
+                    print("rsi-mod:")
+                    print("Exception:")
+                    print(e)
+                    print(f'Coin: {pair}')
+                    print(f'handler: {handler[pair]}')
 
         oscCheck = 0
         maCheck = 0
@@ -115,7 +117,8 @@ def analyze(pairs):
 
         if DEBUG:
             if (RSI < 80) and (BUY_SIGS >= 10) and (STOCH_DIFF >= 0.01) and (RSI_DIFF >= 0.01):
-                print(
+                with lock:
+                    print(
                     f'Signals OSC: {pair} = RSI:{RSI}/{RSI1} DIFF: {RSI_DIFF} | STOCH_K/D:{STOCH_K}/{STOCH_D} DIFF: {STOCH_DIFF} | BUYS: {BUY_SIGS}_{BUY_SIGS2}/26 | {oscCheck}-{maCheck}')
 
 
@@ -124,23 +127,26 @@ def analyze(pairs):
                 if (BUY_SIGS >= MA_SUMMARY) and (BUY_SIGS2 >= MA_SUMMARY2) and (STOCH_K > STOCH_K1):
                     if oscCheck >= OSC_THRESHOLD and maCheck >= MA_THRESHOLD:
                         signal_coins[pair] = pair
-                        debug_log(f'Signals RSI: {pair} - Buy Signal Detected | {BUY_SIGS}_{BUY_SIGS2}', False)
-                        if DEBUG:
-                            print(f'Signals RSI: {pair} - Buy Signal Detected | {BUY_SIGS}_{BUY_SIGS2}')
+                        with lock:
+                            debug_log(f'Signals RSI: {pair} - Buy Signal Detected | {BUY_SIGS}_{BUY_SIGS2}', False)
+                            if DEBUG:
+                                print(f'Signals RSI: {pair} - Buy Signal Detected | {BUY_SIGS}_{BUY_SIGS2}')
                         with open(SIGNALS_FOLDER + '/buy_rsi-mod.exs', 'a+') as f:
                             f.write(pair + '\n')
                 else:
-                    if DEBUG:
-                        print(
-                            f'Signals RSI: {pair} - Stoch/RSI ok, not enough buy signals | {BUY_SIGS}_{BUY_SIGS2}/26 | {STOCH_DIFF}/{RSI_DIFF} | {STOCH_K}')
+                    with lock:
+                        if DEBUG:
+                            print(
+                                f'Signals RSI: {pair} - Stoch/RSI ok, not enough buy signals | {BUY_SIGS}_{BUY_SIGS2}/26 | {STOCH_DIFF}/{RSI_DIFF} | {STOCH_K}')
 
         if SELL_COINS:
             if (BUY_SIGS < SIGNALS_SELL) and (BUY_SIGS2 < SIGNALS_SELL) and (STOCH_DIFF < STOCH_SELL) and (
                     RSI_DIFF < RSI_SELL) and (STOCH_K < STOCH_K1):
                 # signal_coins[pair] = pair
-                debug_log(f'Signals RSI: {pair} - Sell Signal Detected | {BUY_SIGS}_{BUY_SIGS2}', False)
-                if DEBUG:
-                    print(f'Signals RSI: {pair} - Sell Signal Detected | {BUY_SIGS}_{BUY_SIGS2}')
+                with lock:
+                    debug_log(f'Signals RSI: {pair} - Sell Signal Detected | {BUY_SIGS}_{BUY_SIGS2}', False)
+                    if DEBUG:
+                        print(f'Signals RSI: {pair} - Sell Signal Detected | {BUY_SIGS}_{BUY_SIGS2}')
                 with open(SIGNALS_FOLDER + '/sell_rsi-mod.exs', 'a+') as f:
                     f.write(pair + '\n')
             # else:
@@ -162,19 +168,23 @@ def do_work():
             if not threading.main_thread().is_alive():
                 exit()
 
-            debug_log(f'Signals RSI: Analyzing {len(pairs)} coins', False)
-            if DEBUG:
-                print(f'Signals RSI: Analyzing {len(pairs)} coins')
+            with lock:
+                debug_log(f'Signals RSI: Analyzing {len(pairs)} coins', False)
+                if DEBUG:
+                    print(f'Signals RSI: Analyzing {len(pairs)} coins')
 
             signal_coins = analyze(pairs)
-            debug_log(f'Signals RSI: {len(signal_coins)} coins with Buy Signals. Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
-            if DEBUG:
-                print(f'Signals RSI: {len(signal_coins)} coins with Buy Signals. Waiting {TIME_TO_WAIT} minutes for next analysis.')
+
+            with lock:
+                debug_log(f'Signals RSI: {len(signal_coins)} coins with Buy Signals. Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
+                if DEBUG:
+                    print(f'Signals RSI: {len(signal_coins)} coins with Buy Signals. Waiting {TIME_TO_WAIT} minutes for next analysis.')
 
         except Exception as e:
-            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
-            if DEBUG:
-                print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+            with lock:
+                debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+                if DEBUG:
+                    print(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))

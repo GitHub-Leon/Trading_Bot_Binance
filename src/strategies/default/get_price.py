@@ -4,19 +4,23 @@ from datetime import datetime
 import re
 
 # local dependencies
-from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, USE_LEVERAGE
+from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, USE_LEVERAGE, lock
 from src.helpers.scripts.logger import debug_log
 from src.update_globals import update_hsp_head, update_historical_prices
 
 
 def get_price(add_to_historical=True):
-    debug_log("Get price", False)
-
     """Return the current price for all coins on binance"""
+
+    with lock:
+        debug_log("Get price", False)
+
     initial_price = {}
     prices = client.get_all_tickers()
 
-    debug_log("Check prices for all coins in tickers file", False)
+    with lock:
+        debug_log("Check prices for all coins in tickers file", False)
+
     for coin in prices:
 
         if USE_LEVERAGE and (re.match(r'.*DOWNUSDT$', coin['symbol']) or re.match(r'.*UPUSDT$', coin['symbol'])):

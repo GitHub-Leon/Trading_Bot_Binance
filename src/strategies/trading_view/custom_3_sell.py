@@ -6,9 +6,9 @@ import sys
 
 # local dependencies
 from src.config import PAIR_WITH, CUSTOM_LIST_FILE, DEBUG, SIGNALS_FOLDER
+from src.strategies.trading_view import lock
 from src.helpers.scripts.logger import debug_log
 
-debug_log("Define Exchange, Screener and Time-to-wait", False)
 MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
 MY_FIRST_INTERVAL = Interval.INTERVAL_1_MINUTE
@@ -65,14 +65,15 @@ def analyze(pairs):
             second_analysis = second_handler[pair].get_analysis()
             third_analysis = third_handler[pair].get_analysis()
         except Exception as e:
-            debug_log(
-                f"Error while getting analysis.(custom_3.py) Error-Message: {str(e)} With coin: {pair}",
-                True)
-            if DEBUG:
-                print("Custom_3:")
-                print("Exception:")
-                print(e)
-                print(f'Coin: {pair}')
+            with lock:
+                debug_log(
+                    f"Error while getting analysis.(custom_3.py) Error-Message: {str(e)} With coin: {pair}",
+                    True)
+                if DEBUG:
+                    print("Custom_3:")
+                    print("Exception:")
+                    print(e)
+                    print(f'Coin: {pair}')
             tacheckS = 0
 
         first_tacheck = first_analysis.summary['BUY']
@@ -87,10 +88,11 @@ def analyze(pairs):
         third_recommendation = third_analysis.summary['RECOMMENDATION']
         third_RSI = float(third_analysis.indicators['RSI'])
 
-        if DEBUG:
-            print(f'custom_3:{pair} First {first_tacheck} Second {second_tacheck} Third {third_tacheck}')
-            print(
-                f'custom_3:{pair} First {first_recommendation} Second {second_recommendation} Third {third_recommendation}')
+        with lock:
+            if DEBUG:
+                print(f'custom_3:{pair} First {first_tacheck} Second {second_tacheck} Third {third_tacheck}')
+                print(
+                    f'custom_3:{pair} First {first_recommendation} Second {second_recommendation} Third {third_recommendation}')
         # else:
         # print(".", end = '')
 
@@ -111,11 +113,12 @@ def analyze(pairs):
                 (third_recommendation == "SELL" or third_recommendation == "STRONG_SELL"):
             # signal_coins[pair] = pair
 
-            debug_log(f'custom_3: Sell Signal detected on {pair}', False)
-            if DEBUG:
-                print(f'custom_3: Sell Signal detected on {pair}')
+            with lock:
+                debug_log(f'custom_3: Sell Signal detected on {pair}', False)
+                if DEBUG:
+                    print(f'custom_3: Sell Signal detected on {pair}')
 
-            debug_log("Read signal file custom-2.exs", False)
+                debug_log("Read signal file custom-2.exs", False)
             with open(SIGNALS_FOLDER + '/sell_custom_3.exs', 'a+') as f:
                 f.write(pair + '\n')
 
@@ -138,27 +141,31 @@ def do_work():
             if not threading.main_thread().is_alive():  # kills itself, if the main bot isn't running
                 exit()
 
-            debug_log(f'custom_3: Analyzing {len(pairs)} coins', False)
-            if DEBUG:
-                print(f'custom_3: Analyzing {len(pairs)} coins')
+            with lock:
+                debug_log(f'custom_3: Analyzing {len(pairs)} coins', False)
+                if DEBUG:
+                    print(f'custom_3: Analyzing {len(pairs)} coins')
 
             signal_coins = analyze(pairs)
 
             if len(signal_coins) == 0:
-                debug_log(f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
-                if DEBUG:
-                    print(
-                        f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+                with lock:
+                    debug_log(f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+                    if DEBUG:
+                        print(
+                            f'custom_3: No coins above {TA_BUY_THRESHOLD} threshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
             else:
-                debug_log(f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
-                if DEBUG:
-                    print(
-                        f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
+                with lock:
+                    debug_log(f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis', False)
+                    if DEBUG:
+                        print(
+                            f'custom_3: {len(signal_coins)} coins above {TA_BUY_THRESHOLD} treshold on three timeframes. Waiting {TIME_TO_WAIT} minutes for next analysis')
 
         except Exception as e:
-            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
-            if DEBUG:
-                print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+            with lock:
+                debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+                if DEBUG:
+                    print(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))
