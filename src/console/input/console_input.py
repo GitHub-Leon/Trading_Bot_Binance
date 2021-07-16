@@ -11,4 +11,6 @@ def console_input():
 
     with lock:
         debug_log("Enter input", False)
-    return input("--> ")
+        cmd = input("--> ")
+
+    return cmd
