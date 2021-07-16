@@ -14,11 +14,11 @@ from email.mime.text import MIMEText
 # generate auth. code
 import vcode
 
-# local dependencies
 from src.check_package import check_package
 from src.classes.TxColor import txcolors
 from src.config import SENDER_MAIL, SENDER_PW, CODE_EXPIRE_DURATION, WELCOME_TEXT_FILE, EMAIL_REGEX_FILE, \
-    PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE, NO_AUTH_CONFIG
+    PASSWORD_REGEX_FILE, BIRTHDAY_REGEX_FILE, VERIFICATION_MAIL_PLAIN_TEXT_FILE, VERIFICATION_MAIL_HTML_FILE, \
+    NO_AUTH_CONFIG
 from src.helpers.database_connection import connect_to_database  # Database
 from src.helpers.scripts.logger import debug_log, console_log
 
@@ -187,7 +187,7 @@ def login():
         debug_log(str(e), True)
 
     console_log(f"{txcolors.WARNING}SignIn with your email and password.\n{txcolors.DEFAULT}"
-              f"{txcolors.WARNING}Password isn´t shown because of safety.\n{txcolors.DEFAULT}")
+                f"{txcolors.WARNING}Password isn´t shown because of safety.\n{txcolors.DEFAULT}")
 
     # ask about username and password and creates an account if the user doesn´t have one.
     if re.search("[y|Y]", input(f"Do you already have an account?(Y/N) - ")):
@@ -256,7 +256,7 @@ def login():
             send_verification_code = send_mail_verification(email, firstname, lastname)
             console_log(f"{txcolors.WARNING}\nPlease check your mailbox and verify you account!\n{txcolors.DEFAULT}"
                         f"{txcolors.WARNING}The code is only{txcolors.DEFAULT} " + str(
-                        round(CODE_EXPIRE_DURATION / 60, 0)) + f" {txcolors.WARNING}minutes valid.{txcolors.DEFAULT}")
+                round(CODE_EXPIRE_DURATION / 60, 0)) + f" {txcolors.WARNING}minutes valid.{txcolors.DEFAULT}")
 
             start_time = time.time()
 
@@ -282,10 +282,10 @@ def login():
         if not new_login(firstname, lastname, password, email, birthday):
             debug_log("New account creation failed", False)
             console_log(f"{txcolors.WARNING}Creating a new account failed.\n{txcolors.DEFAULT}"
-                  f"{txcolors.WARNING}Please try again!{txcolors.DEFAULT}")
+                        f"{txcolors.WARNING}Please try again!{txcolors.DEFAULT}")
             return False
 
         debug_log("Registration is ready", False)
         console_log(f"{txcolors.WARNING}Your registration is ready.\n{txcolors.DEFAULT}"
-              f"{txcolors.WARNING}If you need help please use the command 'help' or contact us!{txcolors.DEFAULT}")
+                    f"{txcolors.WARNING}If you need help please use the command 'help' or contact us!{txcolors.DEFAULT}")
         return True

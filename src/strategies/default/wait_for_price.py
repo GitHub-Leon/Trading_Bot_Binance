@@ -3,11 +3,10 @@
 import time
 from datetime import datetime, timedelta
 
-# local dependencies
 from src.classes.TxColor import txcolors
-from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, USE_DEFAULT_STRATEGY
+from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, \
+    USE_DEFAULT_STRATEGY
 from src.helpers.scripts.logger import debug_log, console_log
-from src.helpers.scripts.pause_bot import pause_bot
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_buy_signals
 from src.update_globals import update_volatility_cooloff
@@ -19,7 +18,7 @@ def wait_for_price():
     before reading the current price again"""
 
     debug_log("Call the initial price and ensure the correct amount of time has passed before the current price again",
-                  False)
+              False)
 
     volatile_coins = {}
     externals = {}
@@ -65,17 +64,17 @@ def wait_for_price():
                     if len(coins_bought) + len(volatile_coins) < MAX_COINS or MAX_COINS == 0:
                         volatile_coins[coin] = round(threshold_check, 3)
                         debug_log(
-                                f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}',
-                                False)
+                            f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}',
+                            False)
                         console_log(
-                                f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
+                            f'{coin} has gained {volatile_coins[coin]}% within the last {TIME_DIFFERENCE} minutes, calculating volume in {PAIR_WITH}')
 
                     else:
                         debug_log(
-                                f'{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins',
-                                False)
+                            f'{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins',
+                            False)
                         console_log(
-                                f'{txcolors.WARNING}{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins{txcolors.DEFAULT}')
+                            f'{txcolors.WARNING}{coin} has gained {round(threshold_check, 3)}% within the last {TIME_DIFFERENCE} minutes, but you are holding max number of coins{txcolors.DEFAULT}')
 
         elif threshold_check < CHANGE_IN_PRICE:
             coins_down += 1
