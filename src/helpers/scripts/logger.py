@@ -1,8 +1,11 @@
 import os
 from datetime import datetime
+import threading
 
 # Const vars
 LOG_DIR = './log/'
+LOCK_DEBUG = threading.Lock()
+LOCK_CONSOLE = threading.Lock()
 
 
 if not os.path.exists('log'):  # only create folder, if it does not exist already
@@ -12,8 +15,9 @@ if not os.path.exists('log'):  # only create folder, if it does not exist alread
 def trade_log(logline):
     try:
             timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
-            with open(f'{LOG_DIR}trades.log', 'a+') as f:
-                f.write(f'{timestamp} {logline}\n')
+            with LOCK_DEBUG:
+                with open(f'{LOG_DIR}trades.log', 'a+') as f:
+                    f.write(f'{timestamp} {logline}\n')
     except:
         return False
     return True
@@ -22,8 +26,9 @@ def trade_log(logline):
 def input_log(logline, is_valid):
     try:
         timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
-        with open(f'{LOG_DIR}input.log', 'a+') as f:
-            f.write(f'{timestamp} {"[V]" if is_valid else "[E]"} {logline}\n')
+        with LOCK_DEBUG:
+            with open(f'{LOG_DIR}input.log', 'a+') as f:
+                f.write(f'{timestamp} {"[V]" if is_valid else "[E]"} {logline}\n')
     except:
         return False
     return True
@@ -32,10 +37,21 @@ def input_log(logline, is_valid):
 def debug_log(logline, is_error):
     try:
         timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
-        with open(f'{LOG_DIR}debug_{datetime.today().strftime("%Y-%m-%d")}.log', 'a+') as f:
-            f.write(f'{timestamp} {"[I]" if not is_error else "[E]"} {logline}\n')
+        with LOCK_DEBUG:
+            with open(f'{LOG_DIR}debug_{datetime.today().strftime("%Y-%m-%d")}.log', 'a+') as f:
+                f.write(f'{timestamp} {"[I]" if not is_error else "[E]"} {logline}\n')
     except Exception as e:
-        debug_log("Error while debug logging. Error-Message: " + str(e), True)
+        console_log("Error while debug logging. Error-Message: " + str(e))
+        return False
+    return True
+
+
+def console_log(logline):
+    try:
+        with LOCK_CONSOLE:
+            print(logline)
+    except Exception as e:
+        debug_log("Error while console logging", True)
         return False
     return True
 

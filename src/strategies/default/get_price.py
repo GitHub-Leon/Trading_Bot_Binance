@@ -4,22 +4,20 @@ from datetime import datetime
 import re
 
 # local dependencies
-from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, USE_LEVERAGE, lock
-from src.helpers.scripts.logger import debug_log
+from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, USE_LEVERAGE
+from src.helpers.scripts.logger import debug_log, console_log
 from src.update_globals import update_hsp_head, update_historical_prices
 
 
 def get_price(add_to_historical=True):
     """Return the current price for all coins on binance"""
 
-    with lock:
-        debug_log("Get price", False)
+    debug_log("Get price", False)
 
     initial_price = {}
     prices = client.get_all_tickers()
 
-    with lock:
-        debug_log("Check prices for all coins in tickers file", False)
+    debug_log("Check prices for all coins in tickers file", False)
 
     for coin in prices:
 

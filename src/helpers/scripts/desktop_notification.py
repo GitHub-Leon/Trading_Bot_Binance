@@ -1,17 +1,15 @@
 from win10toast_click import ToastNotifier
 
 # local dependencies
-from src.config import DESKTOP_NOTIFICATIONS, lock
-from src.helpers.scripts.logger import debug_log
+from src.config import DESKTOP_NOTIFICATIONS
+from src.helpers.scripts.logger import debug_log, console_log
 
 
 def desktop_notify(title, message, click_callback_func):
-    with lock:
-        debug_log(f'Create a desktop notification {title}. Call-back-function: {callable(click_callback_func)}', False)
+    debug_log(f'Create a desktop notification {title}. Call-back-function: {callable(click_callback_func)}', False)
 
     if not DESKTOP_NOTIFICATIONS:
-        with lock:
-            debug_log("User does not want to get a desktop notification", False)
+        debug_log("User does not want to get a desktop notification", False)
         return False
     notification = ToastNotifier()
 

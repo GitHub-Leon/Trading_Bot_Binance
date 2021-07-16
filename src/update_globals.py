@@ -1,45 +1,38 @@
 # local dependencies
 import src.config as config
-from src.helpers.scripts.logger import debug_log
+from src.helpers.scripts.logger import debug_log, console_log
 
 
 def update_session_profit(session_profit):
-    with config.lock:
-        debug_log("Update session profit", False)
+    debug_log("Update session profit", False)
     config.session_profit += session_profit
 
 
 def update_historical_prices(prices, hsp_head):
-    with config.lock:
-        debug_log("Update historical prices", False)
+    debug_log("Update historical prices", False)
     config.historical_prices[hsp_head] = prices
 
 
 def update_hsp_head(hsp_head):
-    with config.lock:
-        debug_log("Update hsp head", False)
+    debug_log("Update hsp head", False)
     config.hsp_head = hsp_head
 
 
 def update_volatility_cooloff(coin, time):
-    with config.lock:
-        debug_log("Update volatility cooloff", False)
+    debug_log("Update volatility cooloff", False)
     config.volatility_cooloff[coin] = time
 
 
 def update_bot_paused(bot_paused):
-    with config.lock:
-        debug_log("Update bot paused", False)
+    debug_log("Update bot paused", False)
     config.bot_paused = bot_paused
 
 
 def set_default_values():
-    with config.lock:
-        debug_log("Set all values to default", False)
+    debug_log("Set all values to default", False)
     config.session_profit = 0
 
 
 def update_sell_bearish(sell_bearish):
-    with config.lock:
-        debug_log("Update sell_bearish", False)
+    debug_log("Update sell_bearish", False)
     config.sell_bearish = sell_bearish

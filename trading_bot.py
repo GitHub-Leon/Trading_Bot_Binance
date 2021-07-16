@@ -2,8 +2,8 @@
 import time
 
 # local dependencies
-from src.helpers.scripts.logger import debug_log
-from src.config import bot_wait, lock
+from src.helpers.scripts.logger import debug_log, console_log, console_log
+from src.config import bot_wait
 from src.strategies.default.sell import sell_coins
 from src.helpers.scripts.sell_all_coins import sell_all
 from src.remove_coins import remove_from_portfolio
@@ -33,25 +33,20 @@ def main():
                 remove_from_portfolio(coins_sold)
 
         except Exception:  # restarts bot if exception is caught (e.g. connection lost)
-            with lock:
-                print(f'{txcolors.WARNING}Error occured! Restarting bot in 1 min{txcolors.DEFAULT}')
+            console_log(f'{txcolors.WARNING}Error occured! Restarting bot in 1 min{txcolors.DEFAULT}')
             time.sleep(60)  # wait 1 min before restarting bot
-            with lock:
-                print("Trying to start again...")
+            console_log("Trying to start again...")
             time.sleep(5)
 
 
 def startup():
-    with lock:
-        debug_log("------------------------- START_BOT -------------------------", False)
+    debug_log("------------------------- START_BOT -------------------------", False)
     try:
-        with lock:
-            debug_log("Start the bot", False)
+        debug_log("Start the bot", False)
         set_default_values()
         main()
     except KeyboardInterrupt:
-        with lock:
-            debug_log("Exit the bot", False)
+        debug_log("Exit the bot", False)
         sell_all()
 
 

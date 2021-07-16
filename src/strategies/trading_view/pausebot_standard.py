@@ -7,8 +7,7 @@ from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
 from src.config import SIGNALS_FOLDER, SELL_WHEN_BEARISH, DEBUG
-from src.strategies.trading_view import lock
-from src.helpers.scripts.logger import debug_log
+from src.helpers.scripts.logger import debug_log, console_log
 from src.update_globals import update_sell_bearish
 
 INTERVAL = Interval.INTERVAL_5_MINUTES  # Timeframe for analysis
@@ -34,24 +33,21 @@ def analyze():
     try:
         analysis = handler.get_analysis()
     except Exception as e:
-        with lock:
-            debug_log("Error while pausebotmod. Error-Message:" + str(e), True)
+        debug_log("Error while pausebotmod. Error-Message:" + str(e), True)
 
     ma_sell = analysis.moving_averages['SELL']
     if ma_sell >= THRESHOLD:
         paused = True
-        with lock:
-            debug_log(
+        debug_log(
                 f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup',
                 False)
-            print(
+        console_log(
                 f'Save-Mode: Market not looking too good, bot paused from buying {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup')
     else:
-        with lock:
-            debug_log(
+        debug_log(
                 f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup ',
                 False)
-            print(
+        console_log(
                 f'Save-Mode: Market looks ok, bot is running {ma_sell}/{THRESHOLD} -> Waiting {TIME_TO_WAIT} minutes for next market checkup ')
         paused = False
 
@@ -79,14 +75,12 @@ def do_work():
                     if os.path.isfile(SIGNALS_FOLDER + '/paused.exc'):
                         os.remove(SIGNALS_FOLDER + '/paused.exc')
             except OSError as e:
-                with lock:
-                    debug_log("Error while writing or removing signal file. Error-Message: " + str(e), True)
+                debug_log("Error while writing or removing signal file. Error-Message: " + str(e), True)
 
         except Exception as e:
-            with lock:
-                debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
-                if DEBUG:
-                    print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+            if DEBUG:
+                    console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))

@@ -3,7 +3,7 @@ import argparse
 import yaml
 
 # local dependencies
-from src.helpers.scripts.logger import debug_log
+from src.helpers.scripts.logger import debug_log, console_log
 from src.console.output.exit import init_exit
 
 DEFAULT_SETTINGS_FILE = 'settings.json'
@@ -18,7 +18,7 @@ def load_config(file, important):
     except OSError as e:
         debug_log(f'Error while loading config file {file}', True)
         if important:
-            print(f'No config file {file}')
+            console_log(f'No config file {file}')
             init_exit()
     return False
 

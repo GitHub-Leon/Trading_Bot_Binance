@@ -1,15 +1,14 @@
 import json
 
 # local dependencies
-from src.config import coins_bought, coins_bought_file_path, STOP_LOSS, TAKE_PROFIT, DEBUG, lock
-from src.helpers.scripts.logger import debug_log
+from src.config import coins_bought, coins_bought_file_path, STOP_LOSS, TAKE_PROFIT, DEBUG
+from src.helpers.scripts.logger import debug_log, console_log
 
 
 def update_portfolio(orders, last_price, volume):
     """add every coin bought to our portfolio for tracking/selling later"""
 
-    with lock:
-        debug_log("Add every coin bought to our portfolio for tracking/selling later", False)
+    debug_log("Add every coin bought to our portfolio for tracking/selling later", False)
 
     for coin in orders:
 
@@ -24,16 +23,13 @@ def update_portfolio(orders, last_price, volume):
         }
 
         # save the coins in a json file in the same directory
-        with lock:
-            debug_log("Save the coins in the file", False)
+        debug_log("Save the coins in the file", False)
         try:
             with open(coins_bought_file_path, 'w') as file:
                 json.dump(coins_bought, file, indent=4)
         except OSError as e:
-            with lock:
-                debug_log("Error while writing coins to file. Error-Message: " + str(e), True)
+            debug_log("Error while writing coins to file. Error-Message: " + str(e), True)
 
-        with lock:
-            debug_log(f'Order with id {orders[coin][0]["orderId"]} placed and saved to file', False)
-            if DEBUG:
-                print(f'Order with id {orders[coin][0]["orderId"]} placed and saved to file')
+        debug_log(f'Order with id {orders[coin][0]["orderId"]} placed and saved to file', False)
+        if DEBUG:
+            console_log(f'Order with id {orders[coin][0]["orderId"]} placed and saved to file')

@@ -1,13 +1,12 @@
 import mysql.connector
 
 # local dependencies
-from src.config import DB_USERNAME, DB_PASSWORD, DB_NAME, lock
-from src.helpers.scripts.logger import debug_log
+from src.config import DB_USERNAME, DB_PASSWORD, DB_NAME
+from src.helpers.scripts.logger import debug_log, console_log
 
 
 def connect_to_database():
-    with lock:
-        debug_log("Create connection to database", False)
+    debug_log("Create connection to database", False)
 
     try:
         return mysql.connector.connect(
@@ -17,5 +16,4 @@ def connect_to_database():
             database=DB_NAME
         )
     except Exception as e:
-        with lock:
-            debug_log("Error while trying to connect do database. Error-Message: " + str(e), True)
+        debug_log("Error while trying to connect do database. Error-Message: " + str(e), True)

@@ -1,9 +1,7 @@
 # local dependencies
-from src.helpers.scripts.logger import debug_log
-from src.config import lock
+from src.helpers.scripts.logger import debug_log, console_log
 
 
 def helps():
-    with lock:
-        debug_log("User asked for help", False)
-        print("need help?")
+    debug_log("User asked for help", False)
+    console_log("need help?")

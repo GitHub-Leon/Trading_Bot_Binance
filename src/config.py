@@ -8,13 +8,12 @@ from colorama import init
 
 from .helpers import handle_creds
 from .helpers import parameters
-from src.helpers.scripts.logger import debug_log
+from src.helpers.scripts.logger import debug_log, console_log
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused, sell_bearish
 
 # Load arguments then parse settings
-lock = threading.Lock()
 args = parameters.parse_args()
 mymodule = {}
 
@@ -109,7 +108,7 @@ try:
         client = Client(access_key, secret_key)
 except Exception:
     with lock:
-        print("No connection to the internet.")
+        console_log("No connection to the internet.")
     exit()
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
@@ -148,5 +147,5 @@ def bot_wait():
     if not TEST_MODE:
         with lock:
             debug_log("Mainnet security measure", False)
-            print('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
+            console_log('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)

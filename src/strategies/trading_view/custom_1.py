@@ -8,8 +8,7 @@ from tradingview_ta import TA_Handler, Interval
 
 # local dependencies
 from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER, bot_paused
-from src.strategies.trading_view import lock
-from src.helpers.scripts.logger import debug_log
+from src.helpers.scripts.logger import debug_log, console_log
 
 OSC_INDICATORS = ['MACD', 'Stoch.RSI', 'Mom']  # Indicators to use in Oscillator analysis
 OSC_THRESHOLD = 3  # Must be less or equal to number of items in OSC_INDICATORS
@@ -42,16 +41,15 @@ def analyze(pairs):
         try:
             analysis = handler[pair].get_analysis()
         except Exception as e:  # outputs exceptions and details
-            with lock:
-                debug_log(
+            debug_log(
                     f"Error while getting analysis.(custom_1.py) Error-Message: {str(e)} With coin: {pair} Handler: {handler[pair]}",
                     True)
-                if DEBUG:
-                    print("Custom_1:")
-                    print("Exception:")
-                    print(e)
-                    print(f'Coin: {pair}')
-                    print(f'handler: {handler[pair]}')
+            if DEBUG:
+                    console_log("Custom_1:")
+                    console_log("Exception:")
+                    console_log(e)
+                    console_log(f'Coin: {pair}')
+                    console_log(f'handler: {handler[pair]}')
 
         oscCheck = 0
         maCheck = 0
@@ -63,22 +61,20 @@ def analyze(pairs):
             if analysis.moving_averages['COMPUTE'][indicator] == 'BUY':
                 maCheck += 1
 
-        with lock:
-            debug_log(f'Custom_1:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}', False)
-            if DEBUG:
-                print(
+        debug_log(f'Custom_1:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}', False)
+        if DEBUG:
+                console_log(
                     f'Custom_1:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}')
 
         if oscCheck >= OSC_THRESHOLD and maCheck >= MA_THRESHOLD:  # writes the coins that should be bought in a file
             signal_coins[pair] = pair
 
-            with lock:
-                debug_log(f'Custom_1: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.', False)
-                if DEBUG:
-                    print(
+            debug_log(f'Custom_1: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.', False)
+            if DEBUG:
+                    console_log(
                         f'Custom_1: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
 
-                debug_log("Read signal file custom-1.exs", False)
+            debug_log("Read signal file custom-1.exs", False)
             with open(SIGNALS_FOLDER + '/buy_custom_1.exs', 'a+') as f:
                 f.write(pair + '\n')
 
@@ -98,24 +94,21 @@ def do_work():
             if not threading.main_thread().is_alive() or bot_paused:  # kills itself, if the main bot isn't running
                 exit()
 
-            with lock:
-                debug_log(f'Custom_1: Analyzing {len(pairs)} coins', False)
-                if DEBUG:
-                    print(f'Custom_1: Analyzing {len(pairs)} coins')
+            debug_log(f'Custom_1: Analyzing {len(pairs)} coins', False)
+            if DEBUG:
+                    console_log(f'Custom_1: Analyzing {len(pairs)} coins')
 
             signal_coins = analyze(pairs)
 
-            with lock:
-                debug_log(f'Custom_1: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
-                if DEBUG:
-                    print(
+            debug_log(f'Custom_1: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
+            if DEBUG:
+                    console_log(
                         f'Custom_1: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
 
         except Exception as e:
-            with lock:
-                debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
-                if DEBUG:
-                    print(f'Error in Module: {sys.argv[0]}\n Restarting...')
+            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+            if DEBUG:
+                    console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))

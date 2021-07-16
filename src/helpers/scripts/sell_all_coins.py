@@ -3,15 +3,14 @@ import os
 from datetime import datetime
 
 # local dependencies
-from src.config import client, LOG_TRADES, TRADING_FEE, lock
+from src.config import client, LOG_TRADES, TRADING_FEE
 from src.helpers.scripts import logger
 from src.update_globals import update_session_profit
 from src.strategies.default.get_price import get_price
 
 
 def sell_all():
-    with lock:
-        logger.debug_log("Trying to sell all coins", False)
+    logger.debug_log("Trying to sell all coins", False)
     # sells every coin in coins_bought.json and deletes file afterwards
     if os.path.exists('coins_bought.json'):
         with open('coins_bought.json', 'r') as f:
@@ -31,9 +30,8 @@ def sell_all():
                 price_change = float((last_price - buy_price) / buy_price * 100)
 
                 if LOG_TRADES:
-                    with lock:
-                        logger.debug_log("Log trades in log file", False)
-                        logger.trade_log(
+                    logger.debug_log("Log trades in log file", False)
+                    logger.trade_log(
                             f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
 
         os.remove('coins_bought.json')

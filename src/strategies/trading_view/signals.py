@@ -8,49 +8,42 @@ import time
 # local dependencies
 from src.classes.TxColor import txcolors
 from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER
-from src.helpers.scripts.logger import debug_log
-from src.strategies.trading_view import lock
+from src.helpers.scripts.logger import debug_log, console_log
 
 
 def load_signals():
-    with lock:
-        debug_log("Load signals", False)
+    debug_log("Load signals", False)
     signals = glob.glob(SIGNALS_FOLDER + "/*.exs")
 
     for filename in signals:
         try:
             os.remove(filename)
         except:
-            with lock:
-                debug_log("Could not remove external signalling file", True)
-                if DEBUG:
-                    print(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
+            debug_log("Could not remove external signalling file", True)
+            if DEBUG:
+                    console_log(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
 
     if os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
         try:
             os.remove(SIGNALS_FOLDER + "/paused.exc")
         except:
-            with lock:
-                debug_log("Could not remove external signalling file", True)
-                if DEBUG:
-                    print(f'{txcolors.WARNING}Could not remove external signalling file paused.exc{txcolors.DEFAULT}')
+            debug_log("Could not remove external signalling file", True)
+            if DEBUG:
+                    console_log(f'{txcolors.WARNING}Could not remove external signalling file paused.exc{txcolors.DEFAULT}')
 
     my_module = {}
 
     # load signalling modules
-    with lock:
-        debug_log("Load signalling modules", False)
+    debug_log("Load signalling modules", False)
     try:
-        with lock:
-            debug_log(f'Starting pausebot', False)
-            if DEBUG:
-                print(f'Starting pausebot')
+        debug_log(f'Starting pausebot', False)
+        if DEBUG:
+                console_log(f'Starting pausebot')
 
         module = 'pause_bot'
         my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
 
-        with lock:
-            debug_log("Threading the modules", False)
+        debug_log("Threading the modules", False)
 
         t = threading.Thread(target=my_module[module].pause_bot, args=())
         t.daemon = True
@@ -59,23 +52,19 @@ def load_signals():
 
         if len(SIGNALLING_MODULES) > 0:
             for module in SIGNALLING_MODULES:
-                with lock:
-                    if DEBUG:
+                if DEBUG:
                         debug_log(f'Starting {module}', False)
-                        print(f'Starting {module}')
+                        console_log(f'Starting {module}')
                 my_module[module] = importlib.import_module('.' + module, TRADING_VIEW_FOLDER)
 
-                with lock:
-                    debug_log("Threading the modules", False)
+                debug_log("Threading the modules", False)
 
                 t = threading.Thread(target=my_module[module].do_work, args=())
                 t.daemon = True
                 t.start()
                 time.sleep(2)
         else:
-            with lock:
-                debug_log(f'No modules to load {SIGNALLING_MODULES}', False)
-                print(f'No modules to load {SIGNALLING_MODULES}')
+            debug_log(f'No modules to load {SIGNALLING_MODULES}', False)
+            console_log(f'No modules to load {SIGNALLING_MODULES}')
     except Exception as e:
-        with lock:
-            debug_log("Error while loading modules. Error-Message: " + str(e), True)
+        debug_log("Error while loading modules. Error-Message: " + str(e), True)
