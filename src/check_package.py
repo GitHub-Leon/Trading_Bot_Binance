@@ -1,7 +1,6 @@
-# local dependencies
 from src.config import FREE_PACKAGE_ID
 from src.helpers.database_connection import connect_to_database
-from src.helpers.scripts.logger import debug_log, console_log
+from src.helpers.scripts.logger import debug_log
 
 
 def check_package(email):

@@ -1,6 +1,5 @@
-# local dependencies
 import src.config as config
-from src.helpers.scripts.logger import debug_log, console_log
+from src.helpers.scripts.logger import debug_log
 
 
 def update_session_profit(session_profit):

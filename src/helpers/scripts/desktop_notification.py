@@ -1,8 +1,7 @@
 from win10toast_click import ToastNotifier
 
-# local dependencies
 from src.config import DESKTOP_NOTIFICATIONS
-from src.helpers.scripts.logger import debug_log, console_log
+from src.helpers.scripts.logger import debug_log
 
 
 def desktop_notify(title, message, click_callback_func):

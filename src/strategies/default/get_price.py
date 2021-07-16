@@ -1,11 +1,10 @@
 # This module fetches prices from binance API
 
-from datetime import datetime
 import re
+from datetime import datetime
 
-# local dependencies
 from src.config import CUSTOM_LIST, PAIR_WITH, FIATS, client, tickers, RECHECK_INTERVAL, USE_LEVERAGE
-from src.helpers.scripts.logger import debug_log, console_log
+from src.helpers.scripts.logger import debug_log
 from src.update_globals import update_hsp_head, update_historical_prices
 
 

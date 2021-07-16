@@ -1,12 +1,8 @@
 import json
 import os
-from datetime import datetime
 
-# local dependencies
-from src.config import client, LOG_TRADES, TRADING_FEE
+from src.config import client, LOG_TRADES
 from src.helpers.scripts import logger
-from src.update_globals import update_session_profit
-from src.strategies.default.get_price import get_price
 
 
 def sell_all():
@@ -32,7 +28,7 @@ def sell_all():
                 if LOG_TRADES:
                     logger.debug_log("Log trades in log file", False)
                     logger.trade_log(
-                            f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+                        f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
 
         os.remove('coins_bought.json')
 

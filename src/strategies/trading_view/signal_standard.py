@@ -1,12 +1,11 @@
 # use for environment variables
 import os
+import sys
 import threading
 import time
-import sys
 
 from tradingview_ta import TA_Handler, Interval
 
-# local dependencies
 from src.config import PAIR_WITH, SIGNALS_FOLDER, DEBUG, CUSTOM_LIST_FILE
 from src.helpers.scripts.logger import debug_log, console_log
 
@@ -54,15 +53,15 @@ def analyze(pairs):
             second_analysis = second_handler[pair].get_analysis()
         except Exception as e:
             debug_log(
-                    f"Error while getting analysis.(signal_standard.py) Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}",
-                    True)
+                f"Error while getting analysis.(signal_standard.py) Error-Message: {str(e)} With coin: {pair} First handler: {first_handler[pair]} Second handler: {second_handler[pair]}",
+                True)
             tacheckS = 0
 
         first_tacheck = first_analysis.summary['BUY']
         second_tacheck = second_analysis.summary['BUY']
         debug_log(f'{pair} First {first_tacheck} Second {second_tacheck}', False)
         if DEBUG:
-                console_log(f'{pair} First {first_tacheck} Second {second_tacheck}')
+            console_log(f'{pair} First {first_tacheck} Second {second_tacheck}')
 
         if first_tacheck > taMax:
             taMax = first_tacheck
@@ -72,7 +71,7 @@ def analyze(pairs):
 
             debug_log(f'Signal detected on {pair}', False)
             if DEBUG:
-                    console_log(f'Signal detected on {pair}')
+                console_log(f'Signal detected on {pair}')
 
             try:
                 with open(SIGNALS_FOLDER + '/buy_signal_standard.exs', 'a+') as f:
@@ -82,7 +81,7 @@ def analyze(pairs):
 
     debug_log(f'Max signal by {taMaxCoin} at {taMax} on shortest timeframe', False)
     if DEBUG:
-            console_log(f'Max signal by {taMaxCoin} at {taMax} on shortest timeframe')
+        console_log(f'Max signal by {taMaxCoin} at {taMax} on shortest timeframe')
 
     return signal_coins
 
@@ -102,25 +101,25 @@ def do_work():
 
             debug_log(f'Analyzing {len(pairs)} coins', False)
             if DEBUG:
-                    console_log(f'Analyzing {len(pairs)} coins')
+                console_log(f'Analyzing {len(pairs)} coins')
 
             signal_coins = analyze(pairs)
 
             if len(signal_coins) == 0:
                 debug_log(f'No coins above {TA_BUY_THRESHOLD} threshold', False)
                 if DEBUG:
-                        console_log(f'No coins above {TA_BUY_THRESHOLD} threshold')
+                    console_log(f'No coins above {TA_BUY_THRESHOLD} threshold')
             else:
                 debug_log(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} threshold on both timeframes', False)
                 debug_log(f'Waiting {TIME_TO_WAIT} minutes for next analysis', False)
                 if DEBUG:
-                        console_log(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} threshold on both timeframes')
-                        console_log(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
+                    console_log(f'{len(signal_coins)} coins above {TA_BUY_THRESHOLD} threshold on both timeframes')
+                    console_log(f'Waiting {TIME_TO_WAIT} minutes for next analysis')
 
         except Exception as e:
             debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
             if DEBUG:
-                    console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
+                console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))

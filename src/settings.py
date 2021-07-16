@@ -1,8 +1,7 @@
 import os
 
-# local dependencies
 from src.config import DEFAULT_CONFIG_FILE
-from src.helpers.scripts.logger import debug_log, console_log
+from src.helpers.scripts.logger import debug_log
 
 
 def settings():
