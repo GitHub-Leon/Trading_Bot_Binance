@@ -1,14 +1,13 @@
 import json
 import os
 import time
-import threading
 
 from binance.client import Client  # needed for the binance API and websockets
 from colorama import init
 
+from src.helpers.scripts.logger import debug_log, console_log
 from .helpers import handle_creds
 from .helpers import parameters
-from src.helpers.scripts.logger import debug_log, console_log
 
 # global variables
 global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paused, sell_bearish

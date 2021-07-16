@@ -1,10 +1,9 @@
+import sys
 import threading
 import time
-import sys
 
 from tradingview_ta import TA_Handler, Interval
 
-# local dependencies
 from src.config import SIGNALS_FOLDER, USE_LEVERAGE, coins_bought, DEBUG
 from src.helpers.scripts.logger import debug_log, console_log
 
@@ -48,10 +47,10 @@ def analyze():
     # buy
     if ma_sell >= THRESHOLD_BUY_BTCDOWN and LEVERAGE_DOWN_COIN not in list(coins_bought):
         debug_log(
-                f'BTC_leverage: Sell signals at {ma_sell}/{THRESHOLD_BUY_BTCDOWN} -> Buying {LEVERAGE_DOWN_COIN}',
-                False)
+            f'BTC_leverage: Sell signals at {ma_sell}/{THRESHOLD_BUY_BTCDOWN} -> Buying {LEVERAGE_DOWN_COIN}',
+            False)
         if DEBUG:
-                console_log(
+            console_log(
                 f'BTC_leverage: Sell signals at {ma_sell}/{THRESHOLD_BUY_BTCDOWN} -> Buying {LEVERAGE_DOWN_COIN}')
 
         # write file down to buy LEVERAGE_DOWN_COIN
@@ -59,10 +58,10 @@ def analyze():
             f.write(LEVERAGE_DOWN_COIN + '\n')
     if ma_buy >= THRESHOLD_BUY_BTCUP and LEVERAGE_UP_COIN not in list(coins_bought):
         debug_log(
-                f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Buying {LEVERAGE_UP_COIN}',
-                False)
+            f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Buying {LEVERAGE_UP_COIN}',
+            False)
         if DEBUG:
-                console_log(
+            console_log(
                 f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Buying {LEVERAGE_UP_COIN}')
 
         # write file down to buy LEVERAGE_UP_COIN
@@ -72,10 +71,10 @@ def analyze():
     # sell
     if ma_sell <= THRESHOLD_SELL_BTCDOWN and LEVERAGE_DOWN_COIN in list(coins_bought):
         debug_log(
-                f'BTC_leverage: Sell signals at {ma_sell}/{THRESHOLD_BUY_BTCDOWN} -> Selling {LEVERAGE_DOWN_COIN}',
-                False)
+            f'BTC_leverage: Sell signals at {ma_sell}/{THRESHOLD_BUY_BTCDOWN} -> Selling {LEVERAGE_DOWN_COIN}',
+            False)
         if DEBUG:
-                console_log(
+            console_log(
                 f'BTC_leverage: Sell signals at {ma_sell}/{THRESHOLD_BUY_BTCDOWN} -> Selling {LEVERAGE_DOWN_COIN}')
 
         # write file down to sell LEVERAGE_DOWN_COIN
@@ -83,11 +82,11 @@ def analyze():
             f.write(LEVERAGE_DOWN_COIN + '\n')
     if ma_buy <= THRESHOLD_SELL_BTCUP and LEVERAGE_UP_COIN in list(coins_bought):
         debug_log(
-                f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Selling {LEVERAGE_UP_COIN}',
-                False)
+            f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Selling {LEVERAGE_UP_COIN}',
+            False)
         if DEBUG:
-                console_log(
-                    f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Selling {LEVERAGE_UP_COIN}')
+            console_log(
+                f'BTC_leverage: Buy signals at {ma_buy}/{THRESHOLD_BUY_BTCUP} -> Selling {LEVERAGE_UP_COIN}')
 
         # write file down to sell LEVERAGE_UP_COIN
         with open(SIGNALS_FOLDER + '/sell_custom_BTC_leverage.exs', 'a+') as f:
@@ -108,8 +107,7 @@ def do_work():
         except Exception as e:
             debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
             if DEBUG:
-                    console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
+                console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))
-

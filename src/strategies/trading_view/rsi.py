@@ -1,12 +1,11 @@
 # use for environment variables
 import os
+import sys
 import threading
 import time
-import sys
 
 from tradingview_ta import TA_Handler, Interval
 
-# local dependencies
 from src.config import CUSTOM_LIST_FILE, DEBUG, PAIR_WITH, SIGNALS_FOLDER, bot_paused
 from src.helpers.scripts.logger import debug_log, console_log
 
@@ -18,7 +17,7 @@ INTERVAL = Interval.INTERVAL_5_MINUTES  # Timeframe for analysis
 
 EXCHANGE = 'BINANCE'
 SCREENER = 'CRYPTO'
-TIME_TO_WAIT = 5 # Minutes to wait between analysis
+TIME_TO_WAIT = 5  # Minutes to wait between analysis
 
 global last_RSI
 last_RSI = 0
@@ -47,14 +46,14 @@ def analyze(pairs):
             analysis = handler[pair].get_analysis()
         except Exception as e:  # outputs exceptions and details
             debug_log(
-                    f"Error while getting analysis.(rsi.py) Error-Message: {str(e)} With coin: {pair} Handler: {handler[pair]}",
-                    True)
+                f"Error while getting analysis.(rsi.py) Error-Message: {str(e)} With coin: {pair} Handler: {handler[pair]}",
+                True)
             if DEBUG:
-                    console_log("rsi:")
-                    console_log("Exception:")
-                    console_log(e)
-                    console_log(f'Coin: {pair}')
-                    console_log(f'handler: {handler[pair]}')
+                console_log("rsi:")
+                console_log("Exception:")
+                console_log(e)
+                console_log(f'Coin: {pair}')
+                console_log(f'handler: {handler[pair]}')
 
         oscCheck = 0
         maCheck = 0
@@ -71,28 +70,33 @@ def analyze(pairs):
         # Stoch.RSI (25 - 52) & Stoch.RSI.K > Stoch.RSI.D, RSI (49-67), EMA10 > EMA20 > EMA100, Stoch.RSI = BUY, RSI = BUY, EMA10 = EMA20 = BUY
         RSI = float(analysis.indicators['RSI'])
         STOCH_RSI_K = float(analysis.indicators['Stoch.RSI.K'])
-        #STOCH_RSI_D = float(analysis.indicators['Stoch.D'])
+        # STOCH_RSI_D = float(analysis.indicators['Stoch.D'])
         EMA10 = float(analysis.indicators['EMA10'])
         EMA20 = float(analysis.indicators['EMA20'])
         EMA100 = float(analysis.indicators['EMA100'])
         STOCH_K = float(analysis.indicators['Stoch.K'])
         STOCH_D = float(analysis.indicators['Stoch.D'])
 
-        debug_log(f'rsi:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}', False)
+        debug_log(
+            f'rsi:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}',
+            False)
         if DEBUG:
-                console_log(
-                    f'rsi:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}')
+            console_log(
+                f'rsi:{pair} Oscillators:{oscCheck}/{len(OSC_INDICATORS)} Moving averages:{maCheck}/{len(MA_INDICATORS)}')
 
-        if last_RSI != 0 and (RSI - last_RSI >= 2.5) and (RSI >= 49 and RSI <= 67) and (STOCH_RSI_K >= 25 and STOCH_RSI_K <= 58) and \
+        if last_RSI != 0 and (RSI - last_RSI >= 2.5) and (RSI >= 49 and RSI <= 67) and (
+                STOCH_RSI_K >= 25 and STOCH_RSI_K <= 58) and \
                 '''(EMA10 > EMA20 and EMA20 > EMA100)''' and (STOCH_K - STOCH_D >= 4.5):
 
             if oscCheck >= OSC_THRESHOLD and maCheck >= MA_THRESHOLD:  # writes the coins that should be bought in a file
                 signal_coins[pair] = pair
 
-                debug_log(f'rsi: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.', False)
+                debug_log(
+                    f'rsi: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.',
+                    False)
                 if DEBUG:
-                        console_log(
-                            f'rsi: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
+                    console_log(
+                        f'rsi: Signal detected on {pair} at {oscCheck}/{len(OSC_INDICATORS)} oscillators and {maCheck}/{len(MA_INDICATORS)} moving averages.')
 
                 debug_log("Read signal file rsi.exs", False)
                 with open(SIGNALS_FOLDER + '/buy_rsi.exs', 'a+') as f:
@@ -118,20 +122,21 @@ def do_work():
 
             debug_log(f'rsi: Analyzing {len(pairs)} coins', False)
             if DEBUG:
-                    console_log(f'rsi: Analyzing {len(pairs)} coins')
+                console_log(f'rsi: Analyzing {len(pairs)} coins')
 
             signal_coins = analyze(pairs)
 
-            debug_log(f'rsi: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.', False)
+            debug_log(
+                f'rsi: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.',
+                False)
             if DEBUG:
-                    console_log(
-                        f'rsi: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
+                console_log(
+                    f'rsi: {len(signal_coins)} coins above {OSC_THRESHOLD}/{len(OSC_INDICATORS)} oscillators and {MA_THRESHOLD}/{len(MA_INDICATORS)} moving averages Waiting {TIME_TO_WAIT} minutes for next analysis.')
 
         except Exception as e:
             debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
             if DEBUG:
-                    console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
+                console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
 
         finally:  # wait, no matter if there's an error or not
             time.sleep((TIME_TO_WAIT * 60))
-

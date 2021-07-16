@@ -1,13 +1,12 @@
 import sys
 
-# local dependencies
+from src.classes.StampedOut import StampedOut
 from src.console.output.exit import init_exit
 from src.console.output.help import helps
 from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log, console_log
 from src.settings import settings
 from trading_bot import startup
-from src.classes.StampedOut import StampedOut
 
 
 def input_check(command):

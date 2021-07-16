@@ -2,9 +2,8 @@ import argparse
 
 import yaml
 
-# local dependencies
-from src.helpers.scripts.logger import debug_log, console_log
 from src.console.output.exit import init_exit
+from src.helpers.scripts.logger import debug_log, console_log
 
 DEFAULT_SETTINGS_FILE = 'settings.json'
 
