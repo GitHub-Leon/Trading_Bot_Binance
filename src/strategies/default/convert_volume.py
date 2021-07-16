@@ -2,7 +2,7 @@
 
 from src.config import QUANTITY, client, DEBUG
 from src.helpers.scripts.logger import debug_log, console_log
-
+# local dependencies
 from src.strategies.default.wait_for_price import wait_for_price
 
 

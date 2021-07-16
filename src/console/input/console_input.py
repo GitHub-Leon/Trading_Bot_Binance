@@ -1,7 +1,8 @@
 import sys
 
+# local dependencies
+from src.helpers.scripts.logger import debug_log, console_log
 from src.classes.StampedOut import StampedOut
-from src.helpers.scripts.logger import debug_log
 
 
 def console_input():

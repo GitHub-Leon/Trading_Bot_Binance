@@ -1,11 +1,12 @@
 import os
-import threading
 from datetime import datetime
+import threading
 
 # Const vars
 LOG_DIR = './log/'
 LOCK_DEBUG = threading.Lock()
 LOCK_CONSOLE = threading.Lock()
+
 
 if not os.path.exists('log'):  # only create folder, if it does not exist already
     os.mkdir('log')
@@ -13,10 +14,10 @@ if not os.path.exists('log'):  # only create folder, if it does not exist alread
 
 def trade_log(logline):
     try:
-        timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
-        with LOCK_DEBUG:
-            with open(f'{LOG_DIR}trades.log', 'a+') as f:
-                f.write(f'{timestamp} {logline}\n')
+            timestamp = datetime.now().strftime("%d.%m %H:%M:%S")
+            with LOCK_DEBUG:
+                with open(f'{LOG_DIR}trades.log', 'a+') as f:
+                    f.write(f'{timestamp} {logline}\n')
     except:
         return False
     return True

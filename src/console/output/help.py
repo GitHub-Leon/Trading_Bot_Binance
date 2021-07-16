@@ -1,3 +1,4 @@
+# local dependencies
 from src.helpers.scripts.logger import debug_log, console_log
 
 

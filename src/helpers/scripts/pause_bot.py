@@ -2,6 +2,7 @@ import os
 import time
 from datetime import timedelta
 
+# local dependencies
 from src.classes.TxColor import txcolors
 from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, DEBUG, SIGNALS_FOLDER
 from src.helpers.scripts.logger import debug_log, console_log
@@ -21,11 +22,11 @@ def pause_bot():
 
         if not bot_paused:
             debug_log(
-                "Pausing buying due to change in market conditions, stop loss and take profit will continue to work...",
-                False)
+                    "Pausing buying due to change in market conditions, stop loss and take profit will continue to work...",
+                    False)
             if DEBUG:
                 console_log(
-                    f'{txcolors.WARNING}Pausing buying due to change in market conditions, stop loss and take profit will continue to work...{txcolors.DEFAULT}')
+                        f'{txcolors.WARNING}Pausing buying due to change in market conditions, stop loss and take profit will continue to work...{txcolors.DEFAULT}')
             update_bot_paused(True)
 
         time.sleep((TIME_DIFFERENCE * 60) / RECHECK_INTERVAL)
@@ -40,7 +41,7 @@ def pause_bot():
         if bot_paused:
             debug_log(f'Resuming buying due to change in market conditions, total sleep time: {time_elapsed}', False)
             console_log(
-                f'{txcolors.WARNING}Resuming buying due to change in market conditions, total sleep time: {time_elapsed}{txcolors.DEFAULT}')
+                    f'{txcolors.WARNING}Resuming buying due to change in market conditions, total sleep time: {time_elapsed}{txcolors.DEFAULT}')
             update_bot_paused(False)
 
     return

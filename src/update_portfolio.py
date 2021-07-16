@@ -1,5 +1,6 @@
 import json
 
+# local dependencies
 from src.config import coins_bought, coins_bought_file_path, STOP_LOSS, TAKE_PROFIT, DEBUG
 from src.helpers.scripts.logger import debug_log, console_log
 

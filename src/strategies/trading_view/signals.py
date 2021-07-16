@@ -5,6 +5,7 @@ import os
 import threading
 import time
 
+# local dependencies
 from src.classes.TxColor import txcolors
 from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER
 from src.helpers.scripts.logger import debug_log, console_log
@@ -20,7 +21,7 @@ def load_signals():
         except:
             debug_log("Could not remove external signalling file", True)
             if DEBUG:
-                console_log(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
+                    console_log(f'{txcolors.WARNING}Could not remove external signalling file {filename}{txcolors.DEFAULT}')
 
     if os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
         try:
@@ -28,7 +29,7 @@ def load_signals():
         except:
             debug_log("Could not remove external signalling file", True)
             if DEBUG:
-                console_log(f'{txcolors.WARNING}Could not remove external signalling file paused.exc{txcolors.DEFAULT}')
+                    console_log(f'{txcolors.WARNING}Could not remove external signalling file paused.exc{txcolors.DEFAULT}')
 
     my_module = {}
 
@@ -37,7 +38,7 @@ def load_signals():
     try:
         debug_log(f'Starting pausebot', False)
         if DEBUG:
-            console_log(f'Starting pausebot')
+                console_log(f'Starting pausebot')
 
         module = 'pause_bot'
         my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
@@ -52,8 +53,8 @@ def load_signals():
         if len(SIGNALLING_MODULES) > 0:
             for module in SIGNALLING_MODULES:
                 if DEBUG:
-                    debug_log(f'Starting {module}', False)
-                    console_log(f'Starting {module}')
+                        debug_log(f'Starting {module}', False)
+                        console_log(f'Starting {module}')
                 my_module[module] = importlib.import_module('.' + module, TRADING_VIEW_FOLDER)
 
                 debug_log("Threading the modules", False)
