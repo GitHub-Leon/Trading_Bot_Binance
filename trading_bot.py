@@ -46,7 +46,6 @@ def startup():
         main()
     except KeyboardInterrupt:
         debug_log("Exit the bot", False)
-        sell_all()
 
 
 if __name__ == '__main__':

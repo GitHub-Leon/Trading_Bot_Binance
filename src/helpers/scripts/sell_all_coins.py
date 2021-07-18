@@ -1,12 +1,11 @@
-import json
+from src.helpers.scripts.logger import debug_log, trade_log
 import os
-
+import json
 from src.config import client, LOG_TRADES
-from src.helpers.scripts import logger
 
 
 def sell_all():
-    logger.debug_log("Trying to sell all coins", False)
+    debug_log("Trying to sell all coins", False)
     # sells every coin in coins_bought.json and deletes file afterwards
     if os.path.exists('coins_bought.json'):
         with open('coins_bought.json', 'r') as f:
@@ -26,8 +25,8 @@ def sell_all():
                 price_change = float((last_price - buy_price) / buy_price * 100)
 
                 if LOG_TRADES:
-                    logger.debug_log("Log trades in log file", False)
-                    logger.trade_log(
+                    debug_log("Log trades in log file", False)
+                    trade_log(
                         f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
 
         os.remove('coins_bought.json')

@@ -16,6 +16,9 @@ trading_options:
   # sell all currently owned coins when pausebot_standard stops bot because of bearish movement
   SELL_WHEN_BEARISH: False
 
+  # sell all currently held coins at program exit
+  SELL_ALL_AT_END: True
+
   # Fees in percent
   TRADING_FEE: 0.075
 

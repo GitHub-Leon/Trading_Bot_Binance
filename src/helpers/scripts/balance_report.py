@@ -1,6 +1,7 @@
 from src.classes.TxColor import txcolors
 from src.config import QUANTITY, MAX_COINS, PAIR_WITH, LOG_TRADES
 from src.helpers.decimals import decimals
+from src.helpers.scripts.logger import console_log
 
 
 def balance_report(coins_sold):

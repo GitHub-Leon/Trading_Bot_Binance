@@ -33,12 +33,13 @@ parsed_auth = parameters.load_config(auth_file, False)
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
 AMERICAN_USER = parsed_config['script_options']['AMERICAN_USER']
-DEBUG_SETTING = parsed_config['script_options'].get('DEBUG')
+DEBUG_SETTING = parsed_config['script_options']['DEBUG']
 PRINT_CONFIG_AT_START = parsed_config['script_options']['PRINT_CONFIG_AT_START']
 
 # Load trading options
 PAIR_WITH = parsed_config['trading_options']['PAIR_WITH']
 SELL_WHEN_BEARISH = parsed_config['trading_options']['SELL_WHEN_BEARISH']
+SELL_ALL_AT_END = parsed_config['trading_options']['SELL_ALL_AT_END']
 TRADING_FEE = parsed_config['trading_options']['TRADING_FEE']
 QUANTITY = parsed_config['trading_options']['QUANTITY']
 CUSTOM_LIST = parsed_config['trading_options']['CUSTOM_LIST']
@@ -65,8 +66,7 @@ try:
     CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
     NO_AUTH_CONFIG = False
 except TypeError as e:
-    with lock:
-        debug_log("No email auth file. No sign up possible", True)
+    debug_log("No email auth file. No sign up possible", True)
     NO_AUTH_CONFIG = True
 
 # Paths
@@ -91,6 +91,7 @@ DESKTOP_NOTIFICATIONS = True
 # Packages
 FREE_PACKAGE_ID = 999
 
+DEBUG = False
 if DEBUG_SETTING or args.debug:
     DEBUG = True
 
@@ -106,8 +107,7 @@ try:
     else:
         client = Client(access_key, secret_key)
 except Exception:
-    with lock:
-        console_log("No connection to the internet.")
+    console_log("No connection to the internet.")
     exit()
 
 # Use CUSTOM_LIST symbols if CUSTOM_LIST is set to True
@@ -122,6 +122,12 @@ hsp_head = -1
 session_profit = 0
 bot_paused = False
 sell_bearish = False
+
+# session results global vars
+profitable_trades = 0
+losing_trades = 0
+session_fees = 0
+session_duration = time.time()
 
 # prevent including a coin in volatile_coins if it has already appeared there less than TIME_DIFFERENCE minutes ago
 volatility_cooloff = {}
@@ -144,7 +150,6 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
 
 def bot_wait():
     if not TEST_MODE:
-        with lock:
-            debug_log("Mainnet security measure", False)
-            console_log('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
+        debug_log("Mainnet security measure", False)
+        console_log('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
         time.sleep(10)

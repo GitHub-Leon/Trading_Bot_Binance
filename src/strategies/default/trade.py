@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from src.classes.TxColor import txcolors
-from src.config import coins_bought, LOG_TRADES, TEST_MODE, client
+from src.config import coins_bought, LOG_TRADES, TEST_MODE, client, TRADING_FEE, QUANTITY
 from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log, console_log
 from src.strategies.default.convert_volume import convert_volume
@@ -19,7 +19,7 @@ def buy():
     orders = {}
 
     for coin in volume:
-        debug_log("Only buy if there are bo active trades on the coin", False)
+        debug_log("Only buy if there are no active trades on the coin", False)
         # only buy if the there are no active trades on the coin
         if coin not in coins_bought:
             console_log(f"{txcolors.DEFAULT}Preparing to buy {volume[coin]} {coin}{txcolors.DEFAULT}")
@@ -31,6 +31,10 @@ def buy():
                     'orderId': 0,
                     'time': datetime.now().timestamp()
                 }]
+
+                # update not sold coins
+                from src.update_globals import update_session_fees
+                update_session_fees(QUANTITY * TRADING_FEE/100)
 
                 # Log trade
                 if LOG_TRADES:

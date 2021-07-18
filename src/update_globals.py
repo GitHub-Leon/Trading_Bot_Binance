@@ -35,3 +35,18 @@ def set_default_values():
 def update_sell_bearish(sell_bearish):
     debug_log("Update sell_bearish", False)
     config.sell_bearish = sell_bearish
+
+
+def update_losing_trades():
+    debug_log("Update losing_trades", False)
+    config.losing_trades += 1
+
+
+def update_profitable_trades():
+    debug_log("Update profitable_trades", False)
+    config.profitable_trades += 1
+
+
+def update_session_fees(fee):
+    debug_log("Update session_fees", False)
+    config.session_fees += fee

@@ -35,6 +35,7 @@ def pause_bot():
         # stop counting the pause time
         stop_time = time.perf_counter()
         time_elapsed = timedelta(seconds=int(stop_time - start_time))
+        print("bot läuft wieder")
 
         # resume the bot and set pause_bot to False
         if bot_paused:
