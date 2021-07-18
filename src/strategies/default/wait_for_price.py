@@ -88,8 +88,9 @@ def wait_for_price():
     ex_number = 0
 
     for ex_coin in externals:
+        from src.config import bot_paused  # import to get fresh updates
         if ex_coin not in volatile_coins and ex_coin not in coins_bought and (
-                len(coins_bought) + ex_number + len(volatile_coins)) < MAX_COINS:
+                len(coins_bought) + ex_number + len(volatile_coins)) < MAX_COINS and not bot_paused:
             volatile_coins[ex_coin] = 1
             ex_number += 1
             debug_log(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}', False)

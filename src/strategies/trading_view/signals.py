@@ -44,7 +44,7 @@ def load_signals():
 
         debug_log("Threading the modules", False)
 
-        t = threading.Thread(target=my_module[module].pause_bot, args=())
+        t = threading.Thread(target=my_module[module].do_work, args=())
         t.daemon = True
         t.start()
         time.sleep(2)

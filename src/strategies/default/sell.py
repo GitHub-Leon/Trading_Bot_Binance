@@ -108,11 +108,11 @@ def sell_coins():
                 # add coins to sold ones
                 coins_sold[coin] = coins_bought[coin]
 
-                # print balance report
-                balance_report(coins_sold)
-
                 # update session profit
                 update_session_profit(price_change - (TRADING_FEE * 2))
+
+                # print balance report
+                balance_report(coins_sold)
 
             # no action; print once every TIME_DIFFERENCE
             if hsp_head == 1:

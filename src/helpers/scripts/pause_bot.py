@@ -1,11 +1,16 @@
 import os
 import time
 from datetime import timedelta
+import threading
+import sys
 
 from src.classes.TxColor import txcolors
 from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, DEBUG, SIGNALS_FOLDER
 from src.helpers.scripts.logger import debug_log, console_log
 from src.update_globals import update_bot_paused
+
+# local var
+start_time = time.perf_counter()
 
 
 def pause_bot():
@@ -18,7 +23,6 @@ def pause_bot():
     start_time = time.perf_counter()
 
     while os.path.isfile(SIGNALS_FOLDER + "/paused.exc"):
-
         if not bot_paused:
             debug_log(
                 "Pausing buying due to change in market conditions, stop loss and take profit will continue to work...",
@@ -35,7 +39,6 @@ def pause_bot():
         # stop counting the pause time
         stop_time = time.perf_counter()
         time_elapsed = timedelta(seconds=int(stop_time - start_time))
-        print("bot läuft wieder")
 
         # resume the bot and set pause_bot to False
         if bot_paused:
@@ -45,3 +48,20 @@ def pause_bot():
             update_bot_paused(False)
 
     return
+
+
+def do_work():
+    while True:
+        try:
+            if not threading.main_thread().is_alive():
+                exit()
+
+            pause_bot()
+
+        except Exception as e:
+            debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
+            if DEBUG:
+                console_log(f'Error in Module: {sys.argv[0]}\n Restarting...')
+
+        finally:  # wait, no matter if there's an error or not
+            time.sleep(1)
