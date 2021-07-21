@@ -110,6 +110,7 @@ def sell_coins():
 
                 # update session profit
                 update_session_profit(price_change - (TRADING_FEE * 2))
+                logger.profit_log(price_change - (TRADING_FEE * 2))
 
                 # print balance report
                 balance_report(coins_sold)
@@ -178,6 +179,7 @@ def coins_to_sell(coin, coins_sold, last_prices):
 
         update_session_profit(price_change - (TRADING_FEE * 2))
         update_session_fees(QUANTITY * price_change * TRADING_FEE)
+        logger.profit_log(price_change - (TRADING_FEE * 2))
 
         # Log trade
         if LOG_TRADES:

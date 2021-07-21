@@ -1,7 +1,8 @@
-from src.helpers.scripts.logger import debug_log, trade_log
-import os
 import json
+import os
+
 from src.config import client, LOG_TRADES
+from src.helpers.scripts.logger import debug_log, trade_log
 
 
 def sell_all():

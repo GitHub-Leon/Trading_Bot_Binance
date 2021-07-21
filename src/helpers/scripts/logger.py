@@ -1,9 +1,13 @@
+import csv
 import os
+import shutil
 import threading
 from datetime import datetime
+from tempfile import NamedTemporaryFile
 
 # Const vars
 LOG_DIR = './log/'
+PROFIT_LOG_DIR = LOG_DIR + 'profit_log.csv'
 LOCK_DEBUG = threading.Lock()
 LOCK_CONSOLE = threading.Lock()
 
@@ -53,6 +57,56 @@ def console_log(logline):
         debug_log("Error while console logging", True)
         return False
     return True
+
+
+def profit_log(profit):
+    debug_log("Log profits", False)
+    """Logs the daily profit in a file"""
+    found = False
+
+    profit_list = []
+    labels = ['Date', 'Profit']
+    temp_file = NamedTemporaryFile(mode='w', delete=False)
+
+    # creating the csv file with labels for each column
+    try:
+        if not os.path.exists(PROFIT_LOG_DIR):
+            with open(PROFIT_LOG_DIR, 'a+', newline='') as file:
+                # creating a csv writer object
+                csvwriter = csv.writer(file)
+
+                # set labels for all the coming rows
+                csvwriter.writerow(labels)
+
+        # check if there's an entry for the date already
+        with open(PROFIT_LOG_DIR, 'r') as csv_file, temp_file:
+            reader = csv.DictReader(csv_file, fieldnames=labels)
+            writer = csv.DictWriter(temp_file, fieldnames=labels)
+
+            for row in reader:
+                if row['Date'] == str(datetime.today().strftime("%Y-%m-%d")):
+                    found = True
+                    row['Profit'] = str(profit + float(row['Profit']))
+                row = {'Date': row['Date'], 'Profit': row['Profit']}
+                writer.writerow(row)
+
+        shutil.move(temp_file.name, PROFIT_LOG_DIR)
+        if found: return
+
+        # adds a new date entry to the file
+        with open(PROFIT_LOG_DIR, 'a+', newline='') as file:
+            # writing the fields
+            row = [str(datetime.today().strftime("%Y-%m-%d")), str(profit)]
+
+            # creating a csv writer object
+            csvwriter = csv.writer(file)
+
+            # add row to file
+            csvwriter.writerow(row)
+
+    except Exception as e:
+        debug_log("Error in profit logging", True)
+        console_log("Profit not logged due to Error")
 
 
 def check_log_files():

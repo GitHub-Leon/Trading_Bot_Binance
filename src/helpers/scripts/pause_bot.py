@@ -1,8 +1,8 @@
 import os
+import sys
+import threading
 import time
 from datetime import timedelta
-import threading
-import sys
 
 from src.classes.TxColor import txcolors
 from src.config import TIME_DIFFERENCE, RECHECK_INTERVAL, DEBUG, SIGNALS_FOLDER

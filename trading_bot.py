@@ -8,7 +8,6 @@ from src.console.input.console_input import console_input
 from src.console.login import login
 from src.console.output.before_start import print_before_start
 from src.helpers.scripts.logger import debug_log, console_log
-from src.helpers.scripts.sell_all_coins import sell_all
 from src.remove_coins import remove_from_portfolio
 from src.strategies.default.get_price import get_price
 from src.strategies.default.sell import sell_coins
