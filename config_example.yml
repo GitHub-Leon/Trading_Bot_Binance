@@ -4,6 +4,7 @@ script_options:
   # Setting this to False will use REAL funds, use at your own risk
   TEST_MODE: True
   LOG_TRADES: True
+  MSG_DISCORD: True # Used to push alerts, messages etc to a discord channel
   AMERICAN_USER: False
   PRINT_CONFIG_AT_START: False
   DEBUG: False

@@ -5,10 +5,11 @@ from datetime import datetime
 
 from src.classes.TxColor import txcolors
 from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP_LOSS, USE_TRAILING_STOP_LOSS, \
-    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH, USE_DEFAULT_STRATEGY
+    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH, USE_DEFAULT_STRATEGY, MSG_DISCORD
 from src.helpers.decimals import decimals
 from src.helpers.scripts import logger
 from src.helpers.scripts.balance_report import balance_report
+from src.helpers.scripts.discord_msg import msg_discord
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_sell_signals
 from src.update_globals import update_session_profit, update_volatility_cooloff
@@ -108,6 +109,12 @@ def sell_coins():
                 # add coins to sold ones
                 coins_sold[coin] = coins_bought[coin]
 
+                if MSG_DISCORD:  # send discord msg
+                    profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
+                            1 - (TRADING_FEE * 2))  # adjust for trading fee here
+                    msg_discord(
+                        f"```Sell: {coin}\nEntry: {buy_price}\nClose: {last_price}\nProfit: {price_change - (TRADING_FEE * 2):.2f}%```")
+
                 # update session profit
                 update_session_profit(price_change - (TRADING_FEE * 2))
                 logger.profit_log(price_change - (TRADING_FEE * 2))
@@ -182,11 +189,16 @@ def coins_to_sell(coin, coins_sold, last_prices):
         logger.profit_log(price_change - (TRADING_FEE * 2))
 
         # Log trade
-        if LOG_TRADES:
+        if LOG_TRADES or MSG_DISCORD:
             profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
                     1 - (TRADING_FEE * 2))  # adjust for trading fee here
-            logger.trade_log(
-                f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.{decimals()}f} {price_change - (TRADING_FEE * 2):.2f}%")
+
+            if LOG_TRADES:
+                logger.trade_log(
+                    f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.{decimals()}f} {price_change - (TRADING_FEE * 2):.2f}%")
+            if MSG_DISCORD:
+                msg_discord(
+                    f"```Sell: {coin}\nEntry: {buy_price}\nClose: {last_price}\nProfit: {price_change - (TRADING_FEE * 2):.2f}%```")
 
         # print balance report
         balance_report(coins_sold)

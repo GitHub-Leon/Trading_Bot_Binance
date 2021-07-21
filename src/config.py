@@ -31,6 +31,7 @@ parsed_auth = parameters.load_config(auth_file, False)
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
+MSG_DISCORD = parsed_config['script_options']['MSG_DISCORD']
 LOG_TRADES = parsed_config['script_options'].get('LOG_TRADES')
 AMERICAN_USER = parsed_config['script_options']['AMERICAN_USER']
 DEBUG_SETTING = parsed_config['script_options']['DEBUG']
@@ -98,7 +99,9 @@ if DEBUG_SETTING or args.debug:
 init()  # colorama
 
 # Loads credentials
-access_key, secret_key = handle_creds.load_correct_creds(parsed_creds)
+if MSG_DISCORD:
+    DISCORD_WEBHOOK = handle_creds.load_discord_creds(parsed_creds)
+access_key, secret_key = handle_creds.load_trading_creds(parsed_creds)
 
 # Authenticate with the client
 try:

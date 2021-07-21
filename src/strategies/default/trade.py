@@ -34,7 +34,7 @@ def buy():
 
                 # update not sold coins
                 from src.update_globals import update_session_fees
-                update_session_fees(QUANTITY * TRADING_FEE/100)
+                update_session_fees(QUANTITY * TRADING_FEE / 100)
 
                 # Log trade
                 if LOG_TRADES:
