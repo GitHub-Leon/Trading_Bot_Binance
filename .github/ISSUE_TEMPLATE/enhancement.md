@@ -1,5 +1,7 @@
 ---
-name: Enhancement about: Template for Enhancement. title: ''
+name: Enhancement 
+about: Template for Enhancement. 
+title: ''
 labels: enhancement
 ---
 

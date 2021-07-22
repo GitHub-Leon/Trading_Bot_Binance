@@ -1,5 +1,7 @@
 ---
-name: Bug about: Template for Bug-Report. title: ''
+name: Bug 
+about: Template for Bug-Report. 
+title: ''
 labels: bug
 ---
 

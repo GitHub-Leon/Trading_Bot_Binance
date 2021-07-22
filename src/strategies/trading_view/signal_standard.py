@@ -13,8 +13,8 @@ MY_EXCHANGE = 'BINANCE'
 MY_SCREENER = 'CRYPTO'
 MY_FIRST_INTERVAL = Interval.INTERVAL_5_MINUTES
 MY_SECOND_INTERVAL = Interval.INTERVAL_15_MINUTES
-TA_BUY_THRESHOLD = 11  # How many of the 26 indicators to indicate a buy
-TIME_TO_WAIT = 4  # Minutes to wait between analysis
+TA_BUY_THRESHOLD = 18  # How many of the 26 indicators to indicate a buy
+TIME_TO_WAIT = 1  # Minutes to wait between analysis
 
 
 def analyze(pairs):

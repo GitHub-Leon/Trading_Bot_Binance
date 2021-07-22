@@ -13,7 +13,7 @@ from src.update_globals import update_volatility_cooloff
 
 
 def wait_for_price():
-    from src.config import hsp_head, volatility_cooloff, historical_prices, bot_paused
+    from src.config import hsp_head, historical_prices, bot_paused
     """calls the initial price and ensures the correct amount of time has passed
     before reading the current price again"""
 
@@ -53,11 +53,12 @@ def wait_for_price():
         if threshold_check > CHANGE_IN_PRICE:
             coins_up += 1
 
+            from src.config import volatility_cooloff  # update global var
             if coin not in volatility_cooloff:
-                update_volatility_cooloff(coin, datetime.now() - timedelta(minutes=TIME_DIFFERENCE))
+                update_volatility_cooloff(coin, datetime.now() - timedelta(minutes=60))
 
-            # only include coin as volatile if it hasn't been picked up in the last TIME_DIFFERENCE minutes already
-            if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=TIME_DIFFERENCE):
+            # only include coin as volatile if it hasn't been picked up in the last 60 minutes already
+            if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=60):
                 update_volatility_cooloff(coin, datetime.now())
 
                 if USE_DEFAULT_STRATEGY and not bot_paused:
@@ -91,9 +92,18 @@ def wait_for_price():
         from src.config import bot_paused  # import to get fresh updates
         if ex_coin not in volatile_coins and ex_coin not in coins_bought and (
                 len(coins_bought) + ex_number + len(volatile_coins)) < MAX_COINS and not bot_paused:
-            volatile_coins[ex_coin] = 1
-            ex_number += 1
-            debug_log(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}', False)
-            console_log(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}')
+
+            from src.config import volatility_cooloff  # update global var
+            if ex_coin not in volatility_cooloff:
+                update_volatility_cooloff(ex_coin, datetime.now() - timedelta(minutes=60))
+
+            # only include coin as volatile if it hasn't been picked up in the last 60 minutes already
+            if datetime.now() >= volatility_cooloff[ex_coin] + timedelta(minutes=60):
+                update_volatility_cooloff(ex_coin, datetime.now())
+                volatile_coins[ex_coin] = 1
+                ex_number += 1
+
+                debug_log(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}', False)
+                console_log(f'External BUY signal received on {ex_coin}, calculating volume in {PAIR_WITH}')
 
     return volatile_coins, len(volatile_coins), historical_prices[hsp_head]
