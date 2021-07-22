@@ -6,7 +6,7 @@ import threading
 import time
 
 from src.classes.TxColor import txcolors
-from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER
+from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER, MSG_DISCORD
 from src.helpers.scripts.logger import debug_log, console_log
 
 
@@ -35,6 +35,7 @@ def load_signals():
     # load signalling modules
     debug_log("Load signalling modules", False)
     try:
+        # Start pause bot thread
         debug_log(f'Starting pausebot', False)
         if DEBUG:
             console_log(f'Starting pausebot')
@@ -49,6 +50,23 @@ def load_signals():
         t.start()
         time.sleep(2)
 
+        # Start Discord msg thread
+        if MSG_DISCORD:
+            debug_log(f'Starting discord_msg_balance_thread', False)
+            if DEBUG:
+                console_log(f'Starting discord_msg_balance_thread')
+
+            module = 'discord_msg_balance_thread'
+            my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
+
+            debug_log("Threading the modules", False)
+
+            t = threading.Thread(target=my_module[module].do_work, args=())
+            t.daemon = True
+            t.start()
+            time.sleep(2)
+
+        # Start trading_view threads
         if len(SIGNALLING_MODULES) > 0:
             for module in SIGNALLING_MODULES:
                 if DEBUG:

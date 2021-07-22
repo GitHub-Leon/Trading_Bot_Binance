@@ -100,7 +100,8 @@ init()  # colorama
 
 # Loads credentials
 if MSG_DISCORD:
-    DISCORD_WEBHOOK = handle_creds.load_discord_creds(parsed_creds)
+    DISCORD_WEBHOOK_TRADES = handle_creds.load_discord_trades_creds(parsed_creds)
+    DISCORD_WEBHOOK_BALANCE = handle_creds.load_discord_balance_creds(parsed_creds)
 access_key, secret_key = handle_creds.load_trading_creds(parsed_creds)
 
 # Authenticate with the client

@@ -3,13 +3,14 @@
 import re  # regex
 from datetime import datetime
 
+from src.helpers.scripts.discord_msg_trades import msg_discord
+
 from src.classes.TxColor import txcolors
 from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP_LOSS, USE_TRAILING_STOP_LOSS, \
     LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH, USE_DEFAULT_STRATEGY, MSG_DISCORD
 from src.helpers.decimals import decimals
 from src.helpers.scripts import logger
 from src.helpers.scripts.balance_report import balance_report
-from src.helpers.scripts.discord_msg import msg_discord
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_sell_signals
 from src.update_globals import update_session_profit, update_volatility_cooloff

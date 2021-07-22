@@ -4,4 +4,5 @@ prod:
   secret_key: replace_me
 
 discord:
-  DISCORD_WEBHOOK: https://discord.com/api/webhooks/XXX/YYYYY
+  DISCORD_WEBHOOK_TRADES: https://discord.com/api/webhooks/XXX/YYYYY
+  DISCORD_WEBHOOK_BALANCE: https://discord.com/api/webhooks/XXX/YYYYY
