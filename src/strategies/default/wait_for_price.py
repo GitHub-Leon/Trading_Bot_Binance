@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 from src.classes.TxColor import txcolors
 from src.config import PAIR_WITH, TIME_DIFFERENCE, RECHECK_INTERVAL, CHANGE_IN_PRICE, coins_bought, MAX_COINS, \
-    USE_DEFAULT_STRATEGY
+    USE_DEFAULT_STRATEGY, USE_LEVERAGE
 from src.helpers.scripts.logger import debug_log, console_log
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_buy_signals
@@ -27,7 +27,13 @@ def wait_for_price():
     coins_down = 0
     coins_unchanged = 0
 
-    if historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
+    if USE_LEVERAGE and historical_prices[hsp_head]['BNBDOWN' + PAIR_WITH]['time'] > datetime.now() - timedelta(
+            minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
+        # sleep for exactly the amount of time required
+        debug_log("Sleep for exactly the amount of time required", False)
+        time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
+                datetime.now() - historical_prices[hsp_head]['BNBDOWN' + PAIR_WITH]['time'])).total_seconds())
+    elif historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
             minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
         # sleep for exactly the amount of time required
         debug_log("Sleep for exactly the amount of time required", False)

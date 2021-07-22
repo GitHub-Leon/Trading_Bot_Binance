@@ -36,8 +36,8 @@ trading_options:
     - GBPUSDT
     - JPYUSDT
     - USDUSDT
-    - DOWN
-    - UP
+    - DOWN  # comment out if USE_LEVERAGE == True
+    - UP  # comment out if USE_LEVERAGE == True
 
   USE_LEVERAGE: False
 
@@ -63,7 +63,7 @@ strategy_options:
     USE_DEFAULT_STRATEGY: False
 
     # the difference in % between the first and second checks for the price.
-    CHANGE_IN_PRICE: 0.1
+    CHANGE_IN_PRICE: 1
 
   trailing_sl:
     # whether to use trailing stop loss or not; default is True
