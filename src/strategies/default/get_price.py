@@ -22,6 +22,13 @@ def get_price(add_to_historical=True):
 
         if USE_LEVERAGE and (re.match(r'.*DOWNUSDT$', coin['symbol']) or re.match(r'.*UPUSDT$', coin['symbol'])):
             initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+        elif CUSTOM_LIST and USE_LEVERAGE and (re.match(r'.*DOWNUSDT$', coin['symbol']) or re.match(r'.*UPUSDT$', coin['symbol'])):
+            if any(item + 'DOWN' + PAIR_WITH == coin['symbol'] for item in tickers) and all(
+                    item not in coin['symbol'] for item in FIATS):
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+            elif any(item + 'UP' + PAIR_WITH == coin['symbol'] for item in tickers) and all(
+                    item not in coin['symbol'] for item in FIATS):
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
         elif CUSTOM_LIST:
             if any(item + PAIR_WITH == coin['symbol'] for item in tickers) and all(
                     item not in coin['symbol'] for item in FIATS):

@@ -4,7 +4,7 @@ script_options:
   # Setting this to False will use REAL funds, use at your own risk
   TEST_MODE: True
   LOG_TRADES: True
-  MSG_DISCORD: True # Used to push alerts, messages etc to a discord channel
+  MSG_DISCORD: False # Used to push alerts, messages etc to a discord channel
   AMERICAN_USER: False
   PRINT_CONFIG_AT_START: False
   DEBUG: False
@@ -39,7 +39,7 @@ trading_options:
     - DOWN
     - UP
 
-  USE_LEVERAGE: True
+  USE_LEVERAGE: False
 
   # Maximum number of coins to hold
   MAX_COINS: 20
@@ -78,4 +78,3 @@ strategy_options:
     SIGNALLING_MODULES:
       - signal_standard
       - pausebot_standard
-      -
