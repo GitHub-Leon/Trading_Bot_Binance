@@ -27,12 +27,12 @@ def wait_for_price():
     coins_down = 0
     coins_unchanged = 0
 
-    if USE_LEVERAGE and historical_prices[hsp_head]['BNBDOWN' + PAIR_WITH]['time'] > datetime.now() - timedelta(
+    if USE_LEVERAGE and historical_prices[hsp_head]['BNBDOWNUSDT']['time'] > datetime.now() - timedelta(
             minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
         # sleep for exactly the amount of time required
         debug_log("Sleep for exactly the amount of time required", False)
         time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                datetime.now() - historical_prices[hsp_head]['BNBDOWN' + PAIR_WITH]['time'])).total_seconds())
+                datetime.now() - historical_prices[hsp_head]['BNBDOWNUSDT']['time'])).total_seconds())
     elif historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
             minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
         # sleep for exactly the amount of time required
@@ -61,10 +61,10 @@ def wait_for_price():
 
             from src.config import volatility_cooloff  # update global var
             if coin not in volatility_cooloff:
-                update_volatility_cooloff(coin, datetime.now() - timedelta(minutes=60))
+                update_volatility_cooloff(coin, datetime.now() - timedelta(minutes=30))
 
             # only include coin as volatile if it hasn't been picked up in the last 60 minutes already
-            if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=60):
+            if datetime.now() >= volatility_cooloff[coin] + timedelta(minutes=30):
                 update_volatility_cooloff(coin, datetime.now())
 
                 if USE_DEFAULT_STRATEGY and not bot_paused:
@@ -101,10 +101,10 @@ def wait_for_price():
 
             from src.config import volatility_cooloff  # update global var
             if ex_coin not in volatility_cooloff:
-                update_volatility_cooloff(ex_coin, datetime.now() - timedelta(minutes=60))
+                update_volatility_cooloff(ex_coin, datetime.now() - timedelta(minutes=30))
 
             # only include coin as volatile if it hasn't been picked up in the last 60 minutes already
-            if datetime.now() >= volatility_cooloff[ex_coin] + timedelta(minutes=60):
+            if datetime.now() >= volatility_cooloff[ex_coin] + timedelta(minutes=30):
                 update_volatility_cooloff(ex_coin, datetime.now())
                 volatile_coins[ex_coin] = 1
                 ex_number += 1

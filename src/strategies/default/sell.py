@@ -59,9 +59,8 @@ def sell_coins():
                     False)
                 # increasing TP by TRAILING_TAKE_PROFIT (essentially next time to readjust SL)
                 logger.debug_log("Increasing TP by TRAILING_TAKE_PROFIT (essentially next time to readjust SL)", False)
-                coins_bought[coin]['take_profit'] = price_change + TRAILING_TAKE_PROFIT
-                coins_bought[coin]['stop_loss'] = coins_bought[coin]['take_profit'] - TRAILING_STOP_LOSS
-
+                coins_bought[coin]['take_profit'] = coins_bought[coin]['take_profit'] + TRAILING_TAKE_PROFIT
+                coins_bought[coin]['stop_loss'] = coins_bought[coin]['stop_loss'] + TRAILING_STOP_LOSS
                 logger.debug_log(
                     f"{coin} TP reached, adjusting TP {coins_bought[coin]['take_profit']:.2f} and SL {coins_bought[coin]['stop_loss']:.2f} accordingly to lock-in profit",
                     False)
@@ -76,14 +75,17 @@ def sell_coins():
                     last_price > TP and not USE_TRAILING_STOP_LOSS)) and USE_DEFAULT_STRATEGY or sell_bearish:
 
                 if sell_bearish and not LEVERAGED_TOKEN:  # in case market turns bearish
+                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
                     logger.debug_log("Sell all coins because of bearish market condition", False)
                     if price_change - (TRADING_FEE * 2) < 0:
+                        update_losing_trades()
                         logger.debug_log(
                             f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         logger.console_log(
                             f"{txcolors.SELL_LOSS}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
                     elif price_change - (TRADING_FEE * 2) >= 0:
+                        update_profitable_trades()
                         logger.debug_log(
                             f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
@@ -91,16 +93,19 @@ def sell_coins():
                             f"{txcolors.SELL_PROFIT}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
                 else:  # in case TP or SL is getting triggered
+                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
                     logger.debug_log(
                         "The price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case",
                         False)
                     if price_change - (TRADING_FEE * 2) < 0:
+                        update_losing_trades()
                         logger.debug_log(
                             f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         logger.console_log(
                             f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
                     elif price_change - (TRADING_FEE * 2) >= 0:
+                        update_profitable_trades()
                         logger.debug_log(
                             f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)

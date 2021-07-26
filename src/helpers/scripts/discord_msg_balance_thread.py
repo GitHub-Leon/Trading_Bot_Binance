@@ -4,8 +4,7 @@ import time
 
 import requests
 
-from src.config import DEBUG, MSG_DISCORD, DISCORD_WEBHOOK_BALANCE, \
-    PAIR_WITH, QUANTITY, MAX_COINS
+from src.config import DEBUG, MSG_DISCORD, DISCORD_WEBHOOK_BALANCE, MAX_COINS
 from src.helpers.decimals import decimals
 from src.helpers.scripts.logger import debug_log, console_log
 
@@ -17,22 +16,26 @@ def discord_msg_balance():
     """Send a discord push message to a channel every x hours with a balance update"""
     debug_log("Push message to discord channel (balance)", False)
 
-    from src.config import session_profit  # update value
+    # import updated globals
+    from src.config import profitable_trades, losing_trades, coins_bought, session_duration, session_profit, QUANTITY, \
+        PAIR_WITH, session_fees
 
-    try:
-        INVESTMENT_TOTAL = (QUANTITY * MAX_COINS)
-        TOTAL_GAINS = ((QUANTITY * session_profit) / 100)
-        INVESTMENT_GAIN = (TOTAL_GAINS / INVESTMENT_TOTAL) * 100
+    hours, rem = divmod(time.time() - session_duration, 3600)
+    minutes, seconds = divmod(rem, 60)
 
-        msg = f"```Total Investment: {INVESTMENT_TOTAL:.{decimals()}f} {PAIR_WITH}\nProfit: {session_profit:.2f}% ({INVESTMENT_GAIN:.2f}%)\nProfit abs.: {TOTAL_GAINS:.{decimals()}f}{PAIR_WITH}```"
-        message = msg + "\n\n"
+    INVESTMENT_TOTAL = (QUANTITY * MAX_COINS)
+    TOTAL_GAINS = ((QUANTITY * session_profit) / 100)
+    INVESTMENT_GAIN = (TOTAL_GAINS / INVESTMENT_TOTAL) * 100
 
-        if MSG_DISCORD:
-            mUrl = DISCORD_WEBHOOK_BALANCE
-            data = {"content": message}
-            response = requests.post(mUrl, json=data)
-    except Exception:
-        debug_log("Error in discord messaging (balance)", True)
+    session_duration_msg = "Session duration: {:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds)
+    fees_spent_msg = "Fees spent approximately: {:.2f} {}".format(session_fees, PAIR_WITH)
+    msg = f"```Win/Loss: {profitable_trades}/{losing_trades} \nProfit: {session_profit:.2f}% ({INVESTMENT_GAIN:.2f}%)\nProfit abs.: {TOTAL_GAINS:.{decimals()}f}{PAIR_WITH}\nTrading Volume approximately: {QUANTITY * (losing_trades + profitable_trades + len(coins_bought))} {PAIR_WITH}\n{fees_spent_msg}\n{session_duration_msg}``` "
+    message = msg + "\n\n"
+
+    if MSG_DISCORD:
+        mUrl = DISCORD_WEBHOOK_BALANCE
+        data = {"content": message}
+        response = requests.post(mUrl, json=data)
 
     return
 
