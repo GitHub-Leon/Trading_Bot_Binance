@@ -2,6 +2,7 @@
 
 import re  # regex
 from datetime import datetime
+import math
 
 from src.helpers.scripts.discord_msg_trades import msg_discord
 
@@ -86,13 +87,45 @@ def sell_coins():
 
                         )
                     if not TEST_MODE and LEVERAGED_TOKEN:
-                        volume_float = coins_bought[coin]['volume']
-                        length_decimals = len(str(volume_float).split(".")[1])
+                        lot_size = {}
+                        volume = {}
+
+                        # Find the correct step size for each coin
+                        try:
+                            logger.debug_log("Find the correct step size for each coin", False)
+                            info = client.get_symbol_info(coin)
+                            step_size = info['filters'][2]['stepSize']
+                            lot_size[coin] = step_size.index('1') - 1
+
+                            if lot_size[coin] < 0:
+                                lot_size[coin] = 0
+
+                        except Exception as e:
+                            logger.debug_log("Error while finding the correct step size for each coin", True)
+                            if DEBUG:
+                                logger.console_log(e)
+
+                        volume[coin] = float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'])
+
+                        print(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'])
+                        print(volume[coin])
+                        print(lot_size)
+                        # define the volume with the correct step size
+                        if coin not in lot_size:
+                            volume[coin] = float('{:.1f}'.format(volume[coin]))
+                        else:
+                            # if lot size has 0 decimal points, make the volume an integer
+                            if lot_size[coin] == 0:
+                                logger.debug_log("Lot size has 0 decimal points", False)
+                                volume[coin] = int(volume[coin])
+                            else:
+                                volume[coin] = round_decimals_down(volume[coin], lot_size[coin])
+
                         sell_coins_limit = client.create_order(
                             symbol=coin,
                             side='SELL',
                             type='MARKET',
-                            quantity=round_down(float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']), length_decimals)
+                            quantity=volume[coin]
 
                         )
 
@@ -239,6 +272,12 @@ def coins_to_sell(coin, coins_sold, last_prices):
     return coins_sold
 
 
-def round_down(value, decimals):
-    factor = 1 / (10 ** decimals)
-    return (value // factor) * factor
+def round_decimals_down(number:float, decimals:int=2):
+    """
+    Returns a value rounded down to a specific number of decimal places.
+    """
+    if decimals == 0:
+        return math.floor(number)
+
+    factor = 10 ** decimals
+    return math.floor(number * factor) / factor
