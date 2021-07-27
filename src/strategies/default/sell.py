@@ -74,59 +74,87 @@ def sell_coins():
             if (last_price < SL or (
                     last_price > TP and not USE_TRAILING_STOP_LOSS)) and USE_DEFAULT_STRATEGY or sell_bearish:
 
-                if sell_bearish and not LEVERAGED_TOKEN:  # in case market turns bearish
-                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
-                    logger.debug_log("Sell all coins because of bearish market condition", False)
-                    if price_change - (TRADING_FEE * 2) < 0:
-                        update_losing_trades()
+                # try to create a real order
+                logger.debug_log("Try to create a real order", False)
+                try:
+                    if not TEST_MODE and not LEVERAGED_TOKEN:
+                        sell_coins_limit = client.create_order(
+                            symbol=coin,
+                            side='SELL',
+                            type='MARKET',
+                            quantity=coins_bought[coin]['volume']
+
+                        )
+                    if not TEST_MODE and LEVERAGED_TOKEN:
+                        volume_float = coins_bought[coin]['volume']
+                        length_decimals = len(str(volume_float).split(".")[1])
+                        sell_coins_limit = client.create_order(
+                            symbol=coin,
+                            side='SELL',
+                            type='MARKET',
+                            quantity=round_down(float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']), length_decimals)
+
+                        )
+
+                # error handling here in case position cannot be placed
+                except Exception as e:
+                    print("error: "+ str(e))
+                    logger.debug_log("Error while trying to place a real order. Error-Message: " + str(e), True)
+
+                else:
+                    if sell_bearish and not LEVERAGED_TOKEN:  # in case market turns bearish
+                        from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
+                        logger.debug_log("Sell all coins because of bearish market condition", False)
+                        if price_change - (TRADING_FEE * 2) < 0:
+                            update_losing_trades()
+                            logger.debug_log(
+                                f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                                False)
+                            logger.console_log(
+                                f"{txcolors.SELL_LOSS}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                        elif price_change - (TRADING_FEE * 2) >= 0:
+                            update_profitable_trades()
+                            logger.debug_log(
+                                f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                                False)
+                            logger.console_log(
+                                f"{txcolors.SELL_PROFIT}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+
+                    else:  # in case TP or SL is getting triggered
+                        from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
                         logger.debug_log(
-                            f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            "The price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case",
                             False)
-                        logger.console_log(
-                            f"{txcolors.SELL_LOSS}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-                    elif price_change - (TRADING_FEE * 2) >= 0:
-                        update_profitable_trades()
-                        logger.debug_log(
-                            f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                            False)
-                        logger.console_log(
-                            f"{txcolors.SELL_PROFIT}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                        if price_change - (TRADING_FEE * 2) < 0:
+                            update_losing_trades()
+                            logger.debug_log(
+                                f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                                False)
+                            logger.console_log(
+                                f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                        elif price_change - (TRADING_FEE * 2) >= 0:
+                            update_profitable_trades()
+                            logger.debug_log(
+                                f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                                False)
+                            logger.console_log(
+                                f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
-                else:  # in case TP or SL is getting triggered
-                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
-                    logger.debug_log(
-                        "The price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case",
-                        False)
-                    if price_change - (TRADING_FEE * 2) < 0:
-                        update_losing_trades()
-                        logger.debug_log(
-                            f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                            False)
-                        logger.console_log(
-                            f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-                    elif price_change - (TRADING_FEE * 2) >= 0:
-                        update_profitable_trades()
-                        logger.debug_log(
-                            f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                            False)
-                        logger.console_log(
-                            f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                    # add coins to sold ones
+                    coins_sold[coin] = coins_bought[coin]
 
-                # add coins to sold ones
-                coins_sold[coin] = coins_bought[coin]
+                    if MSG_DISCORD:  # send discord msg
+                        profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
+                                1 - (TRADING_FEE * 2))  # adjust for trading fee here
+                        msg_discord(
+                            f"```Sell: {coin}\nEntry: {buy_price}\nClose: {last_price}\nProfit: {price_change - (TRADING_FEE * 2):.2f}%```")
 
-                if MSG_DISCORD:  # send discord msg
-                    profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
-                            1 - (TRADING_FEE * 2))  # adjust for trading fee here
-                    msg_discord(
-                        f"```Sell: {coin}\nEntry: {buy_price}\nClose: {last_price}\nProfit: {price_change - (TRADING_FEE * 2):.2f}%```")
+                    # update session profit
+                    update_session_profit(price_change - (TRADING_FEE * 2))
+                    logger.profit_log(price_change - (TRADING_FEE * 2))
 
-                # update session profit
-                update_session_profit(price_change - (TRADING_FEE * 2))
-                logger.profit_log(price_change - (TRADING_FEE * 2))
-
-                # print balance report
-                balance_report(coins_sold)
+                    # print balance report
+                    balance_report(coins_sold)
 
             # no action; print once every TIME_DIFFERENCE
             if hsp_head == 1:
@@ -134,8 +162,7 @@ def sell_coins():
                     logger.debug_log(
                         f'Not selling {coin} for now {buy_price} - {last_price}: {price_change - (TRADING_FEE * 2):.2f}% Est: {(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}$',
                         False)
-                    logger.console_log(
-                        f'Not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
+                    logger.console_log(f'Not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
 
             if hsp_head == 1 and len(coins_bought) == 0:
                 logger.debug_log("Not holding any coins", False)
@@ -210,3 +237,8 @@ def coins_to_sell(coin, coins_sold, last_prices):
         balance_report(coins_sold)
 
     return coins_sold
+
+
+def round_down(value, decimals):
+    factor = 1 / (10 ** decimals)
+    return (value // factor) * factor

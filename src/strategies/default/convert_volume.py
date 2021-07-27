@@ -9,7 +9,7 @@ from src.strategies.default.wait_for_price import wait_for_price
 def convert_volume():
     """Converts the volume given in QUANTITY from coin (PAIR_WITH) to the each coin's volume"""
 
-    debug_log("Convert the volume given quqntity from coin to the each coin´s volume", False)
+    debug_log("Convert the volume given quantity from coin to the each coin´s volume", False)
 
     volatile_coins, number_of_coins, last_price = wait_for_price()
     lot_size = {}
@@ -33,7 +33,7 @@ def convert_volume():
                 console_log(e)
 
         # calculate the volume in coin from QUANTITY in coin (PAIR_WITH)
-        debug_log("Calculate the colume in coin from quantity in coin (pair_with)", False)
+        debug_log("Calculate the volume in coin from quantity in coin (pair_with)", False)
         volume[coin] = float(QUANTITY / float(last_price[coin]['price']))
 
         # define the volume with the correct step size
