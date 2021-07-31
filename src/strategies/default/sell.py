@@ -3,12 +3,13 @@
 import re  # regex
 from datetime import datetime
 import math
+import time
 
 from src.helpers.scripts.discord_msg_trades import msg_discord
 
 from src.classes.TxColor import txcolors
 from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP_LOSS, USE_TRAILING_STOP_LOSS, \
-    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH, USE_DEFAULT_STRATEGY, MSG_DISCORD
+    LOG_TRADES, TEST_MODE, DEBUG, TRADING_FEE, QUANTITY, PAIR_WITH, USE_DEFAULT_STRATEGY, MSG_DISCORD, USE_LIMIT_ORDERS
 from src.helpers.decimals import decimals
 from src.helpers.scripts import logger
 from src.helpers.scripts.balance_report import balance_report
@@ -75,119 +76,37 @@ def sell_coins():
             if (last_price < SL or (
                     last_price > TP and not USE_TRAILING_STOP_LOSS)) and USE_DEFAULT_STRATEGY or sell_bearish:
 
-                # try to create a real order
-                logger.debug_log("Try to create a real order", False)
-                try:
-                    if not TEST_MODE and not LEVERAGED_TOKEN:
-                        sell_coins_limit = client.create_order(
-                            symbol=coin,
-                            side='SELL',
-                            type='MARKET',
-                            quantity=coins_bought[coin]['volume']
+                # use a limit order to sell the coin
+                if USE_LIMIT_ORDERS:
+                    # try to create a real order
+                    logger.debug_log("Try to create a real order (limit)", False)
+                    try:
+                        if not TEST_MODE:  # use limit sell when not in TEST_MODE
+                            coins_sold = use_limit_sell_order(coin, coins_sold, last_prices)
+                        if TEST_MODE:  # use market sell if TEST_MODE
+                            coins_sold = coins_to_sell(coin, coins_sold, last_prices)
 
-                        )
-                    if not TEST_MODE and LEVERAGED_TOKEN:
-                        lot_size = {}
-                        volume = {}
+                    # error handling here in case position cannot be placed
+                    except Exception as e:
+                        logger.console_log("error: " + str(e))
+                        logger.debug_log("Error while trying to place a real order. SL/TP or bearish market triggered (Limit). Error-Message: " + str(e), True)
 
-                        # Find the correct step size for each coin
-                        try:
-                            logger.debug_log("Find the correct step size for each coin", False)
-                            info = client.get_symbol_info(coin)
-                            step_size = info['filters'][2]['stepSize']
-                            lot_size[coin] = step_size.index('1') - 1
+                    else:
+                        logger.debug_log("SL/TP or bearish market triggered (Limit).", False)
 
-                            if lot_size[coin] < 0:
-                                lot_size[coin] = 0
+                if not USE_LIMIT_ORDERS:
+                    # try to create a real order
+                    logger.debug_log("Try to create a real order", False)
+                    try:
+                        coins_sold = coins_to_sell(coin, coins_sold, last_prices)
 
-                        except Exception as e:
-                            logger.debug_log("Error while finding the correct step size for each coin", True)
-                            if DEBUG:
-                                logger.console_log(e)
+                    # error handling here in case position cannot be placed
+                    except Exception as e:
+                        logger.console_log("error: " + str(e))
+                        logger.debug_log("Error while trying to place a real order. SL/TP or bearish market triggered. Error-Message: " + str(e), True)
 
-                        volume[coin] = float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'])
-
-                        print(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'])
-                        print(volume[coin])
-                        print(lot_size)
-                        # define the volume with the correct step size
-                        if coin not in lot_size:
-                            volume[coin] = float('{:.1f}'.format(volume[coin]))
-                        else:
-                            # if lot size has 0 decimal points, make the volume an integer
-                            if lot_size[coin] == 0:
-                                logger.debug_log("Lot size has 0 decimal points", False)
-                                volume[coin] = int(volume[coin])
-                            else:
-                                volume[coin] = round_decimals_down(volume[coin], lot_size[coin])
-
-                        sell_coins_limit = client.create_order(
-                            symbol=coin,
-                            side='SELL',
-                            type='MARKET',
-                            quantity=volume[coin]
-
-                        )
-
-                # error handling here in case position cannot be placed
-                except Exception as e:
-                    print("error: "+ str(e))
-                    logger.debug_log("Error while trying to place a real order. Error-Message: " + str(e), True)
-
-                else:
-                    if sell_bearish and not LEVERAGED_TOKEN:  # in case market turns bearish
-                        from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
-                        logger.debug_log("Sell all coins because of bearish market condition", False)
-                        if price_change - (TRADING_FEE * 2) < 0:
-                            update_losing_trades()
-                            logger.debug_log(
-                                f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                                False)
-                            logger.console_log(
-                                f"{txcolors.SELL_LOSS}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-                        elif price_change - (TRADING_FEE * 2) >= 0:
-                            update_profitable_trades()
-                            logger.debug_log(
-                                f"Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                                False)
-                            logger.console_log(
-                                f"{txcolors.SELL_PROFIT}Bearish market, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-
-                    else:  # in case TP or SL is getting triggered
-                        from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees
-                        logger.debug_log(
-                            "The price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case",
-                            False)
-                        if price_change - (TRADING_FEE * 2) < 0:
-                            update_losing_trades()
-                            logger.debug_log(
-                                f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                                False)
-                            logger.console_log(
-                                f"{txcolors.SELL_LOSS}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-                        elif price_change - (TRADING_FEE * 2) >= 0:
-                            update_profitable_trades()
-                            logger.debug_log(
-                                f"TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
-                                False)
-                            logger.console_log(
-                                f"{txcolors.SELL_PROFIT}TP or SL reached, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
-
-                    # add coins to sold ones
-                    coins_sold[coin] = coins_bought[coin]
-
-                    if MSG_DISCORD:  # send discord msg
-                        profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
-                                1 - (TRADING_FEE * 2))  # adjust for trading fee here
-                        msg_discord(
-                            f"```Sell: {coin}\nEntry: {buy_price}\nClose: {last_price}\nProfit: {price_change - (TRADING_FEE * 2):.2f}%```")
-
-                    # update session profit
-                    update_session_profit(price_change - (TRADING_FEE * 2))
-                    logger.profit_log(price_change - (TRADING_FEE * 2))
-
-                    # print balance report
-                    balance_report(coins_sold)
+                    else:
+                        logger.debug_log("SL/TP or bearish market triggered.", False)
 
             # no action; print once every TIME_DIFFERENCE
             if hsp_head == 1:
@@ -223,7 +142,7 @@ def coins_to_sell(coin, coins_sold, last_prices):
 
     # error handling here in case position cannot be placed
     except Exception as e:
-        logger.debug_log("Error while trying to place a real order. Error-Message: " + str(e), True)
+        logger.debug_log("Error while trying to place a real order (coins_to_sell). Error-Message: " + str(e), True)
 
     # run the else block if coin has been sold and create a dict for each coin sold
     else:
@@ -272,12 +191,112 @@ def coins_to_sell(coin, coins_sold, last_prices):
     return coins_sold
 
 
-def round_decimals_down(number:float, decimals:int=2):
+def use_limit_sell_order(coin, coins_sold, last_prices):
+    """
+    Input coin gets sold via current market price with limit orders
+    Returns the updated coins_sold
+    """
+    last_price = float(last_prices[coin]['price'])
+    buy_price = float(coins_bought[coin]['bought_at'])
+    price_change = float((last_price - buy_price) / buy_price * 100)
+
+    from src.update_globals import update_session_fees
+    update_session_profit(price_change - (TRADING_FEE * 2))
+    update_session_fees(QUANTITY * price_change * TRADING_FEE)
+    logger.profit_log(price_change - (TRADING_FEE * 2))
+
+    while True:
+        last_price = float(client.get_symbol_ticker(symbol=coin)['price'])
+        buy_price = float(coins_bought[coin]['bought_at'])
+        price_change = float((last_price - buy_price) / buy_price * 100)
+
+        orders = {}
+
+        try:
+            if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) == 0:  # if balance == 0, remove from portfolio
+                coins_sold[coin] = coins_bought[coin]
+                return coins_sold
+
+            order = client.order_limit_sell(
+                symbol=coin,
+                quantity=client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'],
+                price=last_price
+            )
+        except Exception as e:
+            logger.debug_log("Error while creating an limit order: " + str(e), True)
+        else:
+            time.sleep(0.2)  # wait to see if order got filled or not
+            try:
+                if len(client.get_open_orders(symbol=coin)) != 0:  # check, if there are still open orders
+                    try:
+                        while not orders[coin]:
+                            orders[coin] = client.get_all_orders(symbol=str(coin).split(PAIR_WITH)[0], limit=1)
+                            time.sleep(1)
+                    except Exception:  # occurs, if no order is available for the coin anymore
+                        pass
+
+                if len(client.get_open_orders(symbol=coin)) == 0:
+                    coins_sold[coin] = coins_bought[coin]  # add the coin to the sold coins, if no order is open anymore
+
+                    logger.debug_log("Selling coin with limit sell", False)
+                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees, update_volatility_cooloff
+                    if price_change - (TRADING_FEE * 2) < 0:
+                        update_losing_trades()  # coin was not profitable
+                        logger.debug_log(
+                            f"Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            False)
+                        logger.console_log(
+                            f"{txcolors.SELL_LOSS}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                    elif price_change - (TRADING_FEE * 2) >= 0:
+                        update_profitable_trades()  # coin was profitable
+                        logger.debug_log(
+                            f"Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            False)
+                        logger.console_log(
+                            f"{txcolors.SELL_PROFIT}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+
+                    # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
+                    update_volatility_cooloff(coin, datetime.now())
+
+                    # update global vars
+                    update_session_profit(price_change - (TRADING_FEE * 2))
+                    update_session_fees(QUANTITY * price_change * TRADING_FEE)
+
+                    # log profits
+                    logger.profit_log(price_change - (TRADING_FEE * 2))
+
+                    # Log trade
+                    if LOG_TRADES or MSG_DISCORD:
+                        profit = ((last_price - buy_price) * coins_sold[coin]['volume']) * (
+                                1 - (TRADING_FEE * 2))  # adjust for trading fee here
+
+                        if LOG_TRADES:
+                            logger.trade_log(
+                                f"Sell: {coins_sold[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.{decimals()}f} {price_change - (TRADING_FEE * 2):.2f}%")
+                        if MSG_DISCORD:
+                            msg_discord(
+                                f"```Sell: {coin}\nEntry: {buy_price}\nClose: {last_price}\nProfit: {price_change - (TRADING_FEE * 2):.2f}%```")
+
+                    # print balance report
+                    balance_report(coins_sold)
+
+                    return coins_sold
+                else:  # cancel the order, if it is still up
+                    result = client.cancel_order(
+                        symbol=coin,
+                        orderId=orders[coin][0]['orderId']
+                    )
+
+            except Exception as e:
+                logger.debug_log("Error while cancelling a limit order: " + str(e), True)
+
+
+def round_decimals_down(number: float, decimal_places: int=2):  # NOT USED AS OF RIGHT NOW!!!
     """
     Returns a value rounded down to a specific number of decimal places.
     """
-    if decimals == 0:
+    if decimal_places == 0:
         return math.floor(number)
 
-    factor = 10 ** decimals
+    factor = 10 ** decimal_places
     return math.floor(number * factor) / factor
