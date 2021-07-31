@@ -43,11 +43,12 @@ def discord_msg_balance():
 def do_work():
     while True:
         try:
-            if not threading.main_thread().is_alive():
-                exit()
+            for i in range(0, wait_time*3600):
+                if not threading.main_thread().is_alive():
+                    exit()
 
-            discord_msg_balance()
-            time.sleep(wait_time * 3600)
+                if i == wait_time*3600-1:
+                    discord_msg_balance()
 
         except Exception as e:
             debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
