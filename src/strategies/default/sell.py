@@ -230,7 +230,24 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                 coins_sold[coin] = coins_bought[coin]
                 return coins_sold
 
-            if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0:  # if there's already a part locked, cancel the order
+            # if one sell order is already up (below MIN_NOTATIONAL) and a new buy order bought some
+            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0 and float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) != 0:
+                orders[coin] = client.get_open_orders(symbol=coin)
+
+                while not orders[coin]:
+                    time.sleep(1)
+                    orders[coin] = client.get_open_orders(symbol=coin)
+
+                result = client.cancel_order(  # old partially filled sell order below MIN_NOTATIONAL
+                    symbol=coin,
+                    orderId=orders[coin][0]['orderId']
+                )
+                result = client.cancel_order(  # new partially filled buy order
+                    symbol=coin,
+                    orderId=orders[coin][1]['orderId']
+                )
+
+            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0:  # if there's already a part locked, cancel the order
                 orders[coin] = client.get_open_orders(symbol=coin)
 
                 while not orders[coin]:
@@ -248,6 +265,25 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                         quantity=client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'],
                         price=last_price
                     )
+
+            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) != 0:  # if a part already got filled
+                if len(client.get_open_orders(symbol=coin)) > 0:
+                    orders[coin] = client.get_open_orders(symbol=coin)
+
+                    while not orders[coin]:
+                        time.sleep(1)
+                        orders[coin] = client.get_open_orders(symbol=coin)
+
+                    result = client.cancel_order(
+                        symbol=coin,
+                        orderId=orders[coin][0]['orderId']
+                    )
+
+                order = client.order_limit_sell(
+                    symbol=coin,
+                    quantity=client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'],
+                    price=last_price
+                )
 
         except Exception as e:
             logger.debug_log("Error while creating an limit sell order: " + str(e), True)
