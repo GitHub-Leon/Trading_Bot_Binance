@@ -1,6 +1,7 @@
 import sys
 import threading
 import time
+import datetime
 
 import requests
 
@@ -43,12 +44,12 @@ def discord_msg_balance():
 def do_work():
     while True:
         try:
-            for i in range(0, wait_time*3600):
-                if not threading.main_thread().is_alive():
-                    exit()
+            if not threading.main_thread().is_alive():
+                exit()
 
-                if i == wait_time*3600-1:
-                    discord_msg_balance()
+            if datetime.datetime.now().minute == 0:
+                discord_msg_balance()
+                time.sleep(61)  # sleep 61 secs to prevent it from triggering again
 
         except Exception as e:
             debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)

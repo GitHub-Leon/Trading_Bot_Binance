@@ -192,18 +192,15 @@ def coins_to_sell(coin, coins_sold, last_prices):
 
 
 def use_limit_sell_order(coin, coins_sold, last_prices):
+    logger.debug_log("Trying to create limit sell order", False)
     """
     Input coin gets sold via current market price with limit orders
     Returns the updated coins_sold
     """
+    logger.console_log(f"Sell signal for {coin} received.")
     last_price = float(last_prices[coin]['price'])
     buy_price = float(coins_bought[coin]['bought_at'])
     price_change = float((last_price - buy_price) / buy_price * 100)
-
-    from src.update_globals import update_session_fees
-    update_session_profit(price_change - (TRADING_FEE * 2))
-    update_session_fees(QUANTITY * price_change * TRADING_FEE)
-    logger.profit_log(price_change - (TRADING_FEE * 2))
 
     while True:
         last_price = float(client.get_symbol_ticker(symbol=coin)['price'])
@@ -213,47 +210,70 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
         orders = {}
 
         try:
-            if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) == 0:  # if balance == 0, remove from portfolio
+            if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) == 0 and float(
+                    client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])[
+                        'locked']) == 0:  # if balance == 0, remove from portfolio
+
+                # in case a buy order is still up, cancel it
+                if len(client.get_open_orders(symbol=coin)) > 0:
+                    orders[coin] = client.get_open_orders(symbol=coin)
+                    while not orders[coin]:
+                        time.sleep(1)
+                        orders[coin] = client.get_open_orders(symbol=coin)
+                    result = client.cancel_order(
+                        symbol=coin,
+                        orderId=orders[coin][0]['orderId']
+                    )
+
+                #TODO: maybe substract session fees*2, bc no buy order was filled
+
                 coins_sold[coin] = coins_bought[coin]
                 return coins_sold
 
-            order = client.order_limit_sell(
-                symbol=coin,
-                quantity=client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'],
-                price=last_price
-            )
-        except Exception as e:
-            logger.debug_log("Error while creating an limit order: " + str(e), True)
-        else:
-            time.sleep(0.2)  # wait to see if order got filled or not
-            try:
-                if len(client.get_open_orders(symbol=coin)) != 0:  # check, if there are still open orders
-                    try:
-                        while not orders[coin]:
-                            orders[coin] = client.get_all_orders(symbol=str(coin).split(PAIR_WITH)[0], limit=1)
-                            time.sleep(1)
-                    except Exception:  # occurs, if no order is available for the coin anymore
-                        pass
+            if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0:  # if there's already a part locked, cancel the order
+                orders[coin] = client.get_open_orders(symbol=coin)
 
+                while not orders[coin]:
+                    time.sleep(1)
+                    orders[coin] = client.get_open_orders(symbol=coin)
+
+                if client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']*last_price > 15:  # if less than MIN_NOTATIONAL is available (15$ for binance)
+                    result = client.cancel_order(
+                        symbol=coin,
+                        orderId=orders[coin][0]['orderId']
+                    )
+
+                    order = client.order_limit_sell(
+                        symbol=coin,
+                        quantity=client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'],
+                        price=last_price
+                    )
+
+        except Exception as e:
+            logger.debug_log("Error while creating an limit sell order: " + str(e), True)
+        else:
+            time.sleep(1)  # wait to see if order got filled or not
+            try:
                 if len(client.get_open_orders(symbol=coin)) == 0:
                     coins_sold[coin] = coins_bought[coin]  # add the coin to the sold coins, if no order is open anymore
 
                     logger.debug_log("Selling coin with limit sell", False)
-                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees, update_volatility_cooloff
+                    from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees, \
+                        update_volatility_cooloff
                     if price_change - (TRADING_FEE * 2) < 0:
                         update_losing_trades()  # coin was not profitable
                         logger.debug_log(
-                            f"Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            f"Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         logger.console_log(
-                            f"{txcolors.SELL_LOSS}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                            f"{txcolors.SELL_LOSS}Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
                     elif price_change - (TRADING_FEE * 2) >= 0:
                         update_profitable_trades()  # coin was profitable
                         logger.debug_log(
-                            f"Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            f"Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         logger.console_log(
-                            f"{txcolors.SELL_PROFIT}Sell signal received, selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                            f"{txcolors.SELL_PROFIT}Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
                     # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
                     update_volatility_cooloff(coin, datetime.now())
@@ -281,14 +301,9 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                     balance_report(coins_sold)
 
                     return coins_sold
-                else:  # cancel the order, if it is still up
-                    result = client.cancel_order(
-                        symbol=coin,
-                        orderId=orders[coin][0]['orderId']
-                    )
 
             except Exception as e:
-                logger.debug_log("Error while cancelling a limit order: " + str(e), True)
+                logger.debug_log("Error while cancelling a limit sell order: " + str(e), True)
 
 
 def round_decimals_down(number: float, decimal_places: int=2):  # NOT USED AS OF RIGHT NOW!!!

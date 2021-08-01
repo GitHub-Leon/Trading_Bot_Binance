@@ -26,19 +26,21 @@ def wait_for_price():
     coins_up = 0
     coins_down = 0
     coins_unchanged = 0
-
-    if USE_LEVERAGE and historical_prices[hsp_head]['BNBDOWNUSDT']['time'] > datetime.now() - timedelta(
-            minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
-        # sleep for exactly the amount of time required
-        debug_log("Sleep for exactly the amount of time required", False)
-        time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                datetime.now() - historical_prices[hsp_head]['BNBDOWNUSDT']['time'])).total_seconds())
-    elif historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
-            minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
-        # sleep for exactly the amount of time required
-        debug_log("Sleep for exactly the amount of time required", False)
-        time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
+    try:
+        if USE_LEVERAGE and historical_prices[hsp_head]['BNBDOWNUSDT']['time'] > datetime.now() - timedelta(
+                minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
+            # sleep for exactly the amount of time required
+            debug_log("Sleep for exactly the amount of time required", False)
+            time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
+                    datetime.now() - historical_prices[hsp_head]['BNBDOWNUSDT']['time'])).total_seconds())
+        elif historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
+                minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
+            # sleep for exactly the amount of time required
+            debug_log("Sleep for exactly the amount of time required", False)
+            time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
+                    datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
+    except Exception:
+        pass
 
     # retrieve latest prices
     get_price()
