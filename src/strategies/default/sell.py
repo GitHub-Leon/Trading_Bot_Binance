@@ -254,7 +254,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                     time.sleep(1)
                     orders[coin] = client.get_open_orders(symbol=coin)
 
-                if client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']*last_price > 15:  # if less than MIN_NOTATIONAL is available (15$ for binance)
+                if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked'])*last_price > 15:  # if less than MIN_NOTATIONAL is available (15$ for binance)
                     result = client.cancel_order(
                         symbol=coin,
                         orderId=orders[coin][0]['orderId']
