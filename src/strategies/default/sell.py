@@ -1,11 +1,9 @@
 # This module handles the sell logic of our bot.
 
-import re  # regex
-from datetime import datetime
 import math
+import re  # regex
 import time
-
-from src.helpers.scripts.discord_msg_trades import msg_discord
+from datetime import datetime
 
 from src.classes.TxColor import txcolors
 from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP_LOSS, USE_TRAILING_STOP_LOSS, \
@@ -13,6 +11,7 @@ from src.config import coins_bought, client, TRAILING_TAKE_PROFIT, TRAILING_STOP
 from src.helpers.decimals import decimals
 from src.helpers.scripts import logger
 from src.helpers.scripts.balance_report import balance_report
+from src.helpers.scripts.discord_msg_trades import msg_discord
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_sell_signals
 from src.update_globals import update_session_profit, update_volatility_cooloff
@@ -89,7 +88,9 @@ def sell_coins():
                     # error handling here in case position cannot be placed
                     except Exception as e:
                         logger.console_log("error: " + str(e))
-                        logger.debug_log("Error while trying to place a real order. SL/TP or bearish market triggered (Limit). Error-Message: " + str(e), True)
+                        logger.debug_log(
+                            "Error while trying to place a real order. SL/TP or bearish market triggered (Limit). Error-Message: " + str(
+                                e), True)
 
                     else:
                         logger.debug_log("SL/TP or bearish market triggered (Limit).", False)
@@ -103,7 +104,9 @@ def sell_coins():
                     # error handling here in case position cannot be placed
                     except Exception as e:
                         logger.console_log("error: " + str(e))
-                        logger.debug_log("Error while trying to place a real order. SL/TP or bearish market triggered. Error-Message: " + str(e), True)
+                        logger.debug_log(
+                            "Error while trying to place a real order. SL/TP or bearish market triggered. Error-Message: " + str(
+                                e), True)
 
                     else:
                         logger.debug_log("SL/TP or bearish market triggered.", False)
@@ -114,7 +117,8 @@ def sell_coins():
                     logger.debug_log(
                         f'Not selling {coin} for now {buy_price} - {last_price}: {price_change - (TRADING_FEE * 2):.2f}% Est: {(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.2f}$',
                         False)
-                    logger.console_log(f'Not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
+                    logger.console_log(
+                        f'Not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
 
             if hsp_head == 1 and len(coins_bought) == 0:
                 logger.debug_log("Not holding any coins", False)
@@ -225,13 +229,14 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                         orderId=orders[coin][0]['orderId']
                     )
 
-                #TODO: maybe substract session fees*2, bc no buy order was filled
+                # TODO: maybe substract session fees*2, bc no buy order was filled
 
                 coins_sold[coin] = coins_bought[coin]
                 return coins_sold
 
             # if one sell order is already up (below MIN_NOTATIONAL) and a new buy order bought some
-            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0 and float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) != 0:
+            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0 and float(
+                    client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) != 0:
                 orders[coin] = client.get_open_orders(symbol=coin)
 
                 while not orders[coin]:
@@ -247,14 +252,16 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                     orderId=orders[coin][1]['orderId']
                 )
 
-            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked']) != 0:  # if there's already a part locked, cancel the order
+            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])[
+                           'locked']) != 0:  # if there's already a part locked, cancel the order
                 orders[coin] = client.get_open_orders(symbol=coin)
 
                 while not orders[coin]:
                     time.sleep(1)
                     orders[coin] = client.get_open_orders(symbol=coin)
 
-                if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['locked'])*last_price > 15:  # if less than MIN_NOTATIONAL is available (15$ for binance)
+                if float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])[
+                             'locked']) * last_price > 15:  # if less than MIN_NOTATIONAL is available (15$ for binance)
                     result = client.cancel_order(
                         symbol=coin,
                         orderId=orders[coin][0]['orderId']
@@ -266,7 +273,8 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                         price=last_price
                     )
 
-            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']) != 0:  # if a part already got filled
+            elif float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])[
+                           'free']) != 0:  # if a part already got filled
                 if len(client.get_open_orders(symbol=coin)) > 0:
                     orders[coin] = client.get_open_orders(symbol=coin)
 
@@ -342,7 +350,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                 logger.debug_log("Error while cancelling a limit sell order: " + str(e), True)
 
 
-def round_decimals_down(number: float, decimal_places: int=2):  # NOT USED AS OF RIGHT NOW!!!
+def round_decimals_down(number: float, decimal_places: int = 2):  # NOT USED AS OF RIGHT NOW!!!
     """
     Returns a value rounded down to a specific number of decimal places.
     """

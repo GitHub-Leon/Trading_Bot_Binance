@@ -1,7 +1,7 @@
+import datetime
 import sys
 import threading
 import time
-import datetime
 
 import requests
 
@@ -32,9 +32,8 @@ def discord_msg_balance():
     fees_spent_msg = "Fees spent approximately: {:.2f} {}".format(session_fees, PAIR_WITH)
     trade_win_ration_msg = f"Win/Loss: {profitable_trades}/{losing_trades} \n"
 
-
-    if profitable_trades+losing_trades > 0:  # set a new msg after one trade, to prevent division by zero
-        trade_win_ration_msg = f"Win/Loss: {profitable_trades}/{losing_trades} ({(profitable_trades/(losing_trades+profitable_trades)*100):.2f} %)\n"
+    if profitable_trades + losing_trades > 0:  # set a new msg after one trade, to prevent division by zero
+        trade_win_ration_msg = f"Win/Loss: {profitable_trades}/{losing_trades} ({(profitable_trades / (losing_trades + profitable_trades) * 100):.2f} %)\n"
 
     msg = f"```{trade_win_ration_msg}Profit: {session_profit:.2f}% ({INVESTMENT_GAIN:.2f}%)\nProfit abs.: {TOTAL_GAINS:.{decimals()}f}{PAIR_WITH}\nTrading Volume approximately: {QUANTITY * (losing_trades + profitable_trades + len(coins_bought))} {PAIR_WITH}\n{fees_spent_msg}\n{session_duration_msg}``` "
     message = msg + "\n\n"

@@ -1,6 +1,6 @@
 # This module converts the use-given volume from PAIR_WITH to the coin that gets bought
 
-from src.config import QUANTITY, client, DEBUG
+from src.config import QUANTITY, client, DEBUG, PAIR_WITH
 from src.helpers.scripts.logger import debug_log, console_log
 
 from src.strategies.default.wait_for_price import wait_for_price
@@ -9,7 +9,7 @@ from src.strategies.default.wait_for_price import wait_for_price
 def convert_volume():
     """Converts the volume given in QUANTITY from coin (PAIR_WITH) to the each coin's volume"""
 
-    debug_log("Convert the volume given quantity from coin to the each coin´s volume", False)
+    debug_log(f"Convert the volume given {QUANTITY} from coin {PAIR_WITH} to the each coins volume", False)
 
     volatile_coins, number_of_coins, last_price = wait_for_price()
     lot_size = {}
