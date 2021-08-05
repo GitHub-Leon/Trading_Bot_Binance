@@ -174,7 +174,7 @@ def coins_to_sell(coin, coins_sold, last_prices):
         update_volatility_cooloff(coin, datetime.now())
 
         update_session_profit(price_change - (TRADING_FEE * 2))
-        update_session_fees(QUANTITY * price_change * TRADING_FEE)
+        update_session_fees(QUANTITY * (1+price_change/100) * TRADING_FEE/100)
         logger.profit_log(price_change - (TRADING_FEE * 2))
 
         # Log trade
@@ -324,7 +324,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
 
                     # update global vars
                     update_session_profit(price_change - (TRADING_FEE * 2))
-                    update_session_fees(QUANTITY * price_change * TRADING_FEE)
+                    update_session_fees(QUANTITY * (1+price_change/100) * TRADING_FEE/100)
 
                     # log profits
                     logger.profit_log(price_change - (TRADING_FEE * 2))

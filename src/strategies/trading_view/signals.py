@@ -35,21 +35,6 @@ def load_signals():
     # load signalling modules
     debug_log("Load signalling modules", False)
     try:
-        # Start pause bot thread
-        debug_log(f'Starting pausebot', False)
-        if DEBUG:
-            console_log(f'Starting pausebot')
-
-        module = 'pause_bot'
-        my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
-
-        debug_log("Threading the modules", False)
-
-        t = threading.Thread(target=my_module[module].do_work, args=())
-        t.daemon = True
-        t.start()
-        time.sleep(2)
-
         # Start Discord msg thread
         if MSG_DISCORD:
             debug_log(f'Starting discord_msg_balance_thread', False)
@@ -66,13 +51,15 @@ def load_signals():
             t.start()
             time.sleep(2)
 
-        # Start trading_view threads
-        if len(SIGNALLING_MODULES) > 0:
-            for module in SIGNALLING_MODULES:
+        if SIGNALLING_MODULES is not None:
+            # Start pause bot thread
+            if 'pausebot_standard' in SIGNALLING_MODULES:
+                debug_log(f'Starting pausebot', False)
                 if DEBUG:
-                    debug_log(f'Starting {module}', False)
-                    console_log(f'Starting {module}')
-                my_module[module] = importlib.import_module('.' + module, TRADING_VIEW_FOLDER)
+                    console_log(f'Starting pausebot')
+
+                module = 'pause_bot'
+                my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
 
                 debug_log("Threading the modules", False)
 
@@ -80,8 +67,23 @@ def load_signals():
                 t.daemon = True
                 t.start()
                 time.sleep(2)
+
+            # Start trading_view threads
+            if len(SIGNALLING_MODULES) > 0:
+                for module in SIGNALLING_MODULES:
+                    if DEBUG:
+                        debug_log(f'Starting {module}', False)
+                        console_log(f'Starting {module}')
+                    my_module[module] = importlib.import_module('.' + module, TRADING_VIEW_FOLDER)
+
+                    debug_log("Threading the modules", False)
+
+                    t = threading.Thread(target=my_module[module].do_work, args=())
+                    t.daemon = True
+                    t.start()
+                    time.sleep(2)
         else:
-            debug_log(f'No modules to load {SIGNALLING_MODULES}', False)
-            console_log(f'No modules to load {SIGNALLING_MODULES}')
+            debug_log(f'No modules to load', False)
+
     except Exception as e:
         debug_log("Error while loading modules. Error-Message: " + str(e), True)
