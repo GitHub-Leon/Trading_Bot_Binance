@@ -69,8 +69,6 @@ def sell_coins():
                     logger.console_log(
                         f"{coin} TP reached, adjusting TP {coins_bought[coin]['take_profit']:.2f} and SL {coins_bought[coin]['stop_loss']:.2f} accordingly to lock-in profit")
 
-                continue
-
             # check that the price is below the stop loss or above take profit (if trailing stop loss not used) and sell if this is the case or when market is bearish
             if (last_price < SL or (
                     last_price > TP and not USE_TRAILING_STOP_LOSS)) and USE_DEFAULT_STRATEGY or sell_bearish:
@@ -119,10 +117,6 @@ def sell_coins():
                         False)
                     logger.console_log(
                         f'Not selling {coin} for now {buy_price} - {last_price}: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT} Est: {txcolors.SELL_PROFIT if price_change - (TRADING_FEE * 2) >= 0. else txcolors.SELL_LOSS}{(QUANTITY * (price_change - (TRADING_FEE * 2))) / 100:.{decimals()}f} {PAIR_WITH}{txcolors.DEFAULT}')
-
-            if hsp_head == 1 and len(coins_bought) == 0:
-                logger.debug_log("Not holding any coins", False)
-                logger.console_log(f'Not holding any coins')
 
     return coins_sold
 
@@ -174,7 +168,7 @@ def coins_to_sell(coin, coins_sold, last_prices):
         update_volatility_cooloff(coin, datetime.now())
 
         update_session_profit(price_change - (TRADING_FEE * 2))
-        update_session_fees(QUANTITY * (1+price_change/100) * TRADING_FEE/100)
+        update_session_fees(QUANTITY * (1 + price_change / 100) * TRADING_FEE / 100)
         logger.profit_log(price_change - (TRADING_FEE * 2))
 
         # Log trade
@@ -324,7 +318,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
 
                     # update global vars
                     update_session_profit(price_change - (TRADING_FEE * 2))
-                    update_session_fees(QUANTITY * (1+price_change/100) * TRADING_FEE/100)
+                    update_session_fees(QUANTITY * (1 + price_change / 100) * TRADING_FEE / 100)
 
                     # log profits
                     logger.profit_log(price_change - (TRADING_FEE * 2))
