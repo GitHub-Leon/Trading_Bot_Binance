@@ -17,8 +17,6 @@ def pause_bot():
     """Pause the script when external indicators detect a bearish trend in the market"""
     from src.config import bot_paused
 
-    debug_log("Pause the script when external indicators detect a bearish trend in the market", False)
-
     # start counting for how long the bot has been paused
     start_time = time.perf_counter()
 

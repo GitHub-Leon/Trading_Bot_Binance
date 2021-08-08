@@ -41,6 +41,9 @@ trading_options:
 
   USE_LEVERAGE: False
 
+  # True if limit orders should be used instead of market orders
+  USE_LIMIT_ORDERS: True
+
   # Maximum number of coins to hold
   MAX_COINS: 20
 

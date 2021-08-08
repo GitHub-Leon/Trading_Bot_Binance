@@ -45,6 +45,7 @@ TRADING_FEE = parsed_config['trading_options']['TRADING_FEE']
 QUANTITY = parsed_config['trading_options']['QUANTITY']
 CUSTOM_LIST = parsed_config['trading_options']['CUSTOM_LIST']
 USE_LEVERAGE = parsed_config['trading_options']['USE_LEVERAGE']
+USE_LIMIT_ORDERS = parsed_config['trading_options']['USE_LIMIT_ORDERS']
 MAX_COINS = parsed_config['trading_options']['MAX_COINS']
 FIATS = parsed_config['trading_options']['FIATS']
 TIME_DIFFERENCE = parsed_config['trading_options']['TIME_DIFFERENCE']
@@ -161,5 +162,5 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
 def bot_wait():
     if not TEST_MODE:
         debug_log("Mainnet security measure", False)
-        console_log('WARNING: You are using the Mainnet and live funds. Waiting 10 seconds as a security measure')
-        time.sleep(10)
+        console_log('WARNING: You are using the Mainnet and live funds. Waiting 1 second(s) as a security measure')
+        time.sleep(1)

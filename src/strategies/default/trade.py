@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from src.classes.TxColor import txcolors
-from src.config import coins_bought, LOG_TRADES, TEST_MODE, client, TRADING_FEE, QUANTITY
+from src.config import coins_bought, LOG_TRADES, TEST_MODE, client, TRADING_FEE, QUANTITY, USE_LIMIT_ORDERS
 from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log, console_log
 from src.strategies.default.convert_volume import convert_volume
@@ -13,7 +13,7 @@ from src.strategies.default.convert_volume import convert_volume
 def buy():
     """Place Buy market orders for each volatile coin found"""
 
-    debug_log("Place buy market orders for each volatile coin found", False)
+    debug_log("Place buy market/limit orders for each volatile coin found", False)
 
     volume, last_price = convert_volume()
     orders = {}
@@ -32,7 +32,7 @@ def buy():
                     'time': datetime.now().timestamp()
                 }]
 
-                # update not sold coins
+                # fees from buying the coin
                 from src.update_globals import update_session_fees
                 update_session_fees(QUANTITY * TRADING_FEE / 100)
 
@@ -45,12 +45,21 @@ def buy():
             # try to create a real order if the test orders did not raise an exception
             debug_log("Try to create a real order if the test order did not raise an exception", False)
             try:
-                buy_limit = client.create_order(
-                    symbol=coin,
-                    side='BUY',
-                    type='MARKET',
-                    quantity=volume[coin]
-                )
+                if USE_LIMIT_ORDERS:
+                    current_price = float(client.get_symbol_ticker(symbol=coin)['price'])
+
+                    buy_limit = client.order_limit_buy(
+                        symbol=coin,
+                        quantity=volume[coin],
+                        price=current_price
+                    )
+                else:
+                    buy_market = client.create_order(
+                        symbol=coin,
+                        side='BUY',
+                        type='MARKET',
+                        quantity=volume[coin]
+                    )
 
             # error handling here in case position cannot be placed
             except Exception as e:
@@ -58,6 +67,10 @@ def buy():
 
             # run the else block if the position has been placed and return order info
             else:
+                # fees from buying the coin
+                from src.update_globals import update_session_fees
+                update_session_fees(QUANTITY * TRADING_FEE / 100)
+
                 debug_log("Get all orders", False)
                 orders[coin] = client.get_all_orders(symbol=coin, limit=1)
 

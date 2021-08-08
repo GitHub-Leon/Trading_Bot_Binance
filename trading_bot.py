@@ -18,10 +18,16 @@ from src.update_portfolio import update_portfolio
 
 
 def main():
+    bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
+
+    try:  # separate exception catch, to prevent bot from loading modules after every error
+        load_signals()  # loads signals into bot
+    except Exception:
+        console_log(f'{txcolors.WARNING}Error occured! Could not load signals{txcolors.DEFAULT}')
+        exit()
+
     while True:
         try:
-            bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
-            load_signals()  # loads signals into bot
             get_price()  # seed initial prices
 
             while True:
