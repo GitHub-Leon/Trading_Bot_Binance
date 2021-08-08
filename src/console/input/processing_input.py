@@ -2,7 +2,6 @@ import sys
 
 from src.classes.StampedOut import StampedOut
 from src.console.output.exit import init_exit
-from src.console.output.help import helps
 from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log, console_log
 from src.settings import settings
@@ -14,7 +13,6 @@ def input_check(command):
 
     debug_log("Check input", False)
     functions = {
-        "help": helps,
         "settings": settings,
         "exit": init_exit,
         "start": startup

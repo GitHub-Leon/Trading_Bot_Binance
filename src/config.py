@@ -19,15 +19,12 @@ mymodule = {}
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
 DEFAULT_CREDS_FILE = 'creds.yml'
-DEFAULT_CONFIG_AUTH_FILE = 'config_auth.yml'
 
 # Config loader
 config_file = args.config if args.config else DEFAULT_CONFIG_FILE
 creds_file = args.creds if args.creds else DEFAULT_CREDS_FILE
-auth_file = args.config if args.config else DEFAULT_CONFIG_AUTH_FILE
 parsed_config = parameters.load_config(config_file, True)
 parsed_creds = parameters.load_config(creds_file, True)
-parsed_auth = parameters.load_config(auth_file, False)
 
 # Load system vars
 TEST_MODE = parsed_config['script_options']['TEST_MODE']
@@ -61,34 +58,13 @@ TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['TRAILING_
 TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILING_TAKE_PROFIT']
 SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLING_MODULES']
 
-# Load auth vars
-try:
-    SENDER_MAIL = parsed_auth['auth-options']['SENDER_MAIL']
-    SENDER_PW = parsed_auth['auth-options']['SENDER_MAIL_PW']
-    CODE_EXPIRE_DURATION = parsed_auth['auth-options']['CODE_EXPIRE_TIME']
-    NO_AUTH_CONFIG = False
-except TypeError as e:
-    debug_log("No email auth file. No sign up possible", True)
-    NO_AUTH_CONFIG = True
-
 # Paths
-WELCOME_TEXT_FILE = 'src/console/output/welcome.txt'
-EMAIL_REGEX_FILE = './src/helpers/email_regex.txt'
-PASSWORD_REGEX_FILE = './src/helpers/password_regex.txt'
-BIRTHDAY_REGEX_FILE = './src/helpers/birthday_regex.txt'
-VERIFICATION_MAIL_PLAIN_TEXT_FILE = './src/helpers/mail_verification_plain.txt'
-VERIFICATION_MAIL_HTML_FILE = './src/helpers/mail_verification_html.html'
 SIGNALS_FOLDER = 'src/signals'
 TRADING_VIEW_FOLDER = 'src.strategies.trading_view'
 if USE_LEVERAGE:
     CUSTOM_LIST_FILE = './tickers/tickers_leveraged.txt'
 else:
     CUSTOM_LIST_FILE = './tickers/tickers_' + PAIR_WITH + '.txt'
-
-# Database connection
-DB_USERNAME = "bot"
-DB_PASSWORD = "asdfasdf"
-DB_NAME = "bot_2"
 
 # Desktop notification
 DESKTOP_NOTIFICATIONS = True

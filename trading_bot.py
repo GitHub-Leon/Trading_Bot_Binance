@@ -5,7 +5,6 @@ from src.classes.TxColor import txcolors
 from src.config import bot_wait
 from src.console.input import processing_input
 from src.console.input.console_input import console_input
-from src.console.login import login
 from src.console.output.before_start import print_before_start
 from src.helpers.scripts.logger import debug_log, console_log
 from src.remove_coins import remove_from_portfolio
@@ -54,9 +53,8 @@ def startup():
 
 
 if __name__ == '__main__':
-    if login():  # verifies correct login data before starting the bot
-        print_before_start()  # before commands can be used
+    print_before_start()  # before commands can be used
 
-        while True:
-            command = console_input()
-            processing_input.input_check(command)
+    while True:
+        command = console_input()
+        processing_input.input_check(command)
