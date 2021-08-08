@@ -81,3 +81,17 @@ strategy_options:
     SIGNALLING_MODULES:
       - signal_standard
       - pausebot_standard
+
+  # Options for mirroring elon´s btc trading actions
+  elon_mirror:
+    # activates the elon mode in addition to the trading bot
+    USE_ELON_MIRROR: True
+
+    # activates only elon mode and does not uses the trading bot (can´t be True if USE_ELON_MIRROR is False).
+    USE_ONLY_ELON_MIRROR: True
+
+    # Number of time to check elon´s actions in minutes (is only used if USE_ONLY_ELON_MIRROR is True).
+    RECHECK_INTERVAL: 1
+
+    # The amount of btc that the bot is allowed to dispose of. (only interesting if you already have btc)
+    BTC_BALANCE: 1

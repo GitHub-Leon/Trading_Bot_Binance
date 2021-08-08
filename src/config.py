@@ -57,6 +57,14 @@ USE_TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['USE_T
 TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['TRAILING_STOP_LOSS']
 TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILING_TAKE_PROFIT']
 SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLING_MODULES']
+USE_ELON_MIRROR = parsed_config['strategy_options']['elon_mirror']['USE_ELON_MIRROR']
+USE_ONLY_ELON_MIRROR = parsed_config['strategy_options']['elon_mirror']['USE_ONLY_ELON_MIRROR']
+ELON_MIRROR_RECHECK_INTERVAL = parsed_config['strategy_options']['elon_mirror']['RECHECK_INTERVAL']
+BTC_BALANCE = parsed_config['strategy_options']['elon_mirror']['BTC_BALANCE']
+
+# Elon recheck minimum 1 min
+if ELON_MIRROR_RECHECK_INTERVAL < 1:
+    ELON_MIRROR_RECHECK_INTERVAL = 1
 
 # Paths
 SIGNALS_FOLDER = 'src/signals'
