@@ -138,3 +138,6 @@ config.yml
 
 # Log
 /log
+
+# Temp
+temp/*
