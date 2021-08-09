@@ -87,11 +87,11 @@ strategy_options:
     # activates the elon mode in addition to the trading bot
     USE_ELON_MIRROR: True
 
-    # activates only elon mode and does not uses the trading bot (can´t be True if USE_ELON_MIRROR is False).
-    USE_ONLY_ELON_MIRROR: True
-
     # Number of time to check elon´s actions in minutes (is only used if USE_ONLY_ELON_MIRROR is True).
     RECHECK_INTERVAL: 1
 
-    # The amount of btc that the bot is allowed to dispose of. (only interesting if you already have btc)
+    # The amount of btc that the bot is allowed to dispose of.
     BTC_BALANCE: 1
+
+    # If elon buys and you don´t have equal or more btc as set by BTC_BALANCE, it will fill up to the BTC_BALANCE.
+    FILL_BALANCE: True

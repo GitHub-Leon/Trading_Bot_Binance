@@ -2,7 +2,7 @@
 import time
 
 from src.classes.TxColor import txcolors
-from src.config import bot_wait, USE_ELON_MIRROR, USE_ONLY_ELON_MIRROR
+from src.config import bot_wait
 from src.console.input import processing_input
 from src.console.input.console_input import console_input
 from src.console.output.before_start import print_before_start
@@ -14,37 +14,33 @@ from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
 from src.update_globals import set_default_values
 from src.update_portfolio import update_portfolio
-from src.strategies.elon_mirror.elon_mirror_main import only_elon_mirror_strategy
+from src.strategies.elon_mirror.elon_mirror_thread import only_elon_mirror_strategy
 
 
 def main():
     bot_wait()  # waits a specified amount of seconds before starting the bot as a safety measure
 
-    if not USE_ELON_MIRROR and USE_ONLY_ELON_MIRROR:  # checks if we only want to use elon mirror
-        try:  # separate exception catch, to prevent bot from loading modules after every error
-            load_signals()  # loads signals into bot
-        except Exception:
-            console_log(f'{txcolors.WARNING}Error occured! Could not load signals{txcolors.DEFAULT}')
-            exit()
+    try:  # separate exception catch, to prevent bot from loading modules after every error
+        load_signals()  # loads signals into bot
+    except Exception:
+        console_log(f'{txcolors.WARNING}Error occured! Could not load signals{txcolors.DEFAULT}')
+        exit()
 
-        while True:
-            try:
-                if not USE_ELON_MIRROR and USE_ONLY_ELON_MIRROR:  # checks if we only want to use elon mirror
-                    get_price()  # seed initial prices
+    while True:
+        try:
+            get_price()  # seed initial prices
 
-                    while True:
-                        orders, last_price, volume = buy()
-                        update_portfolio(orders, last_price, volume)
-                        coins_sold = sell_coins()
-                        remove_from_portfolio(coins_sold)
-                else:  # only use elon mirror
-                    only_elon_mirror_strategy()
+            while True:
+                orders, last_price, volume = buy()
+                update_portfolio(orders, last_price, volume)
+                coins_sold = sell_coins()
+                remove_from_portfolio(coins_sold)
 
-            except Exception:  # restarts bot if exception is caught (e.g. connection lost)
-                console_log(f'{txcolors.WARNING}Error occured! Restarting bot in 1 min{txcolors.DEFAULT}')
-                time.sleep(60)  # wait 1 min before restarting bot
-                console_log("Trying to start again...")
-                time.sleep(5)
+        except Exception:  # restarts bot if exception is caught (e.g. connection lost)
+            console_log(f'{txcolors.WARNING}Error occured! Restarting bot in 1 min{txcolors.DEFAULT}')
+            time.sleep(60)  # wait 1 min before restarting bot
+            console_log("Trying to start again...")
+            time.sleep(5)
 
 
 def startup():

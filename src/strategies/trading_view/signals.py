@@ -6,7 +6,7 @@ import threading
 import time
 
 from src.classes.TxColor import txcolors
-from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER, MSG_DISCORD
+from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER, MSG_DISCORD, USE_ELON_MIRROR
 from src.helpers.scripts.logger import debug_log, console_log
 
 
@@ -43,6 +43,22 @@ def load_signals():
 
             module = 'discord_msg_balance_thread'
             my_module[module] = importlib.import_module('.' + module, 'src.helpers.scripts')
+
+            debug_log("Threading the modules", False)
+
+            t = threading.Thread(target=my_module[module].do_work, args=())
+            t.daemon = True
+            t.start()
+            time.sleep(2)
+
+        # Start Elon Mirroring thread
+        if USE_ELON_MIRROR:
+            debug_log(f'Starting elon_mirror_thread', False)
+            if DEBUG:
+                console_log(f'Starting elon_mirror_thread')
+
+            module = 'elon_mirror_thread'
+            my_module[module] = importlib.import_module('.' + module, 'src.strategies.elon_mirror')
 
             debug_log("Threading the modules", False)
 

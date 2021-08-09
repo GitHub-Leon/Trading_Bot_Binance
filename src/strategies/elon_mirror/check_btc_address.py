@@ -6,8 +6,8 @@ class ActionType(Enum):
     SELL = 2
 
 
-def is_action():
-    return
+def isAction(ignore_sell):
+    return True
 
 
 def get_btc_balance():

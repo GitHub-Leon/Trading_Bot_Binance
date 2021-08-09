@@ -16,6 +16,10 @@ global session_profit, historical_prices, hsp_head, volatility_cooloff, bot_paus
 args = parameters.parse_args()
 mymodule = {}
 
+# Temp file paths
+TEMP_FILE_PATH = './temp/'
+elon_mirror_saved_btc_balance_file = 'elon_mirror_btc_balance.json'
+
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
 DEFAULT_CREDS_FILE = 'creds.yml'
@@ -57,10 +61,21 @@ USE_TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['USE_T
 TRAILING_STOP_LOSS = parsed_config['strategy_options']['trailing_sl']['TRAILING_STOP_LOSS']
 TRAILING_TAKE_PROFIT = parsed_config['strategy_options']['trailing_sl']['TRAILING_TAKE_PROFIT']
 SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLING_MODULES']
+
+# Load elon mirror options
 USE_ELON_MIRROR = parsed_config['strategy_options']['elon_mirror']['USE_ELON_MIRROR']
-USE_ONLY_ELON_MIRROR = parsed_config['strategy_options']['elon_mirror']['USE_ONLY_ELON_MIRROR']
 ELON_MIRROR_RECHECK_INTERVAL = parsed_config['strategy_options']['elon_mirror']['RECHECK_INTERVAL']
 BTC_BALANCE = parsed_config['strategy_options']['elon_mirror']['BTC_BALANCE']
+FILL_BALANCE = parsed_config['strategy_options']['elon_mirror']['FILL_BALANCE']
+
+# Elon btc balance file
+if os.path.exists(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file):
+    with open(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file) as btc_balance_file:
+        jsonObject = json.load(btc_balance_file)
+        btc_balance_file.close()
+    os.remove(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file)
+    BTC_BALANCE = jsonObject['btc_balance']
+    debug_log(f'Elon mirror btc_balance from temp file: {BTC_BALANCE}', False)
 
 # Elon recheck minimum 1 min
 if ELON_MIRROR_RECHECK_INTERVAL < 1:

@@ -140,4 +140,4 @@ config.yml
 /log
 
 # Temp
-temp/*
+temp/*.json
