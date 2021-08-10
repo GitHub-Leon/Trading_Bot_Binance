@@ -6,7 +6,7 @@ import time
 
 from src.config import BTC_BALANCE, FILL_BALANCE, ELON_MIRROR_RECHECK_INTERVAL, bot_paused, DEBUG
 from src.helpers.scripts.logger import debug_log, console_log
-from src.strategies.elon_mirror.check_btc_address import isAction, ActionType, get_action_type
+from src.strategies.elon_mirror.check_btc_address_website import is_action, ActionType, get_action_type
 
 
 def analyze():
@@ -19,7 +19,7 @@ def analyze():
             ignore_sell = True
         btc_balance = u_btc_balance
 
-    if not isAction(ignore_sell):  # exit analyze if there is no action
+    if not is_action(ignore_sell):  # exit analyze if there is no action
         return -1, None
 
     # there is action

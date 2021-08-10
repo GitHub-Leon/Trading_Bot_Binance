@@ -14,7 +14,6 @@ from src.strategies.default.trade import buy
 from src.strategies.trading_view.signals import load_signals
 from src.update_globals import set_default_values
 from src.update_portfolio import update_portfolio
-from src.strategies.elon_mirror.elon_mirror_thread import only_elon_mirror_strategy
 
 
 def main():

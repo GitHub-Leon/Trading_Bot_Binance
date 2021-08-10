@@ -72,10 +72,13 @@ FILL_BALANCE = parsed_config['strategy_options']['elon_mirror']['FILL_BALANCE']
 if os.path.exists(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file):
     with open(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file) as btc_balance_file:
         jsonObject = json.load(btc_balance_file)
-        btc_balance_file.close()
     os.remove(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file)
     BTC_BALANCE = jsonObject['btc_balance']
     debug_log(f'Elon mirror btc_balance from temp file: {BTC_BALANCE}', False)
+
+# Elon btc address web url
+ELON_MIRROR_WEB_URL = 'https://bitinfocharts.com/bitcoin/address/1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ?__cf_chl' \
+                      '_jschl_tk__=pmd_7d908c680fb2d3a40a9e1c243ee9ae88c7c2b82b-1628607747-0-gqNtZGzNAk2jcnBszQZi'
 
 # Elon recheck minimum 1 min
 if ELON_MIRROR_RECHECK_INTERVAL < 1:
