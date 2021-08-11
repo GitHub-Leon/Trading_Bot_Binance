@@ -1,10 +1,10 @@
 from enum import Enum
 from bs4 import BeautifulSoup
-import cloudscraper
+from selenium import webdriver
 
 
 from src.config import ELON_MIRROR_WEB_URL
-from src.helpers.scripts.logger import debug_log
+from src.helpers.scripts.logger import debug_log, console_log
 
 class ActionType(Enum):
     BUY = 1
@@ -13,8 +13,11 @@ class ActionType(Enum):
 
 def is_action(ignore_sell):
     try:
-        scraper = cloudscraper.create_scraper()
-        html = scraper.get(ELON_MIRROR_WEB_URL).text
+        driver = webdriver.PhantomJS()
+        driver.get(ELON_MIRROR_WEB_URL)
+        p_element = driver.find_element_by_id(id_='intro-text')
+
+        console_log(driver)
     except Exception as e:
         debug_log(e, False)  # TODO: cloudflare version 2 - no get access
     return True

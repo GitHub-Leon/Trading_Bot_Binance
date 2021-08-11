@@ -77,8 +77,7 @@ if os.path.exists(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file):
     debug_log(f'Elon mirror btc_balance from temp file: {BTC_BALANCE}', False)
 
 # Elon btc address web url
-ELON_MIRROR_WEB_URL = 'https://bitinfocharts.com/bitcoin/address/1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ?__cf_chl' \
-                      '_jschl_tk__=pmd_7d908c680fb2d3a40a9e1c243ee9ae88c7c2b82b-1628607747-0-gqNtZGzNAk2jcnBszQZi'
+ELON_MIRROR_WEB_URL = 'https://bitref.com/1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ'
 
 # Elon recheck minimum 1 min
 if ELON_MIRROR_RECHECK_INTERVAL < 1:
