@@ -8,7 +8,7 @@ from src.helpers.scripts.logger import debug_log
 from src.update_globals import update_hsp_head, update_historical_prices
 
 
-def get_price(add_to_historical=True):
+def get_price(add_to_historical=True, get_all=False):
     """Return the current price for all coins on binance"""
 
     debug_log("Get price", False)
@@ -20,7 +20,9 @@ def get_price(add_to_historical=True):
 
     try:
         for coin in prices:
-            if USE_LEVERAGE and not CUSTOM_LIST and (
+            if get_all:
+                initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
+            elif USE_LEVERAGE and not CUSTOM_LIST and (
                     re.match(r'.*DOWNUSDT$', coin['symbol']) or re.match(r'.*UPUSDT$', coin['symbol'])):
                 initial_price[coin['symbol']] = {'price': coin['price'], 'time': datetime.now()}
             elif CUSTOM_LIST and USE_LEVERAGE:
