@@ -1,1 +1,124 @@
-# Trading_Bot_Binance
+# Asset Tycoon Crypto Bot
+
+## Installation
+
+- download repository (it is recommended to use only stable **[releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** as a safety measure).
+- install **[python](https://www.python.org/downloads/)**. 
+- execute **setup.bat** [[linux](https://www.linux.org/threads/running-windows-batch-files-on-linux.11205/)]
+- doubleclick **trading_bot.py**
+
+In order to be able to use the bot correctly, you have to deposit the credentials.
+
+## Usage
+
+### Commands
+
+- **start** (starts the bot)
+- **Strg + C** (stopps the bot)
+- **exit** (exit application)
+- **settings** (opens config file to edit configuration)
+- **creds** (opens creds file to edit)
+
+### Credentials File: `creds.yml`
+
+    prod:  
+      access_key: replace_me  
+      secret_key: replace_me  
+      
+    discord:  
+      DISCORD_WEBHOOK_TRADES: https://discord.com/api/webhooks/XXX/YYYYY  
+      DISCORD_WEBHOOK_BALANCE: https://discord.com/api/webhooks/XXX/YYYYY
+
+### Config File: `config.yml`
+
+    # These options apply to how the script will operate.
+    script_options:
+      # Switch between testnet and mainnet
+      # Setting this to False will use REAL funds, use at your own risk
+      TEST_MODE: True
+      LOG_TRADES: True
+      MSG_DISCORD: False # Used to push alerts, messages etc to a discord channel
+      AMERICAN_USER: False
+      PRINT_CONFIG_AT_START: False
+      DEBUG: False
+    
+    # These options apply to the trading methods the script executes
+    trading_options:
+      # select what to pair the coins to and pull all coins paired with PAIR_WITH
+      PAIR_WITH: USDT
+    
+      # sell all currently owned coins when pausebot_standard stops bot because of bearish movement
+      SELL_WHEN_BEARISH: False
+    
+      # sell all currently held coins at program exit
+      SELL_ALL_AT_END: True
+    
+      # Fees in percent
+      TRADING_FEE: 0.075
+    
+      # Total amount per trade
+      QUANTITY: 150
+    
+      # Use custom tickers.txt list for filtering pairs
+      CUSTOM_LIST: True
+    
+      # List of pairs to exclude
+      # by default we're excluding the most popular fiat/leverage pairs
+      FIATS:
+        - EURUSDT
+        - GBPUSDT
+        - JPYUSDT
+        - USDUSDT
+        - DOWN  # comment out if USE_LEVERAGE == True
+        - UP  # comment out if USE_LEVERAGE == True
+    
+      USE_LEVERAGE: False
+    
+      # True if limit orders should be used instead of market orders
+      USE_LIMIT_ORDERS: True
+    
+      # Maximum number of coins to hold
+      MAX_COINS: 20
+    
+      # the amount of time in MINUTES to calculate the difference from the current price
+      TIME_DIFFERENCE: 1
+    
+      # Number of times to check for TP/SL during each TIME_DIFFERENCE Minimum 1
+      RECHECK_INTERVAL: 6
+    
+      # define in % when to sell a coin that's not making a profit
+      STOP_LOSS: 1
+    
+      # define in % when to take profit on a profitable coin
+      TAKE_PROFIT: 0.2
+    
+    # Options that apply to specific strategies
+    
+    strategy_options:
+      volatility:
+        # whether to use default settings or not; default is True
+        USE_DEFAULT_STRATEGY: False
+    
+        # the difference in % between the first and second checks for the price.
+        CHANGE_IN_PRICE: 1
+    
+      trailing_sl:
+        # whether to use trailing stop loss or not; default is True
+        USE_TRAILING_STOP_LOSS: True
+    
+        # when hit TAKE_PROFIT, move STOP_LOSS to TRAILING_STOP_LOSS percentage points below TAKE_PROFIT hence locking in profit
+        # when hit TAKE_PROFIT, move TAKE_PROFIT up by TRAILING_TAKE_PROFIT percentage points
+        TRAILING_STOP_LOSS: 0.01
+        TRAILING_TAKE_PROFIT: 0.01
+    
+      trading_view:
+        SIGNALLING_MODULES:
+          - signal_standard
+          - pausebot_standard
+
+## Recommended Environments
+
+ - Windows 10
+ - Raspian
+ - Ubuntu
+
