@@ -29,41 +29,33 @@ In order to be able to use the bot correctly, you have to deposit the credential
       DISCORD_WEBHOOK_TRADES: https://discord.com/api/webhooks/XXX/YYYYY  
       DISCORD_WEBHOOK_BALANCE: https://discord.com/api/webhooks/XXX/YYYYY
 
+**[Binance Creds Link](https://www.binance.com/en-IN/support/faq/360002502072)**
+
+**[Discord Webhooks Tutorial](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)**
+
 ### Config File: `config.yml`
 
-    # These options apply to how the script will operate.
     script_options:
-      # Switch between testnet and mainnet
-      # Setting this to False will use REAL funds, use at your own risk
       TEST_MODE: True
       LOG_TRADES: True
-      MSG_DISCORD: False # Used to push alerts, messages etc to a discord channel
+      MSG_DISCORD: False
       AMERICAN_USER: False
       PRINT_CONFIG_AT_START: False
       DEBUG: False
     
-    # These options apply to the trading methods the script executes
     trading_options:
-      # select what to pair the coins to and pull all coins paired with PAIR_WITH
       PAIR_WITH: USDT
     
-      # sell all currently owned coins when pausebot_standard stops bot because of bearish movement
       SELL_WHEN_BEARISH: False
     
-      # sell all currently held coins at program exit
       SELL_ALL_AT_END: True
-    
-      # Fees in percent
+   
       TRADING_FEE: 0.075
     
-      # Total amount per trade
       QUANTITY: 150
     
-      # Use custom tickers.txt list for filtering pairs
       CUSTOM_LIST: True
-    
-      # List of pairs to exclude
-      # by default we're excluding the most popular fiat/leverage pairs
+      
       FIATS:
         - EURUSDT
         - GBPUSDT
@@ -74,41 +66,29 @@ In order to be able to use the bot correctly, you have to deposit the credential
     
       USE_LEVERAGE: False
     
-      # True if limit orders should be used instead of market orders
       USE_LIMIT_ORDERS: True
     
-      # Maximum number of coins to hold
       MAX_COINS: 20
     
-      # the amount of time in MINUTES to calculate the difference from the current price
       TIME_DIFFERENCE: 1
     
-      # Number of times to check for TP/SL during each TIME_DIFFERENCE Minimum 1
       RECHECK_INTERVAL: 6
     
-      # define in % when to sell a coin that's not making a profit
       STOP_LOSS: 1
     
-      # define in % when to take profit on a profitable coin
       TAKE_PROFIT: 0.2
-    
-    # Options that apply to specific strategies
     
     strategy_options:
       volatility:
-        # whether to use default settings or not; default is True
-        USE_DEFAULT_STRATEGY: False
+        USE_DEFAULT_STRATEGY: True
     
-        # the difference in % between the first and second checks for the price.
         CHANGE_IN_PRICE: 1
     
       trailing_sl:
-        # whether to use trailing stop loss or not; default is True
         USE_TRAILING_STOP_LOSS: True
     
-        # when hit TAKE_PROFIT, move STOP_LOSS to TRAILING_STOP_LOSS percentage points below TAKE_PROFIT hence locking in profit
-        # when hit TAKE_PROFIT, move TAKE_PROFIT up by TRAILING_TAKE_PROFIT percentage points
         TRAILING_STOP_LOSS: 0.01
+        
         TRAILING_TAKE_PROFIT: 0.01
     
       trading_view:
@@ -116,9 +96,44 @@ In order to be able to use the bot correctly, you have to deposit the credential
           - signal_standard
           - pausebot_standard
 
+- script_options [**These options apply to how the script will operate**]
+    - TEST_MODE [**Switch between testnet and mainnet**]
+    - LOG_TRADES [**Logs each trade in a log file**]
+    - MSG_DISCORD [**Used to push alerts, messages etc to a discord channel**]
+    - AMERICAN_USER [**Used for binance.us**]
+    - PRINT_CONFIG_AT_START [**Prints current configs at start**]
+    - DEBUG [**Debug mode gets more alerts**]
+- trading_options [**These options apply to the trading methods the script executes**]
+    - PAIR_WITH [**select what to pair the coins to and pull all coins paired with PAIR_WITH**]
+    - SELL_WHEN_BEARISH [**sell all currently owned coins when pausebot_standard stops bot because of bearish movement**]
+    - SELL_ALL_AT_END [**sell all currently held coins at program exit**]
+    - TRADING_FEE [**Fees in percent**]
+    - QUANTITY [**Total amount per trade**]
+    - CUSTOM_LIST [**Use custom tickers.txt list for filtering pairs**]
+    - FIATS [**List of pairs to exclude (by default we're excluding the most popular fiat/leverage pairs)**]
+    - USE_LEVERAGE [**Enables the use of leveraged coins (comment out DOWN and UP at option FIATS)**]
+    - USE_LIMIT_ORDERS [**True if limit orders should be used instead of market orders**]
+    - MAX_COINS [**Maximum number of different coins to hold**]
+    - TIME_DIFFERENCE [**the amount of time in MINUTES to calculate the difference from the current price**]
+    - RECHECK_INTERVAL [**Number of times to check for TP/SL during each TIME_DIFFERENCE Minimum 1**]
+    - STOP_LOSS [**define in % when to sell a coin that's not making a profit**]
+    - TAKE_PROFIT [**define in % when to take profit on a profitable coin**]
+- strategy_options [**Options that apply to specific strategies**]
+    - volatility
+        - USE_DEFAULT_STRATEGY [**whether to use default settings or not; default is True**]
+        - CHANGE_IN_PRICE [**the difference in % between the first and second checks for the price**]
+    - trailing_sl [**when hit TAKE_PROFIT, move STOP_LOSS to TRAILING_STOP_LOSS percentage points below TAKE_PROFIT hence locking in profit | when hit TAKE_PROFIT, move TAKE_PROFIT up by TRAILING_TAKE_PROFIT percentage points**]
+        - USE_TRAILING_STOP_LOSS [**whether to use trailing stop loss or not; default is True**]
+        - TRAILING_STOP_LOSS
+        - TRAILING_TAKE_PROFIT
+    - trading_view
+        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/src/strategies/README.md)**]
+
+
+
 ## Recommended Environments
 
  - Windows 10
- - Raspian
+ - Raspbian
  - Ubuntu
 
