@@ -6,7 +6,4 @@ mysql-connector-python==8.0.25
 tradingview_ta==3.2.3
 numpy==1.19.5
 beautifulsoup4==4.9.3
-requests==2.26.0
-cloudscraper==1.2.58
-selenium==3.141.0
-pandas2==0.0.0
+helium==3.0.7

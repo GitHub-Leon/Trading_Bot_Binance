@@ -18,7 +18,7 @@ mymodule = {}
 
 # Temp file paths
 TEMP_FILE_PATH = './temp/'
-elon_mirror_saved_btc_balance_file = 'elon_mirror_btc_balance.json'
+elon_mirror_saved_btc_balance_file = 'elon_btc_balance.json'
 
 # YML
 DEFAULT_CONFIG_FILE = 'config.yml'
@@ -77,7 +77,7 @@ if os.path.exists(TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file):
     debug_log(f'Elon mirror btc_balance from temp file: {BTC_BALANCE}', False)
 
 # Elon btc address web url
-ELON_MIRROR_WEB_URL = 'https://bitref.com/1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ'
+ELON_MIRROR_WEB_URL = 'https://privatekeys.pw/address/bitcoin/1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ'
 
 # Elon recheck minimum 1 min
 if ELON_MIRROR_RECHECK_INTERVAL < 1:

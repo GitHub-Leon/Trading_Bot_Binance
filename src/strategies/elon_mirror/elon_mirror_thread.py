@@ -1,12 +1,10 @@
-# use for environment variables
-import os
 import sys
 import threading
 import time
 
 from src.config import BTC_BALANCE, FILL_BALANCE, ELON_MIRROR_RECHECK_INTERVAL, bot_paused, DEBUG
 from src.helpers.scripts.logger import debug_log, console_log
-from src.strategies.elon_mirror.check_btc_address_website import is_action, ActionType, get_action_type
+from src.strategies.elon_mirror.check_btc_address_website import is_action, ActionType
 
 
 def analyze():
@@ -19,12 +17,15 @@ def analyze():
             ignore_sell = True
         btc_balance = u_btc_balance
 
-    if not is_action(ignore_sell):  # exit analyze if there is no action
+    action_type, elon_btc_balance, elon_balance_diff = is_action(ignore_sell)
+
+    if action_type == ActionType.NO:  # exit analyze if there is no action
+        debug_log(f'elon_mirror_thread: There is no action.', False)
+        if DEBUG:
+            console_log(f'elon_mirror_thread: There is no action.')
         return -1, None
 
-    # there is action
-    action_type = get_action_type()
-
+    # There is action
     if action_type == ActionType.BUY:  # Buy action triggered
         amount_to_buy = 0
 
@@ -48,6 +49,7 @@ def analyze():
 
                 amount_to_buy = btc_balance - u_btc_balance  # fill up balance to BTC_BALANCE
 
+        # TODO: Buy in percentage (btc_balance * (elon_wallet/elon_buy_amount))
         return amount_to_buy, action_type
     elif action_type == ActionType.SELL:  # Sell action triggered
         amount_to_sell = 0
@@ -58,8 +60,6 @@ def analyze():
 
         # TODO: Sell in percentage (btc_balance * (elon_wallet/elon_buy_amount))
         return amount_to_sell, action_type
-
-
 
 
 def do_work():
