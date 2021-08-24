@@ -137,3 +137,4 @@ In order to be able to use the bot correctly, you have to deposit the credential
  - Raspbian
  - Ubuntu
 
+**© Asset Tycoon 2021**
