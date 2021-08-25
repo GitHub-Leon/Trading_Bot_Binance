@@ -14,7 +14,7 @@ In order to be able to use the bot correctly, you have to deposit the credential
 ### Commands
 
 - **start** (starts the bot)
-- **Strg + C** (stopps the bot)
+- **Strg + C** (stops the bot)
 - **exit** (exit application)
 - **settings** (opens config file to edit configuration)
 - **creds** (opens creds file to edit)

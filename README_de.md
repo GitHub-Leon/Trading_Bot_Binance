@@ -5,7 +5,7 @@
 - herunterladen des Repositories (aus Sicherheit ist es empfohlen nur stabile **[Releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** zu nutzen).
 - installieren von **[python](https://www.python.org/downloads/)**. 
 - führe **setup.bat** aus [[linux](https://www.linux.org/threads/running-windows-batch-files-on-linux.11205/)]
-- doppelclick auf **trading_bot.py**
+- doppelklick auf **trading_bot.py**
 
 Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred File angeben.
 
@@ -29,9 +29,9 @@ Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred Fil
       DISCORD_WEBHOOK_TRADES: https://discord.com/api/webhooks/XXX/YYYYY  
       DISCORD_WEBHOOK_BALANCE: https://discord.com/api/webhooks/XXX/YYYYY
 
-**[Binance Credentials Link](https://www.binance.com/en-IN/support/faq/360002502072)**
+**[Binance Credentials Link](https://www.binance.com/de/support/faq/360002502072)**
 
-**[Discord Webhooks Tutorial](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)**
+**[Discord Webhooks Tutorial](https://support.discord.com/hc/de/articles/228383668-Einleitung-in-Webhooks)**
 
 ### Config File: `config.yml`
 
@@ -100,12 +100,12 @@ Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred Fil
     - TEST_MODE [**Wechselt zwischen dem Testnet und dem Mainnet**]
     - LOG_TRADES [**Dokumentiert alle Trades in einem log File mit**]
     - MSG_DISCORD [**Kann festlegen ob Benachrichtigungen, Nachrichten etc in einen Discord Channel gepostet werden sollen.**]
-    - AMERICAN_USER [**Wird für binance.us unterstützung benutzt**]
-    - PRINT_CONFIG_AT_START [**Schreibt die aktuell genutzten Konfigurationen vor dem Start des Bots auf die Console**]
+    - AMERICAN_USER [**Wird für binance.us Unterstützung benutzt**]
+    - PRINT_CONFIG_AT_START [**Schreibt die aktuell genutzten Konfigurationen vor dem Start des Bots auf die Konsole**]
     - DEBUG [**Debug Modus bekommt mehr Nachrichten**]
 - trading_options [**Allgemeine Trading Strategien**]
     - PAIR_WITH [Gibt an, mit welcher Währung/Coin gepaart werden soll. Aufgrunddessen ergeben sich auch die Paarpreise]
-    - SELL_WHEN_BEARISH [Verkaufe alle derzeitigen Coins, wenn pausebot_standard deb bot aufgrund eines bearishen movement stoppt]
+    - SELL_WHEN_BEARISH [Verkaufe alle derzeitigen Coins, wenn pausebot_standard den bot aufgrund eines bearishen movement stoppt]
     - SELL_ALL_AT_END [Verkaufe alle Coins, die derzeit gekauft sind, bei beenden des Programms]
     - TRADING_FEE [Gebühren in Prozent]
     - QUANTITY [Maximaler Betrag pro Trade]
@@ -113,8 +113,8 @@ Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred Fil
     - FIATS [Liste der Paare welche exkludiert werden sollten (standardmäßig werden die bekanntesten Fiat/Leverage Paare exkludiert)]
     - USE_LEVERAGE [Aktiviert die Benützung von Leverage Tokens (kommentiere DOWN und UP aus -> FIATS)]
     - USE_LIMIT_ORDERS ['True', falls limit orders anstatt market orders benutzt werden sollen]
-    - MAX_COINS [Maximale Anzahl an verschienen Coins die gleichzeitig gehalten werden können]
-    - TIME_DIFFERENCE [Die Zeit in MINUTEN zwischen der Calculation zur Preisdifferenz]
+    - MAX_COINS [Maximale Anzahl an verschienen Coins, die gleichzeitig gehalten werden können]
+    - TIME_DIFFERENCE [Die Zeit in MINUTEN zwischen der Berechnung zur Preisdifferenz]
     - RECHECK_INTERVAL [Wie oft TP/SL während TIME_DIFFERENCE geprüft werden soll. Minimum 1]
     - STOP_LOSS [Ab welcher Preisänderung ins negative, seit Kauf, der Coin verkauft werden soll]
     - TAKE_PROFIT [Ab welcher Preisänderung ins positive, seit Kauf, der Coin verkauft werden soll]
