@@ -127,7 +127,7 @@ In order to be able to use the bot correctly, you have to deposit the credential
         - TRAILING_STOP_LOSS
         - TRAILING_TAKE_PROFIT
     - trading_view
-        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/src/strategies/README.md)**]
+        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/blob/master/src/strategies/README.md)**]
 
 
 
