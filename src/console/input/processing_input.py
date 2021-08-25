@@ -4,7 +4,7 @@ from src.classes.StampedOut import StampedOut
 from src.console.output.exit import init_exit
 from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log, console_log
-from src.settings import settings
+from src.settings import settings, creds
 from trading_bot import startup
 
 
@@ -14,6 +14,7 @@ def input_check(command):
     debug_log("Check input", False)
     functions = {
         "settings": settings,
+        "creds": creds,
         "exit": init_exit,
         "start": startup
     }
