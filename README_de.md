@@ -3,9 +3,19 @@
 ## Installation
 
 - herunterladen des Repositories (aus Sicherheit ist es empfohlen nur stabile **[Releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** zu nutzen).
-- installieren von **[python](https://www.python.org/downloads/)**. 
-- führe **setup.bat** aus [[linux](https://www.linux.org/threads/running-windows-batch-files-on-linux.11205/)]
+  
+### Windowns
+
+- installiren von **[python3.7](https://www.python.org/downloads/)**
+- ausführen von **setup.bat**
 - doppelklick auf **trading_bot.py**
+
+### Linux
+
+- ausführen von **setup.sh** 
+- **python3 trading_bot.py**
+  
+---------------
 
 Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred File angeben.
 
