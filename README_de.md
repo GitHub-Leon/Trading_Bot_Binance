@@ -19,6 +19,8 @@
 
 Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred File angeben.
 
+Du brauchst zuerst die Berechtigung, um mit leverage coins zu handeln.
+
 ## Benutzung
 
 ### Kommandos

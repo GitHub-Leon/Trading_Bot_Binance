@@ -19,6 +19,8 @@
 
 In order to be able to use the bot correctly, you have to deposit the credentials.
 
+You first need permission to trade with leverage coins.
+
 ## Usage
 
 ### Commands
