@@ -139,7 +139,7 @@ You first need permission to trade with leverage coins.
         - TRAILING_STOP_LOSS
         - TRAILING_TAKE_PROFIT
     - trading_view
-        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/blob/master/src/strategies/README.md)**]
+        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/blob/master/src/threads/strategy_threads/README.md)**]
 
 
 

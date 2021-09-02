@@ -15,6 +15,7 @@ from src.helpers.scripts.discord_msg_trades import msg_discord
 from src.strategies.default.get_price import get_price
 from src.strategies.external_signals import external_sell_signals
 from src.update_globals import update_session_profit, update_volatility_cooloff
+from src.threads.thread_manager import start_bnb_auto_buy_thread
 
 
 def sell_coins():
@@ -186,6 +187,9 @@ def coins_to_sell(coin, coins_sold, last_prices):
         # print balance report
         balance_report(coins_sold)
 
+    # check for bnb
+    start_bnb_auto_buy_thread()
+
     return coins_sold
 
 
@@ -337,6 +341,9 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
 
                     # print balance report
                     balance_report(coins_sold)
+
+                    # check for bnb
+                    start_bnb_auto_buy_thread()
 
                     return coins_sold
 
