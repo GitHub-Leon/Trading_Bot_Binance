@@ -2,21 +2,19 @@ import sys
 import threading
 import time
 
-from src.config import BTC_BALANCE, FILL_BALANCE, ELON_MIRROR_RECHECK_INTERVAL, bot_paused, DEBUG, client
+from src.config import BTC_BALANCE_USAGE, FILL_BALANCE, ELON_MIRROR_RECHECK_INTERVAL, bot_paused, DEBUG, client
 from src.helpers.scripts.logger import debug_log, console_log
 from src.strategies.elon_mirror.check_btc_address_website import is_action, ActionType
 
 
 def analyze():
     ignore_sell = False
-    btc_balance = BTC_BALANCE  # btc balance given in config file
 
     u_btc_balance = float(client.get_asset_balance('BTC')['free'])  # get user´s btc balance
 
-    if BTC_BALANCE > u_btc_balance:  # check if user´s owns less btc than the BTC_BALANCE value
+    if BTC_BALANCE_USAGE > u_btc_balance:  # check if user´s owns less btc than the BTC_BALANCE_USAGE value
         if FILL_BALANCE:  # only ignore sell triggers if the user wants to fill up first own balance
             ignore_sell = True
-        btc_balance = u_btc_balance  # use current btc balance for trades
 
     action_type, elon_btc_balance, elon_balance_diff = is_action(ignore_sell)
 
@@ -38,10 +36,10 @@ def analyze():
             u_usdt_balance = float(client.get_asset_balance('BTC')['free'])  # get amount available on user´s account
             btc_price = float(client.get_symbol_ticker('BTCUSDT')['price'])  # get current btc price
 
-            if ((btc_balance - u_btc_balance) * btc_price) > u_usdt_balance:  # can´t afford that much btc
-                debug_log(f'elon_mirror_thread: Not enough usdt to afford {btc_balance - u_btc_balance}.', False)
+            if ((BTC_BALANCE_USAGE - u_btc_balance) * btc_price) > u_usdt_balance:  # can´t afford that much btc
+                debug_log(f'elon_mirror_thread: Not enough usdt to afford {BTC_BALANCE_USAGE - u_btc_balance}.', False)
                 if DEBUG:
-                    console_log(f'elon_mirror_thread: Not enough usdt to afford {btc_balance - u_btc_balance}.')
+                    console_log(f'elon_mirror_thread: Not enough usdt to afford {BTC_BALANCE_USAGE - u_btc_balance}.')
 
                 amount_to_buy = u_usdt_balance / btc_price  # buy as much btc as possible
             else:  # can afford that much btc
@@ -49,9 +47,9 @@ def analyze():
                 if DEBUG:
                     console_log(f'elon_mirror_thread: Can afford enough btc to fill up.')
 
-                amount_to_buy = BTC_BALANCE - u_btc_balance  # fill up balance to BTC_BALANCE
+                amount_to_buy = BTC_BALANCE_USAGE - u_btc_balance  # fill up balance to BTC_BALANCE_USAGE
         else:
-            amount_to_buy = btc_balance * (elon_btc_balance / elon_balance_diff)  # percentage buy
+            amount_to_buy = min(BTC_BALANCE_USAGE, u_btc_balance) * (elon_btc_balance / elon_balance_diff)
         return amount_to_buy, action_type
     elif action_type == ActionType.SELL:  # Sell action triggered
         amount_to_sell = 0
@@ -60,7 +58,7 @@ def analyze():
         if DEBUG:
             console_log(f'elon_mirror_thread: Sell signal triggered.')
 
-        amount_to_sell = btc_balance * (elon_btc_balance / elon_balance_diff)  # percentage sell
+        amount_to_sell = min(BTC_BALANCE_USAGE, u_btc_balance) * (elon_btc_balance / elon_balance_diff)
         return amount_to_sell, action_type
 
 
@@ -83,7 +81,13 @@ def do_work():
                 if DEBUG:
                     console_log(
                         f'elon_mirror_thread: Try to buy {amount} btc.')
-                # TODO: buy amount btc
+
+                buy_market = client.create_order(
+                    symbol='BTCUSDT',
+                    side='BUY',
+                    type='MARKET',
+                    quantity=amount
+                )
 
             elif action_type == ActionType.SELL:
                 debug_log(
@@ -92,7 +96,13 @@ def do_work():
                 if DEBUG:
                     console_log(
                         f'elon_mirror_thread: Try to sell {amount} btc.')
-                # TODO: sell amount btc
+
+                buy_market = client.create_order(
+                    symbol='BTCUSDT',
+                    side='BUY',
+                    type='MARKET',
+                    quantity=amount
+                )
 
             else:
                 debug_log(

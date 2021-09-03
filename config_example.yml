@@ -91,7 +91,7 @@ strategy_options:
     RECHECK_INTERVAL: 1
 
     # The amount of btc that the bot is allowed to dispose of.
-    BTC_BALANCE: 1
+    BTC_BALANCE_USAGE: 1
 
     # If elon buys and you don´t have equal or more btc as set by BTC_BALANCE, it will fill up to the BTC_BALANCE.
     FILL_BALANCE: True

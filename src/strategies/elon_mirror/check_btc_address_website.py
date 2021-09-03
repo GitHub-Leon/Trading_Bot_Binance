@@ -43,7 +43,14 @@ def is_action(ignore_sell):
     try:
         debug_log(f'elon_mirror_thread: Try to load old btc balance from temp file.', False)
 
-        if os.path.exists(ELON_TEMP_FILE_PATH):  # check if file exists
+        if not os.path.exists(ELON_TEMP_FILE_PATH):  # check if file exists
+            # write new temp file
+            f = open(ELON_TEMP_FILE_PATH, "a")
+            f.write('{"elon_btc_balance":' + str(current_elon_btc_balance) + '}')
+            f.close()
+
+            loaded_elon_btc_balance = current_elon_btc_balance
+        else:
             # open and read temp file
             f = open(ELON_TEMP_FILE_PATH, )
             loaded_elon_btc_balance = json.load(f)["elon_btc_balance"]

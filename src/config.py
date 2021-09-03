@@ -65,7 +65,7 @@ SIGNALLING_MODULES = parsed_config['strategy_options']['trading_view']['SIGNALLI
 # Load elon mirror options
 USE_ELON_MIRROR = parsed_config['strategy_options']['elon_mirror']['USE_ELON_MIRROR']
 ELON_MIRROR_RECHECK_INTERVAL = parsed_config['strategy_options']['elon_mirror']['RECHECK_INTERVAL']
-BTC_BALANCE = parsed_config['strategy_options']['elon_mirror']['BTC_BALANCE']
+BTC_BALANCE_USAGE = parsed_config['strategy_options']['elon_mirror']['BTC_BALANCE_USAGE']
 FILL_BALANCE = parsed_config['strategy_options']['elon_mirror']['FILL_BALANCE']
 
 # Elon btc balance file
