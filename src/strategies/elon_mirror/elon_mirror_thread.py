@@ -2,20 +2,21 @@ import sys
 import threading
 import time
 
-from src.config import BTC_BALANCE, FILL_BALANCE, ELON_MIRROR_RECHECK_INTERVAL, bot_paused, DEBUG
+from src.config import BTC_BALANCE, FILL_BALANCE, ELON_MIRROR_RECHECK_INTERVAL, bot_paused, DEBUG, client
 from src.helpers.scripts.logger import debug_log, console_log
 from src.strategies.elon_mirror.check_btc_address_website import is_action, ActionType
 
 
 def analyze():
     ignore_sell = False
-    btc_balance = BTC_BALANCE
+    btc_balance = BTC_BALANCE  # btc balance given in config file
 
-    u_btc_balance = 10  # TODO: get users btc_balance
+    u_btc_balance = float(client.get_asset_balance('BTC')['free'])  # get user´s btc balance
+
     if BTC_BALANCE > u_btc_balance:  # check if user´s owns less btc than the BTC_BALANCE value
         if FILL_BALANCE:  # only ignore sell triggers if the user wants to fill up first own balance
             ignore_sell = True
-        btc_balance = u_btc_balance
+        btc_balance = u_btc_balance  # use current btc balance for trades
 
     action_type, elon_btc_balance, elon_balance_diff = is_action(ignore_sell)
 
@@ -34,22 +35,23 @@ def analyze():
             console_log(f'elon_mirror_thread: Buy signal triggered.')
 
         if FILL_BALANCE:  # let´s try to fill up btc_balance
-            u_usdt_balance = 100  # TODO: get amount available on user´s account
-            btc_price = 100  # TODO: get current btc price
+            u_usdt_balance = float(client.get_asset_balance('BTC')['free'])  # get amount available on user´s account
+            btc_price = float(client.get_symbol_ticker('BTCUSDT')['price'])  # get current btc price
+
             if ((btc_balance - u_btc_balance) * btc_price) > u_usdt_balance:  # can´t afford that much btc
                 debug_log(f'elon_mirror_thread: Not enough usdt to afford {btc_balance - u_btc_balance}.', False)
                 if DEBUG:
                     console_log(f'elon_mirror_thread: Not enough usdt to afford {btc_balance - u_btc_balance}.')
 
-                amount_to_buy = u_btc_balance / btc_price  # buy as much btc as we can
+                amount_to_buy = u_usdt_balance / btc_price  # buy as much btc as possible
             else:  # can afford that much btc
                 debug_log(f'elon_mirror_thread: Can afford enough btc to fill up.', False)
                 if DEBUG:
                     console_log(f'elon_mirror_thread: Can afford enough btc to fill up.')
 
-                amount_to_buy = btc_balance - u_btc_balance  # fill up balance to BTC_BALANCE
-
-        # TODO: Buy in percentage (btc_balance * (elon_wallet/elon_buy_amount))
+                amount_to_buy = BTC_BALANCE - u_btc_balance  # fill up balance to BTC_BALANCE
+        else:
+            amount_to_buy = btc_balance * (elon_btc_balance / elon_balance_diff)  # percentage buy
         return amount_to_buy, action_type
     elif action_type == ActionType.SELL:  # Sell action triggered
         amount_to_sell = 0
@@ -58,7 +60,7 @@ def analyze():
         if DEBUG:
             console_log(f'elon_mirror_thread: Sell signal triggered.')
 
-        # TODO: Sell in percentage (btc_balance * (elon_wallet/elon_buy_amount))
+        amount_to_sell = btc_balance * (elon_btc_balance / elon_balance_diff)  # percentage sell
         return amount_to_sell, action_type
 
 
