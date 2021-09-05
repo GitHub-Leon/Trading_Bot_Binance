@@ -9,9 +9,9 @@ from src.helpers.scripts.logger import debug_log, console_log
 
 
 class ActionType(Enum):
-    NO = 0
-    BUY = 1
-    SELL = 2
+    NO = 'NO'
+    BUY = 'BUY'
+    SELL = 'SELL'
 
 
 ELON_TEMP_FILE_PATH = TEMP_FILE_PATH + elon_mirror_saved_btc_balance_file
