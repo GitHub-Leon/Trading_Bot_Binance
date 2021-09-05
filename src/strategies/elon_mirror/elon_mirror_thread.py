@@ -74,43 +74,17 @@ def do_work():
 
             amount, action_type = analyze()
 
-            if action_type == ActionType.BUY:
-                debug_log(
-                    f'elon_mirror_thread: Try to buy {amount} btc.',
-                    False)
+            if action_type != ActionType.NO:
+                debug_log(f'elon_mirror_thread: Try to buy/sell {amount} btc.', False)
                 if DEBUG:
-                    console_log(
-                        f'elon_mirror_thread: Try to buy {amount} btc.')
+                    console_log(f'elon_mirror_thread: Try to buy/sell {amount} btc.')
 
-                buy_market = client.create_order(
+                market_order = client.create_order(
                     symbol='BTCUSDT',
-                    side='BUY',
+                    side=action_type,
                     type='MARKET',
                     quantity=amount
                 )
-
-            elif action_type == ActionType.SELL:
-                debug_log(
-                    f'elon_mirror_thread: Try to sell {amount} btc.',
-                    False)
-                if DEBUG:
-                    console_log(
-                        f'elon_mirror_thread: Try to sell {amount} btc.')
-
-                buy_market = client.create_order(
-                    symbol='BTCUSDT',
-                    side='BUY',
-                    type='MARKET',
-                    quantity=amount
-                )
-
-            else:
-                debug_log(
-                    f'elon_mirror_thread: No action to do.',
-                    False)
-                if DEBUG:
-                    console_log(
-                        f'elon_mirror_thread: No action to do.')
 
         except Exception as e:
             debug_log(f"Error in Module: {sys.argv[0]}. Restarting Module", True)
