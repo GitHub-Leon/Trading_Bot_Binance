@@ -35,7 +35,7 @@ def is_action(ignore_sell):
 
     except Exception as e:
         debug_log(
-            f'elon_mirror_thread: Error while web scraping. Exception: {e}', False)
+            f'elon_mirror_thread: Error while web scraping. Exception: {e}', True)
         if DEBUG:
             console_log(f'elon_mirror_thread: Error while web scraping. Exception: {e}')
 
@@ -66,17 +66,16 @@ def is_action(ignore_sell):
 
     except Exception as e:
         debug_log(
-            f'elon_mirror_thread: Error while reading/writing temp file. Exception: {e}', False)
+            f'elon_mirror_thread: Error while reading/writing temp file. Exception: {e}', True)
         if DEBUG:
             console_log(f'elon_mirror_thread: Error while reading temp file. Exception: {e}')
 
     elon_balance_diff = current_elon_btc_balance - loaded_elon_btc_balance  # getting diff between new and old balance
 
-    if elon_balance_diff != 0.0:  # There is action
-        if elon_balance_diff > 0.0:  # It´s a buy action
-            return ActionType.BUY, current_elon_btc_balance, elon_balance_diff
+    if elon_balance_diff > 0.0:  # It´s a buy action
+        return ActionType.BUY, current_elon_btc_balance, elon_balance_diff
 
-        if not ignore_sell and elon_balance_diff < 0.0:  # It´s a sell action
-            return ActionType.SELL, current_elon_btc_balance, elon_balance_diff
+    if not ignore_sell and elon_balance_diff < 0.0:  # It´s a sell action
+        return ActionType.SELL, current_elon_btc_balance, elon_balance_diff
 
     return ActionType.NO, current_elon_btc_balance, elon_balance_diff
