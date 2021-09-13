@@ -7,7 +7,7 @@ import time
 
 from enum import Enum
 from src.classes.TxColor import txcolors
-from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, TRADING_VIEW_FOLDER, MSG_DISCORD, PAY_FEE_WITH_BNB
+from src.config import SIGNALLING_MODULES, DEBUG, SIGNALS_FOLDER, MSG_DISCORD, PAY_FEE_WITH_BNB, TEST_MODE
 from src.helpers.scripts.logger import debug_log, console_log
 
 
@@ -24,18 +24,22 @@ def load_all_threads():
 
 
 def load_optional_threads():
-    # Start Discord msg thread
-    if MSG_DISCORD:
-        debug_log(f'Starting discord_msg_balance_thread', False)
-        if DEBUG:
-            console_log(f'Starting discord_msg_balance_thread')
+    debug_log("Trying to load optional threads.", False)
+    try:
+        # Start Discord msg thread
+        if MSG_DISCORD:
+            debug_log(f'Starting discord_msg_balance_thread', False)
+            if DEBUG:
+                console_log(f'Starting discord_msg_balance_thread')
 
-        module = 'discord_msg_balance_thread'
-        start_thread(module, Path.OPTIONAL)
+            module = 'discord_msg_balance_thread'
+            start_thread(module, Path.OPTIONAL)
 
-    # Start BNB auto buy thread
-    if PAY_FEE_WITH_BNB:
-        start_bnb_auto_buy_thread()
+        # Start BNB auto buy thread
+        if PAY_FEE_WITH_BNB and not TEST_MODE:
+            start_bnb_auto_buy_thread()
+    except Exception as e:
+        debug_log("Couldn't load optional threads. Error-Message: " + str(e), True)
 
 
 def load_signal_threads():
@@ -60,7 +64,7 @@ def load_signal_threads():
                 console_log(f'{txcolors.WARNING}Could not remove external signalling file paused.exc{txcolors.DEFAULT}')
 
     # load signalling modules
-    debug_log("Load signalling modules", False)
+    debug_log("Trying to load signalling modules", False)
     try:
         if SIGNALLING_MODULES is not None:
             # Start pause bot thread
@@ -87,16 +91,19 @@ def load_signal_threads():
 
 
 def start_bnb_auto_buy_thread():
-    debug_log(f'Starting bnb_auto_buy_thread', False)
-    if DEBUG:
-        console_log(f'Starting bnb_auto_buy_thread')
+    debug_log(f'Trying to start bnb_auto_buy_thread', False)
+    try:
+        if DEBUG:
+            console_log(f'Starting bnb_auto_buy_thread')
 
-    module = 'discord_msg_balance_thread'
-    start_thread(module, Path.OPTIONAL)
+        module = 'discord_msg_balance_thread'
+        start_thread(module, Path.OPTIONAL)
+    except Exception as e:
+        debug_log("Error while loading start_bnb_auto_buy_thread. Error-Message: " + str(e), True)
 
 
 def start_thread(module, path):
-    my_module = {module: importlib.import_module('.' + module, path)}
+    my_module = {module: importlib.import_module('.' + module, path.value)}
 
     debug_log("Threading the modules", False)
 
