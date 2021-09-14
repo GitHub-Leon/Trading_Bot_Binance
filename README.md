@@ -30,6 +30,7 @@ You first need permission to trade with leverage coins.
 - **exit** (exit application)
 - **settings** (opens config file to edit configuration)
 - **creds** (opens creds file to edit)
+- **plot** (plots the portfolio value)
 
 ### Credentials File: `creds.yml`
 

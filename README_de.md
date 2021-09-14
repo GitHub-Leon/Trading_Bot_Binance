@@ -30,6 +30,7 @@ Du brauchst zuerst die Berechtigung, um mit leverage coins zu handeln.
 - **exit** (schließt das Programm)
 - **settings** (öffnet die Konfigurationen)
 - **creds** (öffnet die Credentials)
+- **plot** (zeichnet den Wert des Portfolios)
 
 ### Credentials File: `creds.yml`
 

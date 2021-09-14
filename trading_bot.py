@@ -14,6 +14,7 @@ from src.strategies.default.trade import buy
 from src.threads.thread_manager import load_all_threads
 from src.update_globals import set_default_values
 from src.update_portfolio import update_portfolio
+from src.helpers.scripts.reset_files import reset_files
 
 
 def main():
@@ -54,6 +55,7 @@ def startup():
 
 if __name__ == '__main__':
     print_before_start()  # before commands can be used
+    reset_files()  # deletes unnecessary files on every startup to prevent bugs and false data storing
 
     while True:
         command = console_input()
