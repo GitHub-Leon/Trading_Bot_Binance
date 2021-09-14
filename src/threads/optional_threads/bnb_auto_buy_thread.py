@@ -39,7 +39,7 @@ def buy_bnb():
 def do_work():
     try:
         if not is_enough_bnb_available():
-            debug_log(f"Not enough BNB available.", True)
+            debug_log(f"Not enough BNB available.", False)
             if DEBUG:
                 console_log(f'Not enough BNB available.')
 

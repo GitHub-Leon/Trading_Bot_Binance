@@ -96,10 +96,28 @@ def start_bnb_auto_buy_thread():
         if DEBUG:
             console_log(f'Starting bnb_auto_buy_thread')
 
-        module = 'discord_msg_balance_thread'
+        module = 'bnb_auto_buy_thread'
         start_thread(module, Path.OPTIONAL)
     except Exception as e:
         debug_log("Error while loading start_bnb_auto_buy_thread. Error-Message: " + str(e), True)
+
+
+def start_sell_thread(coin, coins_sold, last_prices):
+    debug_log(f'Trying to start start_sell_thread', False)
+    try:
+        if DEBUG:
+            console_log(f'Starting start_sell_thread')
+
+        module = 'start_sell_thread'
+
+        my_module = {module: importlib.import_module('.' + module, Path.DEFAULT.value)}
+        t = threading.Thread(target=my_module[module].do_work, args=[coin, coins_sold, last_prices])
+        t.daemon = True
+        t.start()
+        time.sleep(2)
+
+    except Exception as e:
+        debug_log("Error while loading start_sell_thread. Error-Message: " + str(e), True)
 
 
 def start_thread(module, path):
