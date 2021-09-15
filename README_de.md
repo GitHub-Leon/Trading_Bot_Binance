@@ -3,11 +3,23 @@
 ## Installation
 
 - herunterladen des Repositories (aus Sicherheit ist es empfohlen nur stabile **[Releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** zu nutzen).
-- installieren von **[python](https://www.python.org/downloads/)**. 
-- führe **setup.bat** aus [[linux](https://www.linux.org/threads/running-windows-batch-files-on-linux.11205/)]
+  
+### Windows
+
+- installieren von **[python3.7](https://www.python.org/downloads/)**
+- ausführen von **setup.bat**
 - doppelklick auf **trading_bot.py**
 
-Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred File angeben.
+### Linux
+
+- ausführen von **setup.sh** 
+- **python3 trading_bot.py**
+  
+---------------
+
+Wenn du den Bot richtig nutzen willst, musst du die Credentials im cred File angeben.
+
+Du brauchst zuerst die Berechtigung, um mit leverage coins zu handeln.
 
 ## Benutzung
 
@@ -18,6 +30,7 @@ Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred Fil
 - **exit** (schließt das Programm)
 - **settings** (öffnet die Konfigurationen)
 - **creds** (öffnet die Credentials)
+- **plot** (zeichnet den Wert des Portfolios)
 
 ### Credentials File: `creds.yml`
 
@@ -104,30 +117,30 @@ Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred Fil
     - PRINT_CONFIG_AT_START [**Schreibt die aktuell genutzten Konfigurationen vor dem Start des Bots auf die Konsole**]
     - DEBUG [**Debug Modus bekommt mehr Nachrichten**]
 - trading_options [**Allgemeine Trading Strategien**]
-    - PAIR_WITH [Gibt an, mit welcher Währung/Coin gepaart werden soll. Aufgrunddessen ergeben sich auch die Paarpreise]
-    - SELL_WHEN_BEARISH [Verkaufe alle derzeitigen Coins, wenn pausebot_standard den bot aufgrund eines bearishen movement stoppt]
-    - SELL_ALL_AT_END [Verkaufe alle Coins, die derzeit gekauft sind, bei beenden des Programms]
-    - TRADING_FEE [Gebühren in Prozent]
-    - QUANTITY [Maximaler Betrag pro Trade]
-    - CUSTOM_LIST [Benutze ein eigene txt Datei um Paare zu filtern]
-    - FIATS [Liste der Paare welche exkludiert werden sollten (standardmäßig werden die bekanntesten Fiat/Leverage Paare exkludiert)]
-    - USE_LEVERAGE [Aktiviert die Benützung von Leverage Tokens (kommentiere DOWN und UP aus -> FIATS)]
-    - USE_LIMIT_ORDERS ['True', falls limit orders anstatt market orders benutzt werden sollen]
-    - MAX_COINS [Maximale Anzahl an verschienen Coins, die gleichzeitig gehalten werden können]
-    - TIME_DIFFERENCE [Die Zeit in MINUTEN zwischen der Berechnung zur Preisdifferenz]
-    - RECHECK_INTERVAL [Wie oft TP/SL während TIME_DIFFERENCE geprüft werden soll. Minimum 1]
-    - STOP_LOSS [Ab welcher Preisänderung ins negative, seit Kauf, der Coin verkauft werden soll]
-    - TAKE_PROFIT [Ab welcher Preisänderung ins positive, seit Kauf, der Coin verkauft werden soll]
-- strategy_options [Einstellungen die sich auf bestimmte Strategien beziehen]
+    - PAIR_WITH [**Gibt an, mit welcher Währung/Coin gepaart werden soll. Aufgrunddessen ergeben sich auch die Paarpreise**]
+    - SELL_WHEN_BEARISH [**Verkaufe alle derzeitigen Coins, wenn pausebot_standard den bot aufgrund eines bearishen movement stoppt**]
+    - SELL_ALL_AT_END [**Verkaufe alle Coins, die derzeit gekauft sind, bei beenden des Programms**]
+    - TRADING_FEE [**Gebühren in Prozent**]
+    - QUANTITY [**Maximaler Betrag pro Trade**]
+    - CUSTOM_LIST [** ein eigene txt Datei um Paare zu filtern**]
+    - FIATS [**Liste der Paare welche exkludiert werden sollten (standardmäßig werden die bekanntesten Fiat/Leverage Paare exkludiert)**]
+    - USE_LEVERAGE [**Aktiviert die Benützung von Leverage Tokens (kommentiere DOWN und UP aus -> FIATS)**]
+    - USE_LIMIT_ORDERS [**'True', falls limit orders anstatt market orders benutzt werden sollen**]
+    - MAX_COINS [**Maximale Anzahl an verschienen Coins, die gleichzeitig gehalten werden können**]
+    - TIME_DIFFERENCE [**Die Zeit in MINUTEN zwischen der Berechnung zur Preisdifferenz**]
+    - RECHECK_INTERVAL [**Wie oft TP/SL während TIME_DIFFERENCE geprüft werden soll. Minimum 1**]
+    - STOP_LOSS [**Ab welcher Preisänderung ins negative, seit Kauf, der Coin verkauft werden soll**]
+    - TAKE_PROFIT [**Ab welcher Preisänderung ins positive, seit Kauf, der Coin verkauft werden soll**]
+- strategy_options [**Einstellungen die sich auf bestimmte Strategien beziehen**]
     - volatility
-        - USE_DEFAULT_STRATEGY [Einstellung zum Aktivieren/Deaktivieren der Standard Ausbruch-Strategie]
-        - CHANGE_IN_PRICE [Der Unterschied, der zwischen den zwei Überprüfungen erreicht werden muss, um ein Kaufsignal zu geben]
-    - trailing_sl [Sobald der TAKE_PROFIT erreicht wird, wird der STOP_LOSS und TAKE_PROFIT um TRAILING_STOP_LOSS und TRAILING_TAKE_PROFIT Prozentpunkte nach oben verschoben. Dies verhindert zu frühes Profit taken.]
-        - USE_TRAILING_STOP_LOSS [Einstellung zum Aktivieren/Deaktivieren der trailing_stop_loss Funktion; Standartmäßig auf 'True']
+        - USE_DEFAULT_STRATEGY [**Einstellung zum Aktivieren/Deaktivieren der Standard Ausbruch-Strategie**]
+        - CHANGE_IN_PRICE [**Der Unterschied, der zwischen den zwei Überprüfungen erreicht werden muss, um ein Kaufsignal zu geben**]
+    - trailing_sl [**Sobald der TAKE_PROFIT erreicht wird, wird der STOP_LOSS und TAKE_PROFIT um TRAILING_STOP_LOSS und TRAILING_TAKE_PROFIT Prozentpunkte nach oben verschoben. Dies verhindert zu frühes Profit taken.**]
+        - USE_TRAILING_STOP_LOSS [**Einstellung zum Aktivieren/Deaktivieren der trailing_stop_loss Funktion; Standartmäßig auf 'True'**]
         - TRAILING_STOP_LOSS
         - TRAILING_TAKE_PROFIT
     - trading_view
-        - SIGNALLING_MODULES [Eine Liste der verfügbaren Strategien. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/src/strategies/README.md)]
+        - SIGNALLING_MODULES [**Eine Liste der verfügbaren Strategien. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/src/strategies/README.md)**]
 
 
 

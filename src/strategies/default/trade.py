@@ -46,12 +46,10 @@ def buy():
             debug_log("Try to create a real order if the test order did not raise an exception", False)
             try:
                 if USE_LIMIT_ORDERS:
-                    current_price = float(client.get_symbol_ticker(symbol=coin)['price'])
-
                     buy_limit = client.order_limit_buy(
                         symbol=coin,
                         quantity=volume[coin],
-                        price=current_price
+                        price=last_price[coin]['price']
                     )
                 else:
                     buy_market = client.create_order(

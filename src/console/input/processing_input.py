@@ -6,6 +6,7 @@ from src.helpers.scripts import logger
 from src.helpers.scripts.logger import debug_log, console_log
 from src.settings import settings, creds
 from trading_bot import startup
+from src.helpers.scripts.plot_profit import plot_profit
 
 
 def input_check(command):
@@ -16,7 +17,8 @@ def input_check(command):
         "settings": settings,
         "creds": creds,
         "exit": init_exit,
-        "start": startup
+        "start": startup,
+        "plot": plot_profit
     }
     # Get the function from functions dictionary
     func = functions.get(command)

@@ -17,4 +17,6 @@ def print_before_start():
         console_log('\n' * 4)
     if DEBUG:
         console_log(f'Your credentials have been loaded from {creds_file}')
+
+    console_log(f'Crypto Tycoon fully operational!')
     return True

@@ -3,11 +3,23 @@
 ## Installation
 
 - download repository (it is recommended to use only stable **[releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** as a safety measure).
-- install **[python](https://www.python.org/downloads/)**. 
-- execute **setup.bat** [[linux](https://www.linux.org/threads/running-windows-batch-files-on-linux.11205/)]
+
+### Windows
+
+- install **[python3.7](https://www.python.org/downloads/)**
+- execute **setup.bat**
 - doubleclick **trading_bot.py**
 
+### Linux
+
+- execute **setup.sh** 
+- **python3 trading_bot.py**
+  
+---------------
+
 In order to be able to use the bot correctly, you have to deposit the credentials.
+
+You first need permission to trade with leverage coins.
 
 ## Usage
 
@@ -18,6 +30,7 @@ In order to be able to use the bot correctly, you have to deposit the credential
 - **exit** (exit application)
 - **settings** (opens config file to edit configuration)
 - **creds** (opens creds file to edit)
+- **plot** (plots the portfolio value)
 
 ### Credentials File: `creds.yml`
 
@@ -127,7 +140,7 @@ In order to be able to use the bot correctly, you have to deposit the credential
         - TRAILING_STOP_LOSS
         - TRAILING_TAKE_PROFIT
     - trading_view
-        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/blob/master/src/strategies/README.md)**]
+        - SIGNALLING_MODULES [**List of strategies to use. [Modules](https://github.com/GitHub-Leon/Trading_Bot_Binance/blob/master/src/threads/strategy_threads/README.md)**]
 
 
 

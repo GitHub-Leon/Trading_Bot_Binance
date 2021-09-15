@@ -23,6 +23,9 @@ trading_options:
   # Fees in percent
   TRADING_FEE: 0.075
 
+  # Auto buy feature for BNB to cover fees
+  PAY_FEE_WITH_BNB: True
+
   # Total amount per trade
   QUANTITY: 150
 

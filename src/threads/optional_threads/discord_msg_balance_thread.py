@@ -31,11 +31,12 @@ def discord_msg_balance():
     minutes, seconds = divmod(rem, 60)
 
     TOTAL_GAINS = ((QUANTITY * session_profit) / 100)
+    if not TEST_MODE:  # get wallet balance and correct gains in live mode
+        CURRENT_BALANCE = total_amount_usdt()
+        TOTAL_GAINS = CURRENT_BALANCE - INVESTMENT
+
     INVESTMENT_GAIN = (TOTAL_GAINS / INVESTMENT) * 100
     CURRENT_BALANCE = INVESTMENT + TOTAL_GAINS
-
-    if not TEST_MODE:  # get wallet balance in live mode
-        CURRENT_BALANCE = total_amount_usdt()
 
     session_duration_msg = "Session duration: {:0>1}:{:0>2}:{:0>2}:{:05.2f}".format(int(days), int(hours), int(minutes), seconds)
     fees_spent_msg = "Fees spent approximately: {:.2f} {}\n".format(session_fees, PAIR_WITH)
