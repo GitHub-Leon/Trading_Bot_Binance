@@ -103,12 +103,12 @@ def start_bnb_auto_buy_thread():
 
 
 def start_sell_thread(coin, coins_sold, last_prices):
-    debug_log(f'Trying to start start_sell_thread', False)
+    debug_log(f'Trying to start sell_thread', False)
     try:
         if DEBUG:
-            console_log(f'Starting start_sell_thread')
+            console_log(f'Starting sell_thread')
 
-        module = 'start_sell_thread'
+        module = 'sell_thread'
 
         my_module = {module: importlib.import_module('.' + module, Path.DEFAULT.value)}
         t = threading.Thread(target=my_module[module].do_work, args=[coin, coins_sold, last_prices])

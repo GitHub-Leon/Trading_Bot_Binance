@@ -1,7 +1,8 @@
 import json
 import os
+import time
 
-from src.config import client, LOG_TRADES
+from src.config import client, LOG_TRADES, USE_LIMIT_ORDERS
 from src.helpers.scripts.logger import debug_log, trade_log
 
 
@@ -13,22 +14,36 @@ def sell_all():
             coins = json.load(f)
 
             for coin in list(coins):
-                sell_coin = client.create_order(
-                    symbol=coin,
-                    side='SELL',
-                    type='MARKET',
-                    quantity=coins[coin]['volume']
-                )
+                if len(client.get_open_orders(symbol=coin)) > 0:  # in case a buy order is still up, cancel it
+                    orders = {coin: client.get_open_orders(symbol=coin)}
+                    while not orders[coin]:
+                        time.sleep(1)
+                        orders[coin] = client.get_open_orders(symbol=coin)
+                    sell_coin = client.cancel_order(
+                        symbol=coin,
+                        orderId=orders[coin][0]['orderId']
+                    )
 
-                buy_price = float(coins[coin]['bought_at'])
-                last_price = float(sell_coin['fills'][0]['price'])
-                profit = (last_price - buy_price) * coins[coin]['volume']
-                price_change = float((last_price - buy_price) / buy_price * 100)
+                try:
+                    sell_coin = client.create_order(
+                        symbol=coin,
+                        side='SELL',
+                        type='MARKET',
+                        quantity=coins[coin]['volume']
+                    )
 
-                if LOG_TRADES:
-                    debug_log("Log trades in log file", False)
-                    trade_log(
-                        f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+                    buy_price = float(coins[coin]['bought_at'])
+                    last_price = float(sell_coin['fills'][0]['price'])
+                    profit = (last_price - buy_price) * coins[coin]['volume']
+                    price_change = float((last_price - buy_price) / buy_price * 100)
+
+                    if LOG_TRADES:
+                        debug_log("Log trades in log file", False)
+                        trade_log(
+                            f"Sell: {coins[coin]['volume']} {coin} - {buy_price} - {last_price} Profit: {profit:.2f} {price_change:.2f}%")
+
+                except Exception:
+                    pass
 
         os.remove('coins_bought.json')
 

@@ -23,7 +23,7 @@ trading_options:
   # Fees in percent
   TRADING_FEE: 0.075
 
-  # Auto buy feature for BNB to cover fees
+  # Auto buy feature for BNB to cover fees. Only works with USDT as PAIR_WITH
   PAY_FEE_WITH_BNB: True
 
   # Total amount per trade
