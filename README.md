@@ -4,7 +4,7 @@
 
 - download repository (it is recommended to use only stable **[releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** as a safety measure).
 
-### Windowns
+### Windows
 
 - install **[python3.7](https://www.python.org/downloads/)**
 - execute **setup.bat**

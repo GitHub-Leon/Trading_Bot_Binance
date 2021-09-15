@@ -18,5 +18,5 @@ def print_before_start():
     if DEBUG:
         console_log(f'Your credentials have been loaded from {creds_file}')
 
-    console_log(f'Tycoon Bot fully operational!')
+    console_log(f'Crypto Tycoon fully operational!')
     return True

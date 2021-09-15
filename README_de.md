@@ -4,9 +4,9 @@
 
 - herunterladen des Repositories (aus Sicherheit ist es empfohlen nur stabile **[Releases](https://github.com/GitHub-Leon/Trading_Bot_Binance/releases)** zu nutzen).
   
-### Windowns
+### Windows
 
-- installiren von **[python3.7](https://www.python.org/downloads/)**
+- installieren von **[python3.7](https://www.python.org/downloads/)**
 - ausführen von **setup.bat**
 - doppelklick auf **trading_bot.py**
 
@@ -17,7 +17,7 @@
   
 ---------------
 
-Wenn du den Bot richtig nutzen willst, dann musst du die Credentials im cred File angeben.
+Wenn du den Bot richtig nutzen willst, musst du die Credentials im cred File angeben.
 
 Du brauchst zuerst die Berechtigung, um mit leverage coins zu handeln.
 

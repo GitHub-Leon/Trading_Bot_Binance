@@ -165,8 +165,6 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                     # check for bnb
                     start_bnb_auto_buy_thread()
 
-                    exit()  # end thread after it sold the coin
-
             except Exception as e:
                 logger.debug_log("Error while cancelling a limit sell order: " + str(e), True)
 
@@ -180,6 +178,6 @@ def do_work(coin, coins_sold, last_prices):
         use_limit_sell_order(coin, coins_sold, last_prices)
 
     except Exception as e:
-        debug_log(f"Error in Module: {sys.argv[0]}. Couldn't buy BNB.", True)
+        debug_log(f"Error in Module: {sys.argv[0]}. Couldn't cancel a limit sell order.", True)
         if DEBUG:
-            console_log(f"Error in Module: {sys.argv[0]}\n. Couldn't buy BNB.")
+            console_log(f"Error in Module: {sys.argv[0]}\n. Couldn't cancel a limit sell order.")
