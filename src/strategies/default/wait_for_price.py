@@ -19,7 +19,7 @@ def wait_for_price():
 
     debug_log("Call the initial price and ensure the correct amount of time has passed before the current price again",
               False)
-
+    
     volatile_coins = {}
     externals = {}
 
@@ -27,18 +27,12 @@ def wait_for_price():
     coins_down = 0
     coins_unchanged = 0
     try:
-        if USE_LEVERAGE and historical_prices[hsp_head]['BNBDOWNUSDT']['time'] > datetime.now() - timedelta(
-                minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
+        # saves the time in the first entry in historical_prices
+        if historical_prices[hsp_head][next(iter(historical_prices[hsp_head]))]['time'] > datetime.now() - timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
             # sleep for exactly the amount of time required
             debug_log("Sleep for exactly the amount of time required", False)
             time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                    datetime.now() - historical_prices[hsp_head]['BNBDOWNUSDT']['time'])).total_seconds())
-        elif historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'] > datetime.now() - timedelta(
-                minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)):
-            # sleep for exactly the amount of time required
-            debug_log("Sleep for exactly the amount of time required", False)
-            time.sleep((timedelta(minutes=float(TIME_DIFFERENCE / RECHECK_INTERVAL)) - (
-                    datetime.now() - historical_prices[hsp_head]['BNB' + PAIR_WITH]['time'])).total_seconds())
+                    datetime.now() - historical_prices[hsp_head][next(iter(historical_prices[hsp_head]))]['time'])).total_seconds())
     except Exception:
         pass
 
