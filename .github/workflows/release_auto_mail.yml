@@ -1,0 +1,32 @@
+name: Release_Auto_Mail
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release_Auto_Mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          # Required mail server address:
+          server_address: smtp.gmail.com
+          # Required mail server port:
+          server_port: 465
+          # Optional (recommended): mail server username:
+          username: ${{secrets.MAIL_ADDRESS}}
+          # Optional (recommended) mail server password:
+          password: ${{secrets.MAIL_PASSWORD}}
+          # Required mail subject:
+          subject: Github Actions job result
+          # Required recipients' addresses:
+          to: ${{secrets.MAIL_CUSTOMER_LIST}}
+          # Required sender full name (address can be skipped):
+          from: Asset Tycoon
+          # Optional whether this connection use TLS (default is true if server_port is 465)
+          secure: true
+          # Optional plain body:
+          body: Check out our new release!
