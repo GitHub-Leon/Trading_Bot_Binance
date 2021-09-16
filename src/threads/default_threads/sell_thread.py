@@ -19,7 +19,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
     Input coin gets sold via current market price with limit orders
     Returns the updated coins_sold
     """
-    logger.console_log(f"Sell signal for {coin} received.")
+    logger.debug_log(f"Sell signal for {coin} received", False)
     last_price = float(last_prices[coin]['price'])
     buy_price = float(coins_bought[coin]['bought_at'])
     price_change = float((last_price - buy_price) / buy_price * 100)
