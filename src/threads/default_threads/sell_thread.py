@@ -47,8 +47,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                         orderId=orders[coin][0]['orderId']
                     )
 
-                # TODO: maybe substract session fees*2, bc no buy order was filled
-
+                update_session_fees((QUANTITY*TRADING_FEE/100) * -1)  # subtract already added trading fee from "buying"
                 coins_sold[coin] = coins_bought[coin]
                 return coins_sold
 
