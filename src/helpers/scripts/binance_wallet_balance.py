@@ -2,13 +2,13 @@
 from src.config import client
 from src.strategies.default.get_price import get_price
 
-# Getting account info to check balance
-info = client.get_account()  # Getting account info
-
-token_pairs = []  # List to hold different token pairs
-
 
 def get_balances():
+    # Getting account info to check balance
+    info = client.get_account()  # Getting account info
+
+    token_pairs = []  # List to hold different token pairs
+
     # Saving different tokens and respective quantities into lists
     assets = []
     values = []

@@ -18,5 +18,7 @@ if [[ ! $version == *"3.7"* ]]; then
     sudo make altinstall
 fi
 
+python3.7 -m venv venv
+. venv/bin/activate
 # auto install requirements
-sudo pip3.7 install -r requirements.txt
+pip install -r requirements.txt

@@ -21,7 +21,8 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
     Input coin gets sold via current market price with limit orders
     Returns the updated coins_sold
     """
-    logger.console_log(f"Sell signal for {coin} received")
+
+    logger.debug_log(f"Sell signal for {coin} received", False)
     last_price = float(last_prices[coin]['price'])
     buy_price = float(coins_bought_new[coin]['bought_at'])
     price_change = float((last_price - buy_price) / buy_price * 100)
@@ -49,9 +50,9 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                         orderId=orders[coin][0]['orderId']
                     )
 
-                # TODO: maybe substract session fees*2, bc no buy order was filled
+                update_session_fees((QUANTITY*TRADING_FEE/100) * -1)  # subtract already added trading fee from "buying"
+                coins_sold[coin] = coins_bought[coin]
 
-                coins_sold[coin] = coins_bought_new[coin]
                 return coins_sold
 
             # if one sell order is already up (below MIN_NOTATIONAL) and a new buy order bought some
