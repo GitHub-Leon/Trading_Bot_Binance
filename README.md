@@ -6,14 +6,19 @@
 
 ### Windows
 
-- install **[python3.7](https://www.python.org/downloads/)**
-- execute **setup.bat**
-- doubleclick **trading_bot.py**
+- install python 3.7
+
+**setup trading-bot**
+```
+setup.bat PATH_TO_PYTHON3.7
+```
 
 ### Linux
 
-- execute **setup.sh** 
-- **python3 trading_bot.py**
+```
+bash setup.sh
+nash start.sh
+```
   
 ---------------
 
@@ -22,6 +27,20 @@ In order to be able to use the bot correctly, you have to deposit the credential
 You first need permission to trade with leverage coins.
 
 ## Usage
+
+### Execute
+
+#### Windows
+
+```
+start.bat
+```
+
+#### Linux
+
+```
+bash start.sh
+```
 
 ### Commands
 
