@@ -64,7 +64,9 @@ You first need permission to trade with leverage coins.
       SELL_ALL_AT_END: True
    
       TRADING_FEE: 0.075
-    
+
+      PAY_FEE_WITH_BNB: True
+
       QUANTITY: 150
     
       CUSTOM_LIST: True
@@ -121,6 +123,7 @@ You first need permission to trade with leverage coins.
     - SELL_WHEN_BEARISH [**sell all currently owned coins when pausebot_standard stops bot because of bearish movement**]
     - SELL_ALL_AT_END [**sell all currently held coins at program exit**]
     - TRADING_FEE [**Fees in percent**]
+    - PAY_FEE_WITH_BNB [**Auto buy feature for BNB to cover fees**]
     - QUANTITY [**Total amount per trade**]
     - CUSTOM_LIST [**Use custom tickers.txt list for filtering pairs**]
     - FIATS [**List of pairs to exclude (by default we're excluding the most popular fiat/leverage pairs)**]

@@ -1,5 +1,6 @@
 import time
 import sys
+import binance.helpers
 from datetime import datetime
 
 from src.classes.TxColor import txcolors
@@ -14,19 +15,21 @@ from src.helpers.scripts.logger import debug_log, console_log
 
 
 def use_limit_sell_order(coin, coins_sold, last_prices):
+    coins_bought_new = coins_bought.copy()  # create copy to prevent overwriting
     logger.debug_log("Trying to create limit sell order", False)
     """
     Input coin gets sold via current market price with limit orders
     Returns the updated coins_sold
     """
+
     logger.debug_log(f"Sell signal for {coin} received", False)
     last_price = float(last_prices[coin]['price'])
-    buy_price = float(coins_bought[coin]['bought_at'])
+    buy_price = float(coins_bought_new[coin]['bought_at'])
     price_change = float((last_price - buy_price) / buy_price * 100)
 
     while True:
         last_price = float(client.get_symbol_ticker(symbol=coin)['price'])
-        buy_price = float(coins_bought[coin]['bought_at'])
+        buy_price = float(coins_bought_new[coin]['bought_at'])
         price_change = float((last_price - buy_price) / buy_price * 100)
 
         orders = {}
@@ -49,6 +52,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
 
                 update_session_fees((QUANTITY*TRADING_FEE/100) * -1)  # subtract already added trading fee from "buying"
                 coins_sold[coin] = coins_bought[coin]
+
                 return coins_sold
 
             # if one sell order is already up (below MIN_NOTATIONAL) and a new buy order bought some
@@ -84,9 +88,15 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                         orderId=orders[coin][0]['orderId']
                     )
 
+                    # Fix step size issue
+                    info = client.get_symbol_info('BNBUSDT')
+                    step_size = info['filters'][2]['stepSize']
+                    quantity = binance.helpers.round_step_size(
+                        float(client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free']), float(step_size))
+
                     order = client.order_limit_sell(
                         symbol=coin,
-                        quantity=client.get_asset_balance(asset=str(coin).split(PAIR_WITH)[0])['free'],
+                        quantity=quantity,
                         price=last_price
                     )
 
@@ -116,7 +126,7 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
             time.sleep(1)  # wait to see if order got filled or not
             try:
                 if len(client.get_open_orders(symbol=coin)) == 0:
-                    coins_sold[coin] = coins_bought[coin]  # add the coin to the sold coins, if no order is open anymore
+                    coins_sold[coin] = coins_bought_new[coin]  # add the coin to the sold coins, if no order is open anymore
 
                     logger.debug_log("Selling coin with limit sell", False)
                     from src.update_globals import update_profitable_trades, update_losing_trades, update_session_fees, \
@@ -124,17 +134,17 @@ def use_limit_sell_order(coin, coins_sold, last_prices):
                     if price_change - (TRADING_FEE * 2) < 0:
                         update_losing_trades()  # coin was not profitable
                         logger.debug_log(
-                            f"Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            f"Selling {coins_bought_new[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         logger.console_log(
-                            f"{txcolors.SELL_LOSS}Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                            f"{txcolors.SELL_LOSS}Selling {coins_bought_new[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
                     elif price_change - (TRADING_FEE * 2) >= 0:
                         update_profitable_trades()  # coin was profitable
                         logger.debug_log(
-                            f"Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
+                            f"Selling {coins_bought_new[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%",
                             False)
                         logger.console_log(
-                            f"{txcolors.SELL_PROFIT}Selling {coins_bought[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
+                            f"{txcolors.SELL_PROFIT}Selling {coins_bought_new[coin]['volume']} {coin} - {buy_price} -> {last_price}: {price_change - (TRADING_FEE * 2):.2f}%{txcolors.DEFAULT}")
 
                     # prevent system from buying this coin for the next TIME_DIFFERENCE minutes
                     update_volatility_cooloff(coin, datetime.now())

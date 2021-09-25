@@ -139,5 +139,5 @@ if os.path.isfile(coins_bought_file_path) and os.stat(coins_bought_file_path).st
 def bot_wait():
     if not TEST_MODE:
         debug_log("Mainnet security measure", False)
-        console_log('WARNING: You are using the Mainnet and live funds. Waiting 1 second(s) as a security measure')
-        time.sleep(1)
+        console_log('WARNING: You are using the Mainnet and live funds. Waiting 10 second(s) as a security measure')
+        time.sleep(10)
