@@ -80,7 +80,7 @@ def sell_coins():
                     logger.debug_log("Try to create a real order (limit)", False)
                     try:
                         if not TEST_MODE:  # use limit sell when not in TEST_MODE
-                            coins_sold = start_sell_thread(coin, coins_sold, last_prices)
+                            start_sell_thread(coin, coins_sold, last_prices)
                             coins_sold[coin] = coins_bought[coin]  # add coin to coins sold after starting a thread to sell it
                         if TEST_MODE:  # use market sell if TEST_MODE
                             coins_sold = coins_to_sell(coin, coins_sold, last_prices)
