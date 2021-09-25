@@ -7,14 +7,19 @@
 ### Windows
 
 - installieren von **[python3.7](https://www.python.org/downloads/)**
-- ausführen von **setup.bat**
-- doppelklick auf **trading_bot.py**
+
+**aufsetzen vom trading-bot**
+```
+setup.bat PFAD_ZU_PYTHON3.7
+```
 
 ### Linux
 
-- ausführen von **setup.sh** 
-- **python3 trading_bot.py**
-  
+```
+bash setup.sh
+bash start.sh
+```
+
 ---------------
 
 Wenn du den Bot richtig nutzen willst, musst du die Credentials im cred File angeben.
