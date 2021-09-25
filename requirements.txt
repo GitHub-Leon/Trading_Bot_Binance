@@ -6,3 +6,4 @@ mysql-connector-python==8.0.25
 tradingview_ta==3.2.3
 numpy==1.19.5
 requests==2.23.0
+matplotlib==3.3.4
