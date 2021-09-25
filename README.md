@@ -17,7 +17,7 @@ setup.bat PATH_TO_PYTHON3.7
 
 ```
 bash setup.sh
-nash start.sh
+bash start.sh
 ```
   
 ---------------
