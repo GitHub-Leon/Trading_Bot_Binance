@@ -11,7 +11,8 @@ def console_input():
     debug_log("Enter input", False)
     try:
         with LOCK_CONSOLE:
-            cmd = input("--> ")
+            print("↓↓↓")
+            cmd = input()
     except KeyboardInterrupt:
         init_exit()
 
